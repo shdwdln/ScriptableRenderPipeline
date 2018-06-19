@@ -19,6 +19,9 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
         public Material defaultDecalMaterial;
         public Material defaultTerrainMaterial;
         public Shader defaultShader;
+        public Shader DefaultRoughnessOpaqueShader;
+        public Shader DefaultRoughnessTransparentShader;
+        public Shader DefaultRoughnessMaskedShader;
 
         // Debug
         public Texture2D debugFontTexture;

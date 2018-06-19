@@ -157,6 +157,21 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             return m_RenderPipelineResources.defaultDiffuseMaterial;
         }
 
+        public override Shader GetDefaultRoughnessShader()
+        {
+            return m_RenderPipelineResources.DefaultRoughnessOpaqueShader;
+        }
+
+        public override Shader GetDefaultRoughnessTransparentShader()
+        {
+            return m_RenderPipelineResources.DefaultRoughnessTransparentShader;
+        }
+
+        public override Shader GetDefaultRoughnessMaskedShader()
+        {
+            return m_RenderPipelineResources.DefaultRoughnessMaskedShader;
+        }
+
         // Note: This function is HD specific
         public Material GetDefaultDecalMaterial()
         {
