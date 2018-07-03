@@ -157,19 +157,19 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             return m_RenderPipelineResources.defaultDiffuseMaterial;
         }
 
-        public override Shader GetDefaultRoughnessShader()
+        public override Shader GetAutodeskInteractiveShader()
         {
-            return m_RenderPipelineResources.DefaultRoughnessOpaqueShader;
+            return m_RenderPipelineResources.AutodeskInteractiveShader;
         }
 
-        public override Shader GetDefaultRoughnessTransparentShader()
+        public override Shader GetAutodeskInteractiveTransparentShader()
         {
-            return m_RenderPipelineResources.DefaultRoughnessTransparentShader;
+            return m_RenderPipelineResources.AutodeskInteractiveTransparentShader;
         }
 
-        public override Shader GetDefaultRoughnessMaskedShader()
+        public override Shader GetAutodeskInteractiveMaskedShader()
         {
-            return m_RenderPipelineResources.DefaultRoughnessMaskedShader;
+            return m_RenderPipelineResources.AutodeskInteractiveMaskedShader;
         }
 
         // Note: This function is HD specific

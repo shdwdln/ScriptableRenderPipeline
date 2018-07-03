@@ -318,19 +318,19 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
             return GetMaterial(DefaultMaterialType.Standard);
         }
 
-        public override Shader GetDefaultRoughnessShader()
+        public override Shader GetAutodeskInteractiveShader()
         {
-            return editorResources.DefaultRoughnessOpaqueShader;
+            return editorResources.AutodeskInteractiveShader;
         }
 
-        public override Shader GetDefaultRoughnessTransparentShader()
+        public override Shader GetAutodeskInteractiveTransparentShader()
         {
-            return editorResources.DefaultRoughnessTransparentShader;
+            return editorResources.AutodeskInteractiveTransparentShader;
         }
 
-        public override Shader GetDefaultRoughnessMaskedShader()
+        public override Shader GetAutodeskInteractiveMaskedShader()
         {
-            return editorResources.DefaultRoughnessMaskedShader;
+            return editorResources.AutodeskInteractiveMaskedShader;
         }
 
         public override Material GetDefaultParticleMaterial()
