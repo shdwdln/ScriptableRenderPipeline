@@ -7,16 +7,6 @@ namespace UnityEngine.Experimental.Rendering
 {
     using UnityObject = UnityEngine.Object;
 
-    [Flags]
-    public enum ClearFlag
-    {
-        None  = 0,
-        Color = 1,
-        Depth = 2,
-
-        All = Depth | Color
-    }
-
     public static class CoreUtils
     {
         // Data useful for various cubemap processes.
@@ -437,47 +427,6 @@ namespace UnityEngine.Experimental.Rendering
                 buffer.Release();
         }
 
-        // Just a sort function that doesn't allocate memory
-        // Note: Shoud be repalc by a radix sort for positive integer
-        public static int Partition(uint[] numbers, int left, int right)
-        {
-            uint pivot = numbers[left];
-            while (true)
-            {
-                while (numbers[left] < pivot)
-                    left++;
-
-                while (numbers[right] > pivot)
-                    right--;
-
-                if (left < right)
-                {
-                    uint temp = numbers[right];
-                    numbers[right] = numbers[left];
-                    numbers[left] = temp;
-                }
-                else
-                {
-                    return right;
-                }
-            }
-        }
-
-        public static void QuickSort(uint[] arr, int left, int right)
-        {
-            // For Recursion
-            if (left < right)
-            {
-                int pivot = Partition(arr, left, right);
-
-                if (pivot > 1)
-                    QuickSort(arr, left, pivot - 1);
-
-                if (pivot + 1 < right)
-                    QuickSort(arr, pivot + 1, right);
-            }
-        }
-
         public static Mesh CreateCubeMesh(Vector3 min, Vector3 max)
         {
             Mesh mesh = new Mesh();
@@ -526,7 +475,14 @@ namespace UnityEngine.Experimental.Rendering
 
         public static void DisplayUnsupportedAPIMessage()
         {
-            string msg = "Platform " + SystemInfo.operatingSystem + " with device " + SystemInfo.graphicsDeviceType.ToString() + " is not supported, no rendering will occur";
+            // If we are in the editor they are many possible targets that does not matches the current OS so we use the active build target instead
+#if UNITY_EDITOR
+            string currentPlatform = UnityEditor.EditorUserBuildSettings.activeBuildTarget.ToString();
+#else
+            string currentPlatform = SystemInfo.operatingSystem;
+#endif
+
+            string msg = "Platform " + currentPlatform + " with device " + SystemInfo.graphicsDeviceType.ToString() + " is not supported, no rendering will occur";
             DisplayUnsupportedMessage(msg);
         }
 

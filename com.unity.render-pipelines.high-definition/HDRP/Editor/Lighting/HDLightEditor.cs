@@ -11,7 +11,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
     [CustomEditorForRenderPipeline(typeof(Light), typeof(HDRenderPipelineAsset))]
     sealed partial class HDLightEditor : LightEditor
     {
-        [MenuItem("CONTEXT/Light/Remove HD Light", false, 0)]
+        [MenuItem("CONTEXT/Light/Remove Component", false, 0)]
         static void RemoveLight(MenuCommand menuCommand)
         {
             GameObject go = ((Light)menuCommand.context).gameObject;
@@ -22,6 +22,29 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
             Undo.DestroyObjectImmediate(go.GetComponent<Light>());
             Undo.DestroyObjectImmediate(go.GetComponent<HDAdditionalLightData>());
             Undo.DestroyObjectImmediate(go.GetComponent<AdditionalShadowData>());
+        }
+
+        [MenuItem("CONTEXT/Light/Reset", false, 0)]
+        static void ResetLight(MenuCommand menuCommand)
+        {
+            GameObject go = ((Light)menuCommand.context).gameObject;
+
+            Assert.IsNotNull(go);
+
+            Light light = go.GetComponent<Light>();
+            HDAdditionalLightData lightAdditionalData = go.GetComponent<HDAdditionalLightData>();
+            AdditionalShadowData shadowAdditionalData = go.GetComponent<AdditionalShadowData>();
+
+            Assert.IsNotNull(light);
+            Assert.IsNotNull(lightAdditionalData);
+            Assert.IsNotNull(shadowAdditionalData);
+
+            Undo.RecordObjects(new UnityEngine.Object[] { light, lightAdditionalData, shadowAdditionalData }, "Reset HD Light");
+            light.Reset();
+            // To avoid duplicating init code we copy default settings to Reset additional data
+            // Note: we can't call this code inside the HDAdditionalLightData, thus why we don't wrap it in a Reset() function
+            HDUtils.s_DefaultHDAdditionalLightData.CopyTo(lightAdditionalData);
+            HDUtils.s_DefaultAdditionalShadowData.CopyTo(shadowAdditionalData);
         }
 
         sealed class SerializedLightData
@@ -101,6 +124,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
         {
             Lumen = LightUnit.Lumen,
             Luminance = LightUnit.Luminance,
+            Ev100 = LightUnit.Ev100,
         }
 
         enum PunctualLightUnit
@@ -244,6 +268,96 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
                 UpdateAreaLightEmissiveMeshComponents();
         }
 
+        protected override void OnSceneGUI()
+        {
+            m_SerializedAdditionalLightData.Update();
+
+            HDAdditionalLightData src = (HDAdditionalLightData)m_SerializedAdditionalLightData.targetObject;
+            Light light = (Light)target;
+
+            Color wireframeColorAbove = light.enabled ? LightEditor.kGizmoLight : LightEditor.kGizmoDisabledLight;
+            Color handleColorAbove = CoreLightEditorUtilities.GetLightHandleColor(wireframeColorAbove);
+            Color wireframeColorBehind = CoreLightEditorUtilities.GetLightBehindObjectWireframeColor(wireframeColorAbove);
+            Color handleColorBehind = CoreLightEditorUtilities.GetLightHandleColor(wireframeColorBehind);
+
+            switch (src.lightTypeExtent)
+            {
+                case LightTypeExtent.Punctual:
+                    switch (light.type)
+                    {
+                        case LightType.Directional:
+                        case LightType.Point:
+                            base.OnSceneGUI();  //use legacy handles
+                            break;
+                        case LightType.Spot:
+                            switch (src.spotLightShape)
+                            {
+                                case SpotLightShape.Cone:
+                                    CoreLightEditorUtilities.DrawSpotlightGizmo(light, src.GetInnerSpotPercent01(), true);
+                                    break;
+                                case SpotLightShape.Pyramid:
+                                    using (new Handles.DrawingScope(Matrix4x4.TRS(light.transform.position, light.transform.rotation, Vector3.one)))
+                                    {
+                                        Vector4 aspectFovMaxRangeMinRange = new Vector4(src.aspectRatio, light.spotAngle, light.range);
+                                        Handles.zTest = UnityEngine.Rendering.CompareFunction.Greater;
+                                        Handles.color = wireframeColorBehind;
+                                        CoreLightEditorUtilities.DrawPyramidFrustumWireframe(aspectFovMaxRangeMinRange);
+                                        Handles.zTest = UnityEngine.Rendering.CompareFunction.LessEqual;
+                                        Handles.color = wireframeColorAbove;
+                                        CoreLightEditorUtilities.DrawPyramidFrustumWireframe(aspectFovMaxRangeMinRange);
+                                        EditorGUI.BeginChangeCheck();
+                                        Handles.zTest = UnityEngine.Rendering.CompareFunction.Greater;
+                                        Handles.color = handleColorBehind;
+                                        aspectFovMaxRangeMinRange = CoreLightEditorUtilities.DrawPyramidFrustumHandle(aspectFovMaxRangeMinRange, false);
+                                        Handles.zTest = UnityEngine.Rendering.CompareFunction.LessEqual;
+                                        Handles.color = handleColorAbove;
+                                        aspectFovMaxRangeMinRange = CoreLightEditorUtilities.DrawPyramidFrustumHandle(aspectFovMaxRangeMinRange, false);
+                                        if (EditorGUI.EndChangeCheck())
+                                        {
+                                            Undo.RecordObjects(new UnityEngine.Object[] { target, src }, "Adjust Pyramid Spot Light");
+                                            src.aspectRatio = aspectFovMaxRangeMinRange.x;
+                                            light.spotAngle = aspectFovMaxRangeMinRange.y;
+                                            light.range = aspectFovMaxRangeMinRange.z;
+                                        }
+
+                                        // Handles.color reseted at end of scope
+                                    }
+                                    break;
+                                case SpotLightShape.Box:
+                                    using (new Handles.DrawingScope(Matrix4x4.TRS(light.transform.position, light.transform.rotation, Vector3.one)))
+                                    {
+                                        Vector4 widthHeightMaxRangeMinRange = new Vector4(src.shapeWidth, src.shapeHeight, light.range);
+                                        Handles.zTest = UnityEngine.Rendering.CompareFunction.Greater;
+                                        Handles.color = wireframeColorBehind;
+                                        CoreLightEditorUtilities.DrawOrthoFrustumWireframe(widthHeightMaxRangeMinRange);
+                                        Handles.zTest = UnityEngine.Rendering.CompareFunction.LessEqual;
+                                        Handles.color = wireframeColorAbove;
+                                        CoreLightEditorUtilities.DrawOrthoFrustumWireframe(widthHeightMaxRangeMinRange);
+                                        EditorGUI.BeginChangeCheck();
+                                        Handles.zTest = UnityEngine.Rendering.CompareFunction.Greater;
+                                        Handles.color = handleColorBehind;
+                                        widthHeightMaxRangeMinRange = CoreLightEditorUtilities.DrawOrthoFrustumHandle(widthHeightMaxRangeMinRange, false);
+                                        Handles.zTest = UnityEngine.Rendering.CompareFunction.LessEqual;
+                                        Handles.color = handleColorAbove;
+                                        widthHeightMaxRangeMinRange = CoreLightEditorUtilities.DrawOrthoFrustumHandle(widthHeightMaxRangeMinRange, false);
+                                        if (EditorGUI.EndChangeCheck())
+                                        {
+                                            Undo.RecordObjects(new UnityEngine.Object[] { target, src }, "Adjust Box Spot Light");
+                                            src.shapeWidth = widthHeightMaxRangeMinRange.x;
+                                            src.shapeHeight = widthHeightMaxRangeMinRange.y;
+                                            light.range = widthHeightMaxRangeMinRange.z;
+                                        }
+
+                                        // Handles.color reseted at end of scope
+                                    }
+                                    break;
+                            }
+                            break;
+                    }
+                    break;
+            }
+        }
+
         void DrawFoldout(SerializedProperty foldoutProperty, string title, Action func)
         {
             CoreEditorUtils.DrawSplitter();
@@ -329,31 +443,39 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
 
                 case LightShape.Rectangle:
                     // TODO: Currently if we use Area type as it is offline light in legacy, the light will not exist at runtime
-                    //m_BaseData.type.enumValueIndex = (int)LightType.Area;
+                    //m_BaseData.type.enumValueIndex = (int)LightType.Rectangle;
                     // In case of change, think to update InitDefaultHDAdditionalLightData()
                     settings.lightType.enumValueIndex = (int)LightType.Point;
                     m_AdditionalLightData.lightTypeExtent.enumValueIndex = (int)LightTypeExtent.Rectangle;
+                    EditorGUI.BeginChangeCheck();
                     EditorGUILayout.PropertyField(m_AdditionalLightData.shapeWidth, s_Styles.shapeWidthRect);
                     EditorGUILayout.PropertyField(m_AdditionalLightData.shapeHeight, s_Styles.shapeHeightRect);
-                    m_AdditionalLightData.shapeWidth.floatValue = Mathf.Max(m_AdditionalLightData.shapeWidth.floatValue, k_MinAreaWidth);
-                    m_AdditionalLightData.shapeHeight.floatValue = Mathf.Max(m_AdditionalLightData.shapeHeight.floatValue, k_MinAreaWidth);
-                    settings.areaSizeX.floatValue = m_AdditionalLightData.shapeWidth.floatValue;
-                    settings.areaSizeY.floatValue = m_AdditionalLightData.shapeHeight.floatValue;
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        m_AdditionalLightData.shapeWidth.floatValue = Mathf.Max(m_AdditionalLightData.shapeWidth.floatValue, k_MinAreaWidth);
+                        m_AdditionalLightData.shapeHeight.floatValue = Mathf.Max(m_AdditionalLightData.shapeHeight.floatValue, k_MinAreaWidth);
+                        settings.areaSizeX.floatValue = m_AdditionalLightData.shapeWidth.floatValue;
+                        settings.areaSizeY.floatValue = m_AdditionalLightData.shapeHeight.floatValue;
+                    }
                     if (settings.isRealtime)
                         settings.shadowsType.enumValueIndex = (int)LightShadows.None;
                     break;
 
                 case LightShape.Line:
                     // TODO: Currently if we use Area type as it is offline light in legacy, the light will not exist at runtime
-                    //m_BaseData.type.enumValueIndex = (int)LightType.Area;
+                    //m_BaseData.type.enumValueIndex = (int)LightType.Rectangle;
                     settings.lightType.enumValueIndex = (int)LightType.Point;
                     m_AdditionalLightData.lightTypeExtent.enumValueIndex = (int)LightTypeExtent.Line;
+                    EditorGUI.BeginChangeCheck();
                     EditorGUILayout.PropertyField(m_AdditionalLightData.shapeWidth, s_Styles.shapeWidthLine);
-                    m_AdditionalLightData.shapeWidth.floatValue = Mathf.Max(m_AdditionalLightData.shapeWidth.floatValue, k_MinAreaWidth);
-                    m_AdditionalLightData.shapeHeight.floatValue = Mathf.Max(m_AdditionalLightData.shapeHeight.floatValue, k_MinAreaWidth);
-                    // Fake line with a small rectangle in vanilla unity for GI
-                    settings.areaSizeX.floatValue = m_AdditionalLightData.shapeWidth.floatValue;
-                    settings.areaSizeY.floatValue = k_MinAreaWidth;
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        m_AdditionalLightData.shapeWidth.floatValue = Mathf.Max(m_AdditionalLightData.shapeWidth.floatValue, k_MinAreaWidth);
+                        m_AdditionalLightData.shapeHeight.floatValue = Mathf.Max(m_AdditionalLightData.shapeHeight.floatValue, k_MinAreaWidth);
+                        // Fake line with a small rectangle in vanilla unity for GI
+                        settings.areaSizeX.floatValue = m_AdditionalLightData.shapeWidth.floatValue;
+                        settings.areaSizeY.floatValue = k_MinAreaWidth;
+                    }
                     settings.shadowsType.enumValueIndex = (int)LightShadows.None;
                     break;
 
@@ -444,19 +566,17 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
 
             // For area lights
             if (oldLightUnit == LightUnit.Lumen && newLightUnit == LightUnit.Luminance)
-            {
-                if (m_LightShape == LightShape.Rectangle)
-                    intensity = LightUtils.ConvertRectLightLumenToLuminance(intensity, m_AdditionalLightData.shapeWidth.floatValue, m_AdditionalLightData.shapeHeight.floatValue);
-                else if (m_LightShape == LightShape.Line)
-                    intensity = LightUtils.CalculateLineLightLumenToLuminance(intensity, m_AdditionalLightData.shapeWidth.floatValue);
-            }
+                intensity = LightUtils.ConvertAreaLightLumenToLuminance((LightTypeExtent)m_AdditionalLightData.lightTypeExtent.enumValueIndex, intensity, m_AdditionalLightData.shapeWidth.floatValue, m_AdditionalLightData.shapeHeight.floatValue);
             if (oldLightUnit == LightUnit.Luminance && newLightUnit == LightUnit.Lumen)
-            {
-                if (m_LightShape == LightShape.Rectangle)
-                    intensity = LightUtils.ConvertRectLightLuminanceToLumen(intensity, m_AdditionalLightData.shapeWidth.floatValue, m_AdditionalLightData.shapeHeight.floatValue);
-                else if (m_LightShape == LightShape.Line)
-                    intensity = LightUtils.CalculateLineLightLuminanceToLumen(intensity, m_AdditionalLightData.shapeWidth.floatValue);
-            }
+                intensity = LightUtils.ConvertAreaLightLuminanceToLumen((LightTypeExtent)m_AdditionalLightData.lightTypeExtent.enumValueIndex, intensity, m_AdditionalLightData.shapeWidth.floatValue, m_AdditionalLightData.shapeHeight.floatValue);
+            if (oldLightUnit == LightUnit.Luminance && newLightUnit == LightUnit.Ev100)
+                intensity = LightUtils.ConvertLuminanceToEv(intensity);
+            if (oldLightUnit == LightUnit.Ev100 && newLightUnit == LightUnit.Luminance)
+                intensity = LightUtils.ConvertEvToLuminance(intensity);
+            if (oldLightUnit == LightUnit.Ev100 && newLightUnit == LightUnit.Lumen)
+                intensity = LightUtils.ConvertAreaLightEvToLumen((LightTypeExtent)m_AdditionalLightData.lightTypeExtent.enumValueIndex, intensity, m_AdditionalLightData.shapeWidth.floatValue, m_AdditionalLightData.shapeHeight.floatValue);
+            if (oldLightUnit == LightUnit.Lumen && newLightUnit == LightUnit.Ev100)
+                intensity = LightUtils.ConvertAreaLightLumenToEv((LightTypeExtent)m_AdditionalLightData.lightTypeExtent.enumValueIndex, intensity, m_AdditionalLightData.shapeWidth.floatValue, m_AdditionalLightData.shapeHeight.floatValue);
 
             m_AdditionalLightData.intensity.floatValue = intensity;
         }
@@ -528,7 +648,11 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
                 EditorGUILayout.Space();
                 EditorGUILayout.LabelField("Additional Settings", EditorStyles.boldLabel);
                 EditorGUI.indentLevel++;
-                m_AdditionalLightData.lightLayers.intValue = Convert.ToInt32(EditorGUILayout.EnumFlagsField(s_Styles.lightLayer, (LightLayerEnum)m_AdditionalLightData.lightLayers.intValue));
+                var hdPipeline = RenderPipelineManager.currentPipeline as HDRenderPipeline;
+                using (new SettingsDisableScope(hdPipeline.asset.renderPipelineSettings.supportLightLayers))
+                {
+                    m_AdditionalLightData.lightLayers.intValue = Convert.ToInt32(EditorGUILayout.EnumFlagsField(s_Styles.lightLayer, (LightLayerEnum)m_AdditionalLightData.lightLayers.intValue));
+                }
                 EditorGUILayout.PropertyField(m_AdditionalLightData.affectDiffuse, s_Styles.affectDiffuse);
                 EditorGUILayout.PropertyField(m_AdditionalLightData.affectSpecular, s_Styles.affectSpecular);
                 if (m_LightShape != LightShape.Directional)
@@ -696,6 +820,42 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
                         break;
                 }
             }
+
+        }
+
+        [DrawGizmo(GizmoType.Selected | GizmoType.Active)]
+        static void DrawGizmoForHDAdditionalLightData(HDAdditionalLightData src, GizmoType gizmoType)
+        {
+            bool selected = (gizmoType & GizmoType.Selected) != 0;
+
+            var light = src.gameObject.GetComponent<Light>();
+            Color previousColor = Gizmos.color;
+            Gizmos.color = light.enabled ? LightEditor.kGizmoLight : LightEditor.kGizmoDisabledLight;
+
+            if (selected)
+            {
+                // Trace a ray down to better locate the light location
+                Ray ray = new Ray(src.gameObject.transform.position, Vector3.down);
+                RaycastHit hit;
+                if (Physics.Raycast(ray, out hit))
+                {
+                    Handles.zTest = UnityEngine.Rendering.CompareFunction.LessEqual;
+                    using (new Handles.DrawingScope(Color.green))
+                    {
+                        Handles.DrawLine(src.gameObject.transform.position, hit.point);
+                        Handles.DrawWireDisc(hit.point, hit.normal, 0.5f);
+                    }
+                    
+                    Handles.zTest = UnityEngine.Rendering.CompareFunction.Greater;
+                    using (new Handles.DrawingScope(Color.red))
+                    {
+                        Handles.DrawLine(src.gameObject.transform.position, hit.point);
+                        Handles.DrawWireDisc(hit.point, hit.normal, 0.5f);
+                    }
+                }
+            }
+
+            Gizmos.color = previousColor;
         }
     }
 }

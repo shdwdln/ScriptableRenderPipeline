@@ -165,9 +165,13 @@ void LightLoop( float3 V, PositionInputs posInput, PreLightData preLightData, BS
     }
 
     // Define macro for a better understanding of the loop
-#define EVALUATE_BSDF_ENV(envLightData, TYPE, type) \
-    IndirectLighting lighting = EvaluateBSDF_Env(context, V, posInput, preLightData, envLightData, bsdfData, envLightData.influenceShapeType, MERGE_NAME(GPUIMAGEBASEDLIGHTINGTYPE_, TYPE), MERGE_NAME(type, HierarchyWeight)); \
-    AccumulateIndirectLighting(lighting, aggregateLighting);
+    // TODO: this code is now much harder to understand...
+#define EVALUATE_BSDF_ENV_SKY(envLightData, TYPE, type) \
+        IndirectLighting lighting = EvaluateBSDF_Env(context, V, posInput, preLightData, envLightData, bsdfData, envLightData.influenceShapeType, MERGE_NAME(GPUIMAGEBASEDLIGHTINGTYPE_, TYPE), MERGE_NAME(type, HierarchyWeight)); \
+        AccumulateIndirectLighting(lighting, aggregateLighting);
+
+// Environment cubemap test lightlayers, sky don't test it
+#define EVALUATE_BSDF_ENV(envLightData, TYPE, type) if (IsMatchingLightLayer(envLightData.lightLayers, builtinData.renderingLayers)) { EVALUATE_BSDF_ENV_SKY(envLightData, TYPE, type) }
 
     // First loop iteration
     if (featureFlags & (LIGHTFEATUREFLAGS_ENV | LIGHTFEATUREFLAGS_SKY | LIGHTFEATUREFLAGS_SSREFRACTION | LIGHTFEATUREFLAGS_SSREFLECTION))
@@ -189,6 +193,16 @@ void LightLoop( float3 V, PositionInputs posInput, PreLightData preLightData, BS
         //  1. Screen Space Refraction / Reflection
         //  2. Environment Reflection / Refraction
         //  3. Sky Reflection / Refraction
+
+        // Apply SSR.
+    #ifndef _SURFACE_TYPE_TRANSPARENT
+        {
+            IndirectLighting indirect = EvaluateBSDF_ScreenSpaceReflection(posInput, preLightData, bsdfData,
+                                                                           reflectionHierarchyWeight);
+            AccumulateIndirectLighting(indirect, aggregateLighting);
+        }
+    #endif
+
         EnvLightData envLightData;
         if (envLightCount > 0)
         {
@@ -197,13 +211,6 @@ void LightLoop( float3 V, PositionInputs posInput, PreLightData preLightData, BS
         else
         {
             envLightData = InitSkyEnvLightData(0);
-        }
-
-        if (featureFlags & LIGHTFEATUREFLAGS_SSREFLECTION)
-        {
-            IndirectLighting lighting = EvaluateBSDF_SSLighting(    context, V, posInput, preLightData, bsdfData, envLightData,
-                                                                    GPUIMAGEBASEDLIGHTINGTYPE_REFLECTION, reflectionHierarchyWeight);
-            AccumulateIndirectLighting(lighting, aggregateLighting);
         }
 
         if (featureFlags & LIGHTFEATUREFLAGS_SSREFRACTION)
@@ -250,19 +257,20 @@ void LightLoop( float3 V, PositionInputs posInput, PreLightData preLightData, BS
             // Only apply the sky if we haven't yet accumulated enough IBL lighting.
             if (reflectionHierarchyWeight < 1.0)
             {
-                EVALUATE_BSDF_ENV(envLightSky, REFLECTION, reflection);
+                EVALUATE_BSDF_ENV_SKY(envLightSky, REFLECTION, reflection);
             }
 
             if (featureFlags & LIGHTFEATUREFLAGS_SSREFRACTION)
             {
                 if (refractionHierarchyWeight < 1.0)
                 {
-                    EVALUATE_BSDF_ENV(envLightSky, REFRACTION, refraction);
+                    EVALUATE_BSDF_ENV_SKY(envLightSky, REFRACTION, refraction);
                 }
             }
         }
     }
 #undef EVALUATE_BSDF_ENV
+#undef EVALUATE_BSDF_ENV_SKY    
 
     // Also Apply indiret diffuse (GI)
     // PostEvaluateBSDF will perform any operation wanted by the material and sum everything into diffuseLighting and specularLighting

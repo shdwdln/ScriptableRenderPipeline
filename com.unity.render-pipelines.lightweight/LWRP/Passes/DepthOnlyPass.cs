@@ -2,6 +2,12 @@ using UnityEngine.Rendering;
 
 namespace UnityEngine.Experimental.Rendering.LightweightPipeline
 {
+    /// <summary>
+    /// Render all objects that have a 'DepthOnly' pass into the given depth buffer.
+    ///
+    /// You can use this pass to prime a depth buffer for subsequent rendering.
+    /// Use it as a z-prepass, or use it to generate a depth buffer.
+    /// </summary>
     public class DepthOnlyPass : ScriptableRenderPass
     {
         const string k_DepthPrepassTag = "Depth Prepass";
@@ -9,8 +15,24 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
         int kDepthBufferBits = 32;
 
         private RenderTargetHandle depthAttachmentHandle { get; set; }
-        private RenderTextureDescriptor descriptor { get; set; }
+        internal RenderTextureDescriptor descriptor { get; private set; }
+        private FilterRenderersSettings opaqueFilterSettings { get; set; }
 
+        /// <summary>
+        /// Create the DepthOnlyPass
+        /// </summary>
+        public DepthOnlyPass()
+        {
+            RegisterShaderPassName("DepthOnly");
+            opaqueFilterSettings = new FilterRenderersSettings(true)
+            {
+                renderQueueRange = RenderQueueRange.opaque,
+            };
+        }
+        
+        /// <summary>
+        /// Configure the pass
+        /// </summary>
         public void Setup(
             RenderTextureDescriptor baseDescriptor,
             RenderTargetHandle depthAttachmentHandle,
@@ -29,12 +51,8 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
             descriptor = baseDescriptor;
         }
 
-        public DepthOnlyPass(LightweightForwardRenderer renderer) : base(renderer)
-        {
-            RegisterShaderPassName("DepthOnly");
-        }
-
-        public override void Execute(ref ScriptableRenderContext context, ref CullResults cullResults, ref RenderingData renderingData)
+        /// <inheritdoc/>
+        public override void Execute(ScriptableRenderer renderer, ScriptableRenderContext context, ref RenderingData renderingData)
         {
             CommandBuffer cmd = CommandBufferPool.Get(k_DepthPrepassTag);
             using (new ProfilingSample(cmd, k_DepthPrepassTag))
@@ -52,23 +70,24 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
                 context.ExecuteCommandBuffer(cmd);
                 cmd.Clear();
 
-                var drawSettings = CreateDrawRendererSettings(renderingData.cameraData.camera, SortFlags.CommonOpaque, RendererConfiguration.None, renderingData.supportsDynamicBatching);
+                var sortFlags = renderingData.cameraData.defaultOpaqueSortFlags;
+                var drawSettings = CreateDrawRendererSettings(renderingData.cameraData.camera, sortFlags, RendererConfiguration.None, renderingData.supportsDynamicBatching);
                 if (renderingData.cameraData.isStereoEnabled)
                 {
                     Camera camera = renderingData.cameraData.camera;
                     context.StartMultiEye(camera);
-                    context.DrawRenderers(cullResults.visibleRenderers, ref drawSettings, renderer.opaqueFilterSettings);
+                    context.DrawRenderers(renderingData.cullResults.visibleRenderers, ref drawSettings, opaqueFilterSettings);
                     context.StopMultiEye(camera);
                 }
                 else
-                    context.DrawRenderers(cullResults.visibleRenderers, ref drawSettings, renderer.opaqueFilterSettings);
+                    context.DrawRenderers(renderingData.cullResults.visibleRenderers, ref drawSettings, opaqueFilterSettings);
             }
             context.ExecuteCommandBuffer(cmd);
             CommandBufferPool.Release(cmd);
         }
 
-
-        public override void Dispose(CommandBuffer cmd)
+        /// <inheritdoc/>
+        public override void FrameCleanup(CommandBuffer cmd)
         {
             if (depthAttachmentHandle != RenderTargetHandle.CameraTarget)
             {
@@ -76,6 +95,5 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
                 depthAttachmentHandle = RenderTargetHandle.CameraTarget;
             }
         }
-
     }
 }

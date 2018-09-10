@@ -1,16 +1,27 @@
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.PostProcessing;
 
 namespace UnityEngine.Experimental.Rendering.LightweightPipeline
 {
+    /// <summary>
+    /// Perform Opaque post-processing using the given color attachment as the source
+    /// and destination
+    ///
+    /// You can use this pass to apply post-processing to the given color buffer. The
+    /// pass uses the currently configured post-process stack, and it copies the result
+    /// back to the source texture.
+    /// </summary>
     public class OpaquePostProcessPass : ScriptableRenderPass
     {
-
-        public OpaquePostProcessPass(LightweightForwardRenderer renderer) : base(renderer)
-        {}
-
+        const string k_OpaquePostProcessTag = "Render Opaque PostProcess Effects";
         private RenderTargetHandle colorAttachmentHandle { get; set; }
         private RenderTextureDescriptor descriptor { get; set; }
 
+        /// <summary>
+        /// Setup the pass
+        /// </summary>
+        /// <param name="baseDescriptor"></param>
+        /// <param name="colorAttachmentHandle"></param>
         public void Setup(
             RenderTextureDescriptor baseDescriptor,
             RenderTargetHandle colorAttachmentHandle)
@@ -19,12 +30,13 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
             descriptor = baseDescriptor;
         }
 
-        public override void Execute(ref ScriptableRenderContext context, ref CullResults cullResults, ref RenderingData renderingData)
+        /// <inheritdoc/>
+        public override void Execute(ScriptableRenderer renderer, ScriptableRenderContext context, ref RenderingData renderingData)
         {
-            CommandBuffer cmd = CommandBufferPool.Get("Render Opaque PostProcess Effects");
+            CommandBuffer cmd = CommandBufferPool.Get(k_OpaquePostProcessTag);
 
             RenderTargetIdentifier source = colorAttachmentHandle.Identifier();
-            LightweightPipeline.RenderPostProcess(cmd, renderer.postProcessRenderContext, ref renderingData.cameraData, descriptor.colorFormat, source, colorAttachmentHandle.Identifier(), true);
+            renderer.RenderPostProcess(cmd, ref renderingData.cameraData, descriptor.colorFormat, source, colorAttachmentHandle.Identifier(), true);
             context.ExecuteCommandBuffer(cmd);
             CommandBufferPool.Release(cmd);
         }

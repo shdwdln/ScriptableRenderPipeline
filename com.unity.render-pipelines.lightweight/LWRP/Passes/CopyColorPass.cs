@@ -2,35 +2,49 @@ using UnityEngine.Rendering;
 
 namespace UnityEngine.Experimental.Rendering.LightweightPipeline
 {
+    /// <summary>
+    /// Copy the given color buffer to the given destination color buffer.
+    ///
+    /// You can use this pass to copy a color buffer to the destination,
+    /// so you can use it later in rendering. For example, you can copy
+    /// the opaque texture to use it for distortion effects.
+    /// </summary>
     public class CopyColorPass : ScriptableRenderPass
     {
-        Material m_SamplingMaterial;
+        const string k_CopyColorTag = "Copy Color";
         float[] m_OpaqueScalerValues = {1.0f, 0.5f, 0.25f, 0.25f};
         int m_SampleOffsetShaderHandle;
 
         private RenderTargetHandle source { get; set; }
         private RenderTargetHandle destination { get; set; }
 
-        public CopyColorPass(LightweightForwardRenderer renderer) : base(renderer)
+        /// <summary>
+        /// Create the CopyColorPass
+        /// </summary>
+        public CopyColorPass()
         {
-            m_SamplingMaterial = renderer.GetMaterial(MaterialHandles.Sampling);
             m_SampleOffsetShaderHandle = Shader.PropertyToID("_SampleOffset");
         }
 
+        /// <summary>
+        /// Configure the pass with the source and destination to execute on.
+        /// </summary>
+        /// <param name="source">Source Render Target</param>
+        /// <param name="destination">Destination Render Target</param>
         public void Setup(RenderTargetHandle source, RenderTargetHandle destination)
         {
             this.source = source;
             this.destination = destination;
         }
 
-        public override void Execute(ref ScriptableRenderContext context, ref CullResults cullResults, ref RenderingData renderingData)
+        /// <inheritdoc/>
+        public override void Execute(ScriptableRenderer renderer, ScriptableRenderContext context, ref RenderingData renderingData)
         {
-            
-            CommandBuffer cmd = CommandBufferPool.Get("Copy Color");
+            CommandBuffer cmd = CommandBufferPool.Get(k_CopyColorTag);
             Downsampling downsampling = renderingData.cameraData.opaqueTextureDownsampling;
             float opaqueScaler = m_OpaqueScalerValues[(int)downsampling];
 
-            RenderTextureDescriptor opaqueDesc = renderer.CreateRTDesc(ref renderingData.cameraData, opaqueScaler);
+            RenderTextureDescriptor opaqueDesc = ScriptableRenderer.CreateRenderTextureDescriptor(ref renderingData.cameraData, opaqueScaler);
             RenderTargetIdentifier colorRT = source.Identifier();
             RenderTargetIdentifier opaqueColorRT = destination.Identifier();
 
@@ -44,8 +58,9 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
                     cmd.Blit(colorRT, opaqueColorRT);
                     break;
                 case Downsampling._4xBox:
-                    m_SamplingMaterial.SetFloat(m_SampleOffsetShaderHandle, 2);
-                    cmd.Blit(colorRT, opaqueColorRT, m_SamplingMaterial, 0);
+                    Material samplingMaterial = renderer.GetMaterial(MaterialHandles.Sampling);
+                    samplingMaterial.SetFloat(m_SampleOffsetShaderHandle, 2);
+                    cmd.Blit(colorRT, opaqueColorRT, samplingMaterial, 0);
                     break;
                 case Downsampling._4xBilinear:
                     cmd.Blit(colorRT, opaqueColorRT);
@@ -55,9 +70,9 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
             context.ExecuteCommandBuffer(cmd);
             CommandBufferPool.Release(cmd);
         }
-        
-        
-        public override void Dispose(CommandBuffer cmd)
+
+        /// <inheritdoc/>
+        public override void FrameCleanup(CommandBuffer cmd)
         {
             if (destination != RenderTargetHandle.CameraTarget)
             {
@@ -65,6 +80,5 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
                 destination = RenderTargetHandle.CameraTarget;
             }
         }
-        
     }
 }
