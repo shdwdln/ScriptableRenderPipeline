@@ -1,18 +1,8 @@
 //-------------------------------------------------------------------------------------
 // Fill SurfaceData/Builtin data function
 //-------------------------------------------------------------------------------------
-#include "../MaterialUtilities.hlsl"
-
-//#define APPLY_MANUAL_GAMMA  1     // Users have to tag sRGB textures themselves!
-
-float3 ReadsRGBColor(float3 gammaColor)
-{
-#if APPLY_MANUAL_GAMMA
-    return Gamma22ToLinear(gammaColor);
-#else
-    return gammaColor; // Taken care of by the hardware via "_sRGB" textures
-#endif
-}
+#include "HDRP/Material/BuiltinUtilities.hlsl"
+#include "HDRP/Material/MaterialUtilities.hlsl"
 
 void GetSurfaceAndBuiltinData(FragInputs input, float3 V, inout PositionInputs posInput, out SurfaceData surfaceData, out BuiltinData builtinData)
 {
@@ -34,19 +24,19 @@ void GetSurfaceAndBuiltinData(FragInputs input, float3 V, inout PositionInputs p
 
 #ifdef _AXF_BRDF_TYPE_SVBRDF
 
-    surfaceData.diffuseColor = ReadsRGBColor(SAMPLE_TEXTURE2D(_SVBRDF_DiffuseColorMap, sampler_SVBRDF_DiffuseColorMap, UV0).xyz) * _BaseColor.xyz;
-    surfaceData.specularColor = ReadsRGBColor(SAMPLE_TEXTURE2D(_SVBRDF_SpecularColorMap, sampler_SVBRDF_SpecularColorMap, UV0).xyz);
+    surfaceData.diffuseColor = SAMPLE_TEXTURE2D(_SVBRDF_DiffuseColorMap, sampler_SVBRDF_DiffuseColorMap, UV0).xyz * _BaseColor.xyz;
+    surfaceData.specularColor = SAMPLE_TEXTURE2D(_SVBRDF_SpecularColorMap, sampler_SVBRDF_SpecularColorMap, UV0).xyz;
     surfaceData.specularLobe = _SVBRDF_SpecularLobeMapScale * SAMPLE_TEXTURE2D(_SVBRDF_SpecularLobeMap, sampler_SVBRDF_SpecularLobeMap, UV0).xy;
 
     // Check influence of anisotropy
     //surfaceData.specularLobe.y = lerp(surfaceData.specularLobe.x, surfaceData.specularLobe.y, saturate(_DEBUG_anisotropicRoughessX));
 
-    surfaceData.fresnelF0 = ReadsRGBColor(SAMPLE_TEXTURE2D(_SVBRDF_FresnelMap, sampler_SVBRDF_FresnelMap, UV0).x);
+    surfaceData.fresnelF0 = SAMPLE_TEXTURE2D(_SVBRDF_FresnelMap, sampler_SVBRDF_FresnelMap, UV0).x;
     surfaceData.height_mm = SAMPLE_TEXTURE2D(_SVBRDF_HeightMap, sampler_SVBRDF_HeightMap, UV0).x * _SVBRDF_HeightMapMaxMM;
     surfaceData.anisotropyAngle = PI * (2.0 * SAMPLE_TEXTURE2D(_SVBRDF_AnisoRotationMap, sampler_SVBRDF_AnisoRotationMap, UV0).x - 1.0);
-    surfaceData.clearcoatColor = ReadsRGBColor(SAMPLE_TEXTURE2D(_SVBRDF_ClearcoatColorMap, sampler_SVBRDF_ClearcoatColorMap, UV0).xyz);
+    surfaceData.clearcoatColor = SAMPLE_TEXTURE2D(_SVBRDF_ClearcoatColorMap, sampler_SVBRDF_ClearcoatColorMap, UV0).xyz;
 
-    float clearcoatF0 = ReadsRGBColor(SAMPLE_TEXTURE2D(_SVBRDF_ClearcoatIORMap, sampler_SVBRDF_ClearcoatIORMap, UV0).x).x;
+    float clearcoatF0 = SAMPLE_TEXTURE2D(_SVBRDF_ClearcoatIORMap, sampler_SVBRDF_ClearcoatIORMap, UV0).x;
     float sqrtF0 = sqrt(clearcoatF0);
     surfaceData.clearcoatIOR = max(1.0, (1.0 + sqrtF0) / (1.00001 - sqrtF0));    // We make sure it's working for F0=1
 
@@ -55,13 +45,6 @@ void GetSurfaceAndBuiltinData(FragInputs input, float3 V, inout PositionInputs p
     GetNormalWS(input, 2.0 * SAMPLE_TEXTURE2D(_ClearcoatNormalMap, sampler_ClearcoatNormalMap, UV0).xyz - 1.0, surfaceData.clearcoatNormalWS);
 
     float alpha = SAMPLE_TEXTURE2D(_SVBRDF_AlphaMap, sampler_SVBRDF_AlphaMap, UV0).x * _BaseColor.w;
-
-    // Hardcoded values for debug purpose
-    //surfaceData.normalWS = input.worldToTangent[2].xyz;
-    //surfaceData.fresnelF0 = 0.04;
-    //surfaceData.diffuseColor = pow(float3(48, 54, 60) / 255.0, 2.2);
-    //surfaceData.specularColor = 1.0;
-    //surfaceData.specularLobe = PerceptualSmoothnessToRoughness(0.785);
 
     // Useless for SVBRDF
     surfaceData.flakesUV = input.texCoord0;
@@ -106,8 +89,6 @@ void GetSurfaceAndBuiltinData(FragInputs input, float3 V, inout PositionInputs p
 #endif
 
     // Finalize tangent space
-    // surfaceData.tangentWS = input.worldToTangent[0];
-    // surfaceData.biTangentWS = input.worldToTangent[1];
     surfaceData.tangentWS = Orthonormalize(input.worldToTangent[0], surfaceData.normalWS);
     surfaceData.biTangentWS = Orthonormalize(input.worldToTangent[1], surfaceData.normalWS);
 
