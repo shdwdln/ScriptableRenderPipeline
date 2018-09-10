@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Improve Decal Gizmo
 - Implement Screen Space Reflections (SSR) (alpha version, highly experimental)
 - Add an option to invert the fade parameter on a Density Volume
+- Added occlusion mesh to depth prepass for VR (VR still disabled for now)
 
 ### Changed
 - Changed the way depth & color pyramids are built to be faster and better quality, thus improving the look of distortion and refraction.
@@ -24,6 +25,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Decals corectly update normal buffer in forward
 - Fixed a normalization problem in reflection probe face fading causing artefacts in some cases
 - Fix multi-selection behavior of Density Volumes overwriting the albedo value
+- Fixed issue where XRGraphicsConfig values set in the asset inspector GUI weren't propagating correctly (VR still disabled for now)
 - Fixed support of depth texture for RenderTexture. HDRP now correctly output depth to user depth buffer if RenderTexture request it.
 
 ## [3.3.0-preview]
