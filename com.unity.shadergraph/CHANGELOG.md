@@ -59,3 +59,5 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - `Normal Create` node has been renamed to `Normal From Texture`.
 - The preview of nodes now updates correctly.
 - Your system locale can no longer cause incorrect commands due to full stops being converted to commas.
+- The Lightweight PBR subshader now generates the correct meta pass.
+- Both PBR subshaders can now generate indirect light from emission.
