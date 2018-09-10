@@ -4,19 +4,22 @@ namespace UnityEngine.Experimental.Rendering
 {
     public static class XRUtils
     {
-        public static void RenderOcclusionMesh(CommandBuffer cmd, ScriptableRenderContext context, Camera camera)
+        public static void DrawOcclusionMesh(CommandBuffer cmd, Camera camera)
         {   // This method expects XRGraphicsConfig.SetConfig() to have been called prior to it.
             // Then, engine code will check if occlusion mesh rendering is enabled, and apply occlusion mesh scale.
-            context.ExecuteCommandBuffer(cmd);
-            cmd.Clear();
-
-            if (!XRGraphicsConfig.enabled)
+            if ((!XRGraphicsConfig.enabled) || (!camera.stereoEnabled))
                 return;
+            UnityEngine.RectInt normalizedCamViewport = new UnityEngine.RectInt(0, 0, camera.pixelWidth, camera.pixelHeight);
+            cmd.DrawOcclusionMesh(normalizedCamViewport);
+        }
 
-            context.ExecuteCommandBuffer(cmd);
-            cmd.Clear();
-
-            context.RenderOcclusionMesh(camera);
+        public static void DrawOcclusionMesh(CommandBuffer cmd, Camera camera, bool stereoEnabled) // This variant is for if the calling SRP has additional stereo suppression logic
+        {   // This method expects XRGraphicsConfig.SetConfig() to have been called prior to it.
+            // Then, engine code will check if occlusion mesh rendering is enabled, and apply occlusion mesh scale.
+            if ((!XRGraphicsConfig.enabled) || (!camera.stereoEnabled) || (!stereoEnabled))
+                return;
+            UnityEngine.RectInt normalizedCamViewport = new UnityEngine.RectInt(0, 0, camera.pixelWidth, camera.pixelHeight);
+            cmd.DrawOcclusionMesh(normalizedCamViewport);
         }
 
     }

@@ -1453,7 +1453,8 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
 
                     HDUtils.SetRenderTarget(cmd, hdCamera, m_NormalBufferManager.GetBuffersRTI(), m_CameraDepthStencilBuffer);
                     
-                    XRUtils.RenderOcclusionMesh(cmd, renderContext, hdCamera.camera);
+                    XRUtils.DrawOcclusionMesh(cmd, hdCamera.camera, hdCamera.frameSettings.enableStereo);
+
                     // Full forward: Output normal buffer for both forward and forwardOnly
                     RenderOpaqueRenderList(cull, hdCamera, renderContext, cmd, m_DepthOnlyAndDepthForwardOnlyPassNames, 0, HDRenderQueue.k_RenderQueue_AllOpaque);
                 }
@@ -1466,7 +1467,8 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                     cmd.DisableShaderKeyword("WRITE_NORMAL_BUFFER"); // Note: This only disable the output of normal buffer for Lit shader, not the other shader that don't use multicompile
 
                     HDUtils.SetRenderTarget(cmd, hdCamera, m_CameraDepthStencilBuffer);
-                    XRUtils.RenderOcclusionMesh(cmd, renderContext, hdCamera.camera);
+                                        
+                    XRUtils.DrawOcclusionMesh(cmd, hdCamera.camera, hdCamera.frameSettings.enableStereo);
 
                     // First deferred material
                     RenderOpaqueRenderList(cull, hdCamera, renderContext, cmd, m_DepthOnlyPassNames, 0, HDRenderQueue.k_RenderQueue_AllOpaque);
@@ -1484,7 +1486,8 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                     cmd.DisableShaderKeyword("WRITE_NORMAL_BUFFER");
 
                     HDUtils.SetRenderTarget(cmd, hdCamera, m_CameraDepthStencilBuffer);
-                    XRUtils.RenderOcclusionMesh(cmd, renderContext, hdCamera.camera);
+
+                    XRUtils.DrawOcclusionMesh(cmd, hdCamera.camera, hdCamera.frameSettings.enableStereo);
 
                     // First deferred alpha tested materials. Alpha tested object have always a prepass even if enableDepthPrepassWithDeferredRendering is disabled
                     var renderQueueRange = new RenderQueueRange { min = (int)RenderQueue.AlphaTest, max = (int)RenderQueue.GeometryLast - 1 };
