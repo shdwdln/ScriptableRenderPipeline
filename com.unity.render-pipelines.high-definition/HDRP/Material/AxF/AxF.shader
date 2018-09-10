@@ -79,10 +79,10 @@ _DEBUG_clearcoatIOR( "Clearcoat IOR", Float ) = 1
 
 //      // Transparency
 //      [ToggleUI] _PreRefractionPass("PreRefractionPass", Float) = 0.0
-//      
+//
 //      [ToggleUI]  _AlphaCutoffEnable("Alpha Cutoff Enable", Float) = 0.0
-	    _AlphaCutoff("Alpha Cutoff", Range(0.0, 1.0)) = 0.5
-	    _TransparentSortPriority("_TransparentSortPriority", Float) = 0
+        _AlphaCutoff("Alpha Cutoff", Range(0.0, 1.0)) = 0.5
+        _TransparentSortPriority("_TransparentSortPriority", Float) = 0
 
         // Reminder. Color here are in linear but the UI (color picker) do the conversion sRGB to linear
         // Be careful, do not change the name here to _Color. It will conflict with the "fake" parameters (see end of properties) required for GI.
@@ -108,23 +108,23 @@ _DEBUG_clearcoatIOR( "Clearcoat IOR", Float ) = 1
         [HideInInspector] _ZTestModeDistortion("_ZTestModeDistortion", Int) = 8
 
 
-//		[ToggleUI] _EnableFogOnTransparent("Enable Fog", Float) = 1.0
-//		[ToggleUI] _EnableBlendModePreserveSpecularLighting("Enable Blend Mode Preserve Specular Lighting", Float) = 1.0
-        
-	    [ToggleUI] _DoubleSidedEnable("Double sided enable", Float) = 0.0
-	    [Enum(Flip, 0, Mirror, 1, None, 2)] _DoubleSidedNormalMode("Double sided normal mode", Float) = 1 // This is for the editor only, see BaseLitUI.cs: _DoubleSidedConstants will be set based on the mode.
-	    [HideInInspector] _DoubleSidedConstants("_DoubleSidedConstants", Vector) = (1, 1, -1, 0)
+//      [ToggleUI] _EnableFogOnTransparent("Enable Fog", Float) = 1.0
+//      [ToggleUI] _EnableBlendModePreserveSpecularLighting("Enable Blend Mode Preserve Specular Lighting", Float) = 1.0
 
-	    // Caution: C# code in BaseLitUI.cs call LightmapEmissionFlagsProperty() which assume that there is an existing "_EmissionColor"
-	    // value that exist to identify if the GI emission need to be enabled.
-	    // In our case we don't use such a mechanism but need to keep the code quiet. We declare the value and always enable it.
-	    // TODO: Fix the code in legacy unity so we can customize the beahvior for GI
-	    _EmissionColor("Color", Color) = (1, 1, 1)
+        [ToggleUI] _DoubleSidedEnable("Double sided enable", Float) = 0.0
+        [Enum(Flip, 0, Mirror, 1, None, 2)] _DoubleSidedNormalMode("Double sided normal mode", Float) = 1 // This is for the editor only, see BaseLitUI.cs: _DoubleSidedConstants will be set based on the mode.
+        [HideInInspector] _DoubleSidedConstants("_DoubleSidedConstants", Vector) = (1, 1, -1, 0)
 
-	    // HACK: GI Baking system relies on some properties existing in the shader ("_MainTex", "_Cutoff" and "_Color") for opacity handling, so we need to store our version of those parameters in the hard-coded name the GI baking system recognizes.
-	    _MainTex("Albedo", 2D) = "white" {}
-	    _Color("Color", Color) = (1,1,1,1)
-	    _Cutoff("Alpha Cutoff", Range(0.0, 1.0)) = 0.5
+        // Caution: C# code in BaseLitUI.cs call LightmapEmissionFlagsProperty() which assume that there is an existing "_EmissionColor"
+        // value that exist to identify if the GI emission need to be enabled.
+        // In our case we don't use such a mechanism but need to keep the code quiet. We declare the value and always enable it.
+        // TODO: Fix the code in legacy unity so we can customize the beahvior for GI
+        _EmissionColor("Color", Color) = (1, 1, 1)
+
+        // HACK: GI Baking system relies on some properties existing in the shader ("_MainTex", "_Cutoff" and "_Color") for opacity handling, so we need to store our version of those parameters in the hard-coded name the GI baking system recognizes.
+        _MainTex("Albedo", 2D) = "white" {}
+        _Color("Color", Color) = (1,1,1,1)
+        _Cutoff("Alpha Cutoff", Range(0.0, 1.0)) = 0.5
     }
 
     HLSLINCLUDE
@@ -145,7 +145,7 @@ _DEBUG_clearcoatIOR( "Clearcoat IOR", Float ) = 1
     #pragma shader_feature _ _BLENDMODE_ALPHA _BLENDMODE_ADD _BLENDMODE_PRE_MULTIPLY
     #pragma shader_feature _BLENDMODE_PRESERVE_SPECULAR_LIGHTING // easily handled in material.hlsl, so adding this already.
     #pragma shader_feature _ENABLE_FOG_ON_TRANSPARENT
-    
+
     //enable GPU instancing support
     #pragma multi_compile_instancing
 
@@ -177,8 +177,8 @@ _DEBUG_clearcoatIOR( "Clearcoat IOR", Float ) = 1
 
     SubShader
     {
-	    // This tags allow to use the shader replacement features
-	    Tags{ "RenderPipeline" = "HDRenderPipeline" "RenderType" = "HDAxFShader" }
+        // This tags allow to use the shader replacement features
+        Tags{ "RenderPipeline" = "HDRenderPipeline" "RenderType" = "HDAxFShader" }
 
         Pass
         {
@@ -203,142 +203,142 @@ _DEBUG_clearcoatIOR( "Clearcoat IOR", Float ) = 1
             ENDHLSL
         }
 
-	    Pass
-	    {
-		    Name "Depth prepass"
-		    Tags{ "LightMode" = "DepthForwardOnly" }
+        Pass
+        {
+            Name "Depth prepass"
+            Tags{ "LightMode" = "DepthForwardOnly" }
 
-		    Cull[_CullMode]
+            Cull[_CullMode]
 
-		    ZWrite On
+            ZWrite On
 
-		    HLSLPROGRAM
+            HLSLPROGRAM
 
-		    #define SHADERPASS SHADERPASS_DEPTH_ONLY
-		    #include "../../ShaderVariables.hlsl"
-		    #include "../../Material/Material.hlsl"
-		    #include "ShaderPass/AxFDepthPass.hlsl"
-		    #include "AxFData.hlsl"
-		    #include "../../ShaderPass/ShaderPassDepthOnly.hlsl"
+            #define SHADERPASS SHADERPASS_DEPTH_ONLY
+            #include "../../ShaderVariables.hlsl"
+            #include "../../Material/Material.hlsl"
+            #include "ShaderPass/AxFDepthPass.hlsl"
+            #include "AxFData.hlsl"
+            #include "../../ShaderPass/ShaderPassDepthOnly.hlsl"
 
-		    ENDHLSL
-	    }
+            ENDHLSL
+        }
 
-	    // Extracts information for lightmapping, GI (emission, albedo, ...)
-	    // This pass it not used during regular rendering.
-	    Pass
-	    {
-		    Name "META"
-		    Tags{ "LightMode" = "Meta" }
+        // Extracts information for lightmapping, GI (emission, albedo, ...)
+        // This pass it not used during regular rendering.
+        Pass
+        {
+            Name "META"
+            Tags{ "LightMode" = "Meta" }
 
-		    Cull Off
+            Cull Off
 
-		    HLSLPROGRAM
+            HLSLPROGRAM
 
-		    // Lightmap memo
-		    // DYNAMICLIGHTMAP_ON is used when we have an "enlighten lightmap" ie a lightmap updated at runtime by enlighten.This lightmap contain indirect lighting from realtime lights and realtime emissive material.Offline baked lighting(from baked material / light,
-		    // both direct and indirect lighting) will hand up in the "regular" lightmap->LIGHTMAP_ON.
+            // Lightmap memo
+            // DYNAMICLIGHTMAP_ON is used when we have an "enlighten lightmap" ie a lightmap updated at runtime by enlighten.This lightmap contain indirect lighting from realtime lights and realtime emissive material.Offline baked lighting(from baked material / light,
+            // both direct and indirect lighting) will hand up in the "regular" lightmap->LIGHTMAP_ON.
 
-		    #define SHADERPASS SHADERPASS_LIGHT_TRANSPORT
-		    #include "../../ShaderVariables.hlsl"
-		    #include "../../Material/Material.hlsl"
-		    #include "ShaderPass/AxFSharePass.hlsl"
-		    #include "AxFData.hlsl"
-		    #include "../../ShaderPass/ShaderPassLightTransport.hlsl"
+            #define SHADERPASS SHADERPASS_LIGHT_TRANSPORT
+            #include "../../ShaderVariables.hlsl"
+            #include "../../Material/Material.hlsl"
+            #include "ShaderPass/AxFSharePass.hlsl"
+            #include "AxFData.hlsl"
+            #include "../../ShaderPass/ShaderPassLightTransport.hlsl"
 
-		    ENDHLSL
-	    }
+            ENDHLSL
+        }
 
-	    Pass
-	    {
-		    Name "ShadowCaster"
-		    Tags{ "LightMode" = "ShadowCaster" }
+        Pass
+        {
+            Name "ShadowCaster"
+            Tags{ "LightMode" = "ShadowCaster" }
 
-		    Cull[_CullMode]
+            Cull[_CullMode]
 
-		    ZClip [_ZClip]
-		    ZWrite On
-		    ZTest LEqual
+            ZClip [_ZClip]
+            ZWrite On
+            ZTest LEqual
 
-		    ColorMask 0
+            ColorMask 0
 
-		    HLSLPROGRAM
+            HLSLPROGRAM
 
-		    #define SHADERPASS SHADERPASS_SHADOWS
-		    #define USE_LEGACY_UNITY_MATRIX_VARIABLES
-		    #include "../../ShaderVariables.hlsl"
-		    #include "../../Material/Material.hlsl"
+            #define SHADERPASS SHADERPASS_SHADOWS
+            #define USE_LEGACY_UNITY_MATRIX_VARIABLES
+            #include "../../ShaderVariables.hlsl"
+            #include "../../Material/Material.hlsl"
 
-		    #include "ShaderPass/AxFDepthPass.hlsl"
-		    #include "AxFData.hlsl"
-		    #include "../../ShaderPass/ShaderPassDepthOnly.hlsl"
+            #include "ShaderPass/AxFDepthPass.hlsl"
+            #include "AxFData.hlsl"
+            #include "../../ShaderPass/ShaderPassDepthOnly.hlsl"
 
-		    ENDHLSL
-	    }
+            ENDHLSL
+        }
 
-	    // AxF shader always render in forward
-	    Pass
-	    {
-		    Name "Forward" // Name is not used
-		    Tags { "LightMode" = "ForwardOnly" }
+        // AxF shader always render in forward
+        Pass
+        {
+            Name "Forward" // Name is not used
+            Tags { "LightMode" = "ForwardOnly" }
 
-		    Stencil
-		    {
-			    WriteMask [_StencilWriteMask]
-			    Ref [_StencilRef]
-			    Comp Always
-			    Pass Replace
-		    }
+            Stencil
+            {
+                WriteMask [_StencilWriteMask]
+                Ref [_StencilRef]
+                Comp Always
+                Pass Replace
+            }
 
-		    Blend [_SrcBlend] [_DstBlend]
-		    // In case of forward we want to have depth equal for opaque mesh
-		    ZTest [_ZTestDepthEqualForOpaque]
-		    ZWrite [_ZWrite]
-		    Cull [_CullModeForward]
-		    //
-		    // NOTE: For _CullModeForward, see BaseLitUI and the handling of TransparentBackfaceEnable: 
-		    // Basically, we need to use it to support a TransparentBackface pass before this pass
-		    // (and it should be placed just before this one) for separate backface and frontface rendering,
-		    // eg for "hair shader style" approximate sorting, see eg Thorsten Scheuermann writeups on this:
-		    // http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.607.1272&rep=rep1&type=pdf
-		    // http://amd-dev.wpengine.netdna-cdn.com/wordpress/media/2012/10/Scheuermann_HairSketchSlides.pdf
-		    // http://web.engr.oregonstate.edu/~mjb/cs519/Projects/Papers/HairRendering.pdf
-		    //
-		    // See Lit.shader and the order of the passes after a DistortionVectors, we have: 
-		    // TransparentDepthPrepass, TransparentBackface, Forward, TransparentDepthPostpass
+            Blend [_SrcBlend] [_DstBlend]
+            // In case of forward we want to have depth equal for opaque mesh
+            ZTest [_ZTestDepthEqualForOpaque]
+            ZWrite [_ZWrite]
+            Cull [_CullModeForward]
+            //
+            // NOTE: For _CullModeForward, see BaseLitUI and the handling of TransparentBackfaceEnable:
+            // Basically, we need to use it to support a TransparentBackface pass before this pass
+            // (and it should be placed just before this one) for separate backface and frontface rendering,
+            // eg for "hair shader style" approximate sorting, see eg Thorsten Scheuermann writeups on this:
+            // http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.607.1272&rep=rep1&type=pdf
+            // http://amd-dev.wpengine.netdna-cdn.com/wordpress/media/2012/10/Scheuermann_HairSketchSlides.pdf
+            // http://web.engr.oregonstate.edu/~mjb/cs519/Projects/Papers/HairRendering.pdf
+            //
+            // See Lit.shader and the order of the passes after a DistortionVectors, we have:
+            // TransparentDepthPrepass, TransparentBackface, Forward, TransparentDepthPostpass
 
-		    HLSLPROGRAM
+            HLSLPROGRAM
 
-		    #pragma multi_compile _ DEBUG_DISPLAY
-		    //NEWLITTODO
-		    #pragma multi_compile _ LIGHTMAP_ON
-		    #pragma multi_compile _ DIRLIGHTMAP_COMBINED
-		    #pragma multi_compile _ DYNAMICLIGHTMAP_ON
-		    #pragma multi_compile _ SHADOWS_SHADOWMASK
+            #pragma multi_compile _ DEBUG_DISPLAY
+            //NEWLITTODO
+            #pragma multi_compile _ LIGHTMAP_ON
+            #pragma multi_compile _ DIRLIGHTMAP_COMBINED
+            #pragma multi_compile _ DYNAMICLIGHTMAP_ON
+            #pragma multi_compile _ SHADOWS_SHADOWMASK
 
-		    // #include "../../Lighting/Forward.hlsl" : nothing left in there.
-		    //#pragma multi_compile LIGHTLOOP_SINGLE_PASS LIGHTLOOP_TILE_PASS
-		    #define LIGHTLOOP_TILE_PASS
-		    #pragma multi_compile USE_FPTL_LIGHTLIST USE_CLUSTERED_LIGHTLIST
+            // #include "../../Lighting/Forward.hlsl" : nothing left in there.
+            //#pragma multi_compile LIGHTLOOP_SINGLE_PASS LIGHTLOOP_TILE_PASS
+            #define LIGHTLOOP_TILE_PASS
+            #pragma multi_compile USE_FPTL_LIGHTLIST USE_CLUSTERED_LIGHTLIST
 
-		    #define SHADERPASS SHADERPASS_FORWARD
-		    // In case of opaque we don't want to perform the alpha test, it is done in depth prepass and we use depth equal for ztest (setup from UI)
-		    #ifndef _SURFACE_TYPE_TRANSPARENT
-			    #define SHADERPASS_FORWARD_BYPASS_ALPHA_TEST
-		    #endif
-		    #include "../../ShaderVariables.hlsl"
-		    #ifdef DEBUG_DISPLAY
-		    #include "../../Debug/DebugDisplay.hlsl"
-		    #endif
-		    #include "../../Lighting/Lighting.hlsl"
-		    //...this will include #include "../../Material/Material.hlsl" but also LightLoop which the forward pass directly uses.
+            #define SHADERPASS SHADERPASS_FORWARD
+            // In case of opaque we don't want to perform the alpha test, it is done in depth prepass and we use depth equal for ztest (setup from UI)
+            #ifndef _SURFACE_TYPE_TRANSPARENT
+                #define SHADERPASS_FORWARD_BYPASS_ALPHA_TEST
+            #endif
+            #include "../../ShaderVariables.hlsl"
+            #ifdef DEBUG_DISPLAY
+            #include "../../Debug/DebugDisplay.hlsl"
+            #endif
+            #include "../../Lighting/Lighting.hlsl"
+            //...this will include #include "../../Material/Material.hlsl" but also LightLoop which the forward pass directly uses.
 
-		    #include "ShaderPass/AxFSharePass.hlsl"
-		    #include "AxFData.hlsl"
-		    #include "../../ShaderPass/ShaderPassForward.hlsl"
+            #include "ShaderPass/AxFSharePass.hlsl"
+            #include "AxFData.hlsl"
+            #include "../../ShaderPass/ShaderPassForward.hlsl"
 
-		    ENDHLSL
-	    }
+            ENDHLSL
+        }
 
     }
 
