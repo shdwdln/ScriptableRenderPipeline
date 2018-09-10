@@ -18,12 +18,12 @@ void GetSurfaceAndBuiltinData(FragInputs input, float3 V, inout PositionInputs p
 {
     ApplyDoubleSidedFlipOrMirror(input); // Apply double sided flip on the vertex normal
 
-    // NEWLITTODO: 
+    // NEWLITTODO:
     // For now, just use the interpolated vertex normal. This has been normalized in the initial fragment interpolators unpacking.
     // Eventually, we want to share all the LitData LayerTexCoord (and surface gradient frame + uv, planar, triplanar, etc.) logic, also
     // spread in LitDataIndividualLayer and LitDataMeshModification.
     surfaceData.normalWS = input.worldToTangent[2].xyz;
-    
+
     float2 UV0 = TRANSFORM_TEX(input.texCoord0, _BaseColorMap);
 
     UV0 *= float2(_MaterialTilingU, _MaterialTilingV);
@@ -128,7 +128,7 @@ void GetSurfaceAndBuiltinData(FragInputs input, float3 V, inout PositionInputs p
     // Builtin Data:
     // -------------------------------------------------------------
 
-    // For back lighting we use the oposite vertex normal 
+    // For back lighting we use the oposite vertex normal
     InitBuiltinData(alpha, surfaceData.normalWS, surfaceData.normalWS, input.positionRWS, input.texCoord1, input.texCoord2, builtinData);
     PostInitBuiltinData(V, posInput, surfaceData, builtinData);
 }

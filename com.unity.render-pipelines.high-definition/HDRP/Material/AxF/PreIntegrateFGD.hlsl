@@ -67,7 +67,7 @@ real4 IntegrateWardFGD(real3 V, real3 N, real roughness, uint sampleCount = 8192
     real4 acc = 0.0;
     real2 randNum = InitRandom(V.xy * 0.5 + 0.5);    // Add some jittering on Hammersley2d
 
-    real3x3	localToWorld = GetLocalFrame(N);
+    real3x3 localToWorld = GetLocalFrame(N);
 
     for (uint i = 0; i < sampleCount; ++i)
     {
