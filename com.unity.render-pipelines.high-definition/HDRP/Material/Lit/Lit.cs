@@ -21,30 +21,6 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             LitClearCoat            = 1 << 6
         };
 
-        public enum RefractionModel
-        {
-            None = 0,
-            Plane = 1,
-            Sphere = 2
-        };
-
-        [GenerateHLSL]
-        public enum ProjectionModel
-        {
-            None = 0,
-            Proxy = 1,
-            HiZ = 2,
-            Linear = 3
-        };
-
-        [GenerateHLSL]
-        public enum HiZIntersectionKind
-        {
-            None,
-            Cell,
-            Depth
-        }
-
         //-----------------------------------------------------------------------------
         // SurfaceData
         //-----------------------------------------------------------------------------
@@ -206,7 +182,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             return gBufferCount;
         }
 
-        public override void GetMaterialGBufferDescription(HDRenderPipelineAsset asset, out RenderTextureFormat[] RTFormat, out bool[] sRGBFlag, out GBufferUsage[] gBufferUsage)
+        public override void GetMaterialGBufferDescription(HDRenderPipelineAsset asset, out RenderTextureFormat[] RTFormat, out bool[] sRGBFlag, out GBufferUsage[] gBufferUsage, out bool[] enableWrite)
         {
             int gBufferCount;
             bool supportShadowMask;
@@ -215,20 +191,25 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
 
             RTFormat = new RenderTextureFormat[gBufferCount];
             sRGBFlag = new bool[gBufferCount];
-            gBufferUsage = new GBufferUsage[gBufferCount];            
+            gBufferUsage = new GBufferUsage[gBufferCount];
+            enableWrite = new bool[gBufferCount];
 
             RTFormat[0] = RenderTextureFormat.ARGB32; // Albedo sRGB / SSSBuffer
             sRGBFlag[0] = true;
             gBufferUsage[0] = GBufferUsage.SubsurfaceScattering;
+            enableWrite[0] = false;
             RTFormat[1] = RenderTextureFormat.ARGB32; // Normal Buffer
             sRGBFlag[1] = false;
             gBufferUsage[1] = GBufferUsage.Normal;
+            enableWrite[1] = true;                    // normal buffer is used as RWTexture to composite decals in forward
             RTFormat[2] = RenderTextureFormat.ARGB32; // Data
             sRGBFlag[2] = false;
             gBufferUsage[2] = GBufferUsage.None;
+            enableWrite[2] = false;
             RTFormat[3] = Builtin.GetLightingBufferFormat();
             sRGBFlag[3] = Builtin.GetLightingBufferSRGBFlag();
             gBufferUsage[3] = GBufferUsage.None;
+            enableWrite[3] = false;
 
             int index = 4;
 

@@ -1,7 +1,12 @@
 using System;
 using UnityEditor;
+#if UNITY_2017_2_OR_NEWER
 using UnityEngine.XR;
-using UnityEngine.Assertions;
+using XRSettings = UnityEngine.XR.XRSettings;
+#elif UNITY_5_6_OR_NEWER
+using UnityEngine.VR;
+using XRSettings = UnityEngine.VR.VRSettings;
+#endif
 
 namespace UnityEngine.Experimental.Rendering
 {
@@ -13,24 +18,22 @@ namespace UnityEngine.Experimental.Rendering
         public float viewportScale;
         public bool useOcclusionMesh;
         public float occlusionMaskScale;
-        public bool showDeviceView;
-        public GameViewRenderMode gameViewRenderMode;
 
         public void SetConfig()
         { // If XR is enabled, sets XRSettings from our saved config
             if (!enabled)
-                Assert.IsFalse(enabled);
+                return;
+
             XRSettings.eyeTextureResolutionScale = renderScale;
             XRSettings.renderViewportScale = viewportScale;
             XRSettings.useOcclusionMesh = useOcclusionMesh;
             XRSettings.occlusionMaskScale = occlusionMaskScale;
-            XRSettings.showDeviceView = showDeviceView;
-            XRSettings.gameViewRenderMode = gameViewRenderMode;
         }
         public void SetViewportScale(float viewportScale)
         { // Only sets viewport- since this is probably the only thing getting updated every frame
             if (!enabled)
-                Assert.IsFalse(enabled);
+                return;
+
             XRSettings.renderViewportScale = viewportScale;
         }
 
@@ -40,23 +43,21 @@ namespace UnityEngine.Experimental.Rendering
             viewportScale = 1.0f,
             useOcclusionMesh = true,
             occlusionMaskScale = 1.0f,
-            showDeviceView = true,
-            gameViewRenderMode = GameViewRenderMode.BothEyes
         };
 
         public static XRGraphicsConfig GetActualXRSettings()
         {
             XRGraphicsConfig getXRSettings = new XRGraphicsConfig();
-            
+
             if (!enabled)
-                Assert.IsFalse(enabled);
-            
+            {
+                return getXRSettings;
+            }
+
             getXRSettings.renderScale = XRSettings.eyeTextureResolutionScale;
             getXRSettings.viewportScale = XRSettings.renderViewportScale;
             getXRSettings.useOcclusionMesh = XRSettings.useOcclusionMesh;
             getXRSettings.occlusionMaskScale = XRSettings.occlusionMaskScale;
-            getXRSettings.showDeviceView = XRSettings.showDeviceView;
-            getXRSettings.gameViewRenderMode = XRSettings.gameViewRenderMode;            
             return getXRSettings;
         }
 
@@ -77,25 +78,75 @@ namespace UnityEngine.Experimental.Rendering
                 return false;
 #endif
             }
-        }        
+        }
+
+#if UNITY_EDITOR
+        // FIXME: We should probably have StereoREnderingPath defined in UnityEngine.XR, not UnityEditor...
+        public static StereoRenderingPath stereoRenderingMode
+        {
+            get
+            {
+                if (!enabled)
+                {
+                    return StereoRenderingPath.SinglePass;
+                }
+#if UNITY_2018_3_OR_NEWER
+                return (StereoRenderingPath)XRSettings.stereoRenderingMode;
+#else
+                if (eyeTextureDesc.vrUsage == VRTextureUsage.TwoEyes)
+                    return StereoRenderingPath.SinglePass;
+                else if (eyeTextureDesc.dimension == UnityEngine.Rendering.TextureDimension.Tex2DArray)
+                    return StereoRenderingPath.Instancing;
+                else
+                    return StereoRenderingPath.MultiPass;
+#endif
+            }
+        }
+#endif
+
+        public static uint GetPixelOffset(uint eye)
+        {
+            if (!enabled || XRSettings.eyeTextureDesc.vrUsage != VRTextureUsage.TwoEyes)
+                return 0;
+
+            return (uint)(Mathf.CeilToInt((eye * XRSettings.eyeTextureWidth) / 2));
+        }
 
         public static RenderTextureDescriptor eyeTextureDesc
         {
             get
             {
                 if (!enabled)
-                    Assert.IsFalse(enabled);
+                {
+                    return new RenderTextureDescriptor(0, 0);
+                }
+
                 return XRSettings.eyeTextureDesc;
             }
         }
 
-        public static string[] supportedDevices
+        public static int eyeTextureWidth
         {
             get
             {
                 if (!enabled)
-                    Assert.IsFalse(enabled);
-                return XRSettings.supportedDevices;
+                {
+                    return 0;
+                }
+
+                return XRSettings.eyeTextureWidth;
+            }
+        }
+        public static int eyeTextureHeight
+        {
+            get
+            {
+                if (!enabled)
+                {
+                    return 0;
+                }
+
+                return XRSettings.eyeTextureHeight;
             }
         }
     }
