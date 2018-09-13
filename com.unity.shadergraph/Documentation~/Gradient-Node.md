@@ -1,6 +1,6 @@
 ## Description
 
-Defines a constant **Gradient** for use in the shader. To sample the **Gradient** it should be used in conjunction with a Sample Gradient Node. When using a separate **Gradient Node**, you can sample a **Gradient** multiple times with different Time parameters.
+Defines a constant **Gradient** for use in the shader. To sample the **Gradient** it should be used in conjunction with a [Sample Gradient Node](Sample-Gradient-Node.md). When using a separate **Gradient Node**, you can sample a **Gradient** multiple times with different Time parameters.
 
 ## Ports
 
@@ -12,4 +12,4 @@ Defines a constant **Gradient** for use in the shader. To sample the **Gradient*
 
 | Name        | Type           | Options  | Description |
 |:------------ |:-------------|:-----|:---|
-|      | Object Field |  | Defines the gradient. |
+|      | Gradient Field |  | Defines the gradient. |

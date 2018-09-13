@@ -1,8 +1,8 @@
 ## Description
 
-Returns the **Width** and **Height** of the texel size of **Texture** input. Uses the built in variable `{texturename}_TexelSize` to access special properties of a `Texture 2D Asset`.
+Returns the **Width** and **Height** of the texel size of **Texture 2D** input. Uses the built in variable `{texturename}_TexelSize` to access special properties of a **Texture 2D**.
 
-**Note:** Do not use the default input to reference your Texture 2D Asset. It makes your graph perform worse. Connect this node to a separate Texture 2D Asset node per image example.
+**Note:** Do not use the default input to reference your **Texture 2D**. It makes your graph perform worse. Instead connect this node to a separate [Texture 2D Asset Node](Texture-2D-Asset-Node.md) and re-use this definition for sampling.
 
 ## Ports
 

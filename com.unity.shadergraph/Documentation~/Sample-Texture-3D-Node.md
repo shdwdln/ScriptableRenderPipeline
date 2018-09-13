@@ -6,7 +6,7 @@ Samples a **Texture 3D** and returns a **Vector 4** color value for use in the s
 
 | Name        | Direction           | Type  | Binding | Description |
 |:------------ |:-------------|:-----|:---|:---|
-| Texture |	Input |	Texture 2D  | None | Texture 2D to sample |
-| UV      | Input |	Vector 3    | None	| Mesh's normal vector |
+| Texture |	Input |	Texture 3D  | None | Texture 3D to sample |
+| UV      | Input |	Vector 3    | None	| 3 dimnensional UV coordinates |
 | Sampler | Input |	Sampler State | Default sampler state | Sampler for the texture |
 | RGBA	| Output	| Vector 4	| None	| Output value as RGBA |
