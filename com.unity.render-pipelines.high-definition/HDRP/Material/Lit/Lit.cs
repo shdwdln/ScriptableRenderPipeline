@@ -94,6 +94,9 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             public float atDistance;
             [SurfaceDataAttributes("Transmittance mask")]
             public float transmittanceMask;
+
+            [SurfaceDataAttributes("Geometric Normal", true)]
+            public Vector3 geomNormalWS;
         };
 
         //-----------------------------------------------------------------------------
@@ -155,6 +158,8 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             // Reuse thickness from SSS
             public Vector3 absorptionCoefficient;
             public float transmittanceMask;
+
+            public Vector3 geomNormalWS;
         };
 
         //-----------------------------------------------------------------------------

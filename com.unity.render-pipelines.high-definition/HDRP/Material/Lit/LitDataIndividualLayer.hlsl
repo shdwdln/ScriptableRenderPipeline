@@ -267,6 +267,9 @@ float ADD_IDX(GetSurfaceData)(FragInputs input, LayerTexCoord layerTexCoord, out
     surfaceData.thickness = ADD_IDX(_Thickness);
 #endif
 
+    // Propagate the geometry normal
+    surfaceData.geomNormalWS = input.worldToTangent[2];
+
     // This part of the code is not used in case of layered shader but we keep the same macro system for simplicity
 #if !defined(LAYERED_LIT_SHADER)
 

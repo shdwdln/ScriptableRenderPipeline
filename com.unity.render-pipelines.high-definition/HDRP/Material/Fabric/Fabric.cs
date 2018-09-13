@@ -38,9 +38,6 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             [SurfaceDataAttributes(new string[] { "Normal", "Normal View Space" }, true)]
             public Vector3 normalWS;
 
-            [SurfaceDataAttributes(new string[] { "Geometric Normal", "Geometric Normal View Space" }, true)]
-            public Vector3 geomNormalWS;
-
             [SurfaceDataAttributes("Smoothness")]
             public float perceptualSmoothness;
 
@@ -69,6 +66,9 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             public Vector3 tangentWS;
             [SurfaceDataAttributes("Anisotropy")]
             public float anisotropy; // anisotropic ratio(0->no isotropic; 1->full anisotropy in tangent direction, -1->full anisotropy in bitangent direction)
+
+            [SurfaceDataAttributes("Geometric Normal", true)]
+            public Vector3 geomNormalWS;
         };
 
         //-----------------------------------------------------------------------------
@@ -89,11 +89,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
 
             public Vector3 specularColor;
 
-            [SurfaceDataAttributes(new string[] { "Normal WS", "Normal View Space" }, true)]
             public Vector3 normalWS;
-
-            [SurfaceDataAttributes(new string[] { "Geometric Normal", "Geometric Normal View Space" }, true)]
-            public Vector3 geomNormalWS;
 
             public float perceptualRoughness;
 
@@ -117,6 +113,8 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             public float roughnessT;
             public float roughnessB;
             public float anisotropy;
+
+            public Vector3 geomNormalWS;
         };
 
         //-----------------------------------------------------------------------------

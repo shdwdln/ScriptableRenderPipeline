@@ -19,16 +19,15 @@
 #define DEBUGVIEW_FABRIC_SURFACEDATA_SPECULAR_OCCLUSION (1302)
 #define DEBUGVIEW_FABRIC_SURFACEDATA_NORMAL (1303)
 #define DEBUGVIEW_FABRIC_SURFACEDATA_NORMAL_VIEW_SPACE (1304)
-#define DEBUGVIEW_FABRIC_SURFACEDATA_GEOMETRIC_NORMAL (1305)
-#define DEBUGVIEW_FABRIC_SURFACEDATA_GEOMETRIC_NORMAL_VIEW_SPACE (1306)
-#define DEBUGVIEW_FABRIC_SURFACEDATA_SMOOTHNESS (1307)
-#define DEBUGVIEW_FABRIC_SURFACEDATA_AMBIENT_OCCLUSION (1308)
-#define DEBUGVIEW_FABRIC_SURFACEDATA_SPECULAR_TINT (1309)
-#define DEBUGVIEW_FABRIC_SURFACEDATA_DIFFUSION_PROFILE (1310)
-#define DEBUGVIEW_FABRIC_SURFACEDATA_SUBSURFACE_MASK (1311)
-#define DEBUGVIEW_FABRIC_SURFACEDATA_THICKNESS (1312)
-#define DEBUGVIEW_FABRIC_SURFACEDATA_TANGENT (1313)
-#define DEBUGVIEW_FABRIC_SURFACEDATA_ANISOTROPY (1314)
+#define DEBUGVIEW_FABRIC_SURFACEDATA_SMOOTHNESS (1305)
+#define DEBUGVIEW_FABRIC_SURFACEDATA_AMBIENT_OCCLUSION (1306)
+#define DEBUGVIEW_FABRIC_SURFACEDATA_SPECULAR_TINT (1307)
+#define DEBUGVIEW_FABRIC_SURFACEDATA_DIFFUSION_PROFILE (1308)
+#define DEBUGVIEW_FABRIC_SURFACEDATA_SUBSURFACE_MASK (1309)
+#define DEBUGVIEW_FABRIC_SURFACEDATA_THICKNESS (1310)
+#define DEBUGVIEW_FABRIC_SURFACEDATA_TANGENT (1311)
+#define DEBUGVIEW_FABRIC_SURFACEDATA_ANISOTROPY (1312)
+#define DEBUGVIEW_FABRIC_SURFACEDATA_GEOMETRIC_NORMAL (1313)
 
 //
 // UnityEngine.Experimental.Rendering.HDPipeline.Fabric+BSDFData:  static fields
@@ -40,20 +39,18 @@
 #define DEBUGVIEW_FABRIC_BSDFDATA_SPECULAR_OCCLUSION (1354)
 #define DEBUGVIEW_FABRIC_BSDFDATA_SPECULAR_COLOR (1355)
 #define DEBUGVIEW_FABRIC_BSDFDATA_NORMAL_WS (1356)
-#define DEBUGVIEW_FABRIC_BSDFDATA_NORMAL_VIEW_SPACE (1357)
-#define DEBUGVIEW_FABRIC_BSDFDATA_GEOMETRIC_NORMAL (1358)
-#define DEBUGVIEW_FABRIC_BSDFDATA_GEOMETRIC_NORMAL_VIEW_SPACE (1359)
-#define DEBUGVIEW_FABRIC_BSDFDATA_PERCEPTUAL_ROUGHNESS (1360)
-#define DEBUGVIEW_FABRIC_BSDFDATA_DIFFUSION_PROFILE (1361)
-#define DEBUGVIEW_FABRIC_BSDFDATA_SUBSURFACE_MASK (1362)
-#define DEBUGVIEW_FABRIC_BSDFDATA_THICKNESS (1363)
-#define DEBUGVIEW_FABRIC_BSDFDATA_USE_THICK_OBJECT_MODE (1364)
-#define DEBUGVIEW_FABRIC_BSDFDATA_TRANSMITTANCE (1365)
-#define DEBUGVIEW_FABRIC_BSDFDATA_TANGENT_WS (1366)
-#define DEBUGVIEW_FABRIC_BSDFDATA_BITANGENT_WS (1367)
-#define DEBUGVIEW_FABRIC_BSDFDATA_ROUGHNESS_T (1368)
-#define DEBUGVIEW_FABRIC_BSDFDATA_ROUGHNESS_B (1369)
-#define DEBUGVIEW_FABRIC_BSDFDATA_ANISOTROPY (1370)
+#define DEBUGVIEW_FABRIC_BSDFDATA_PERCEPTUAL_ROUGHNESS (1357)
+#define DEBUGVIEW_FABRIC_BSDFDATA_DIFFUSION_PROFILE (1358)
+#define DEBUGVIEW_FABRIC_BSDFDATA_SUBSURFACE_MASK (1359)
+#define DEBUGVIEW_FABRIC_BSDFDATA_THICKNESS (1360)
+#define DEBUGVIEW_FABRIC_BSDFDATA_USE_THICK_OBJECT_MODE (1361)
+#define DEBUGVIEW_FABRIC_BSDFDATA_TRANSMITTANCE (1362)
+#define DEBUGVIEW_FABRIC_BSDFDATA_TANGENT_WS (1363)
+#define DEBUGVIEW_FABRIC_BSDFDATA_BITANGENT_WS (1364)
+#define DEBUGVIEW_FABRIC_BSDFDATA_ROUGHNESS_T (1365)
+#define DEBUGVIEW_FABRIC_BSDFDATA_ROUGHNESS_B (1366)
+#define DEBUGVIEW_FABRIC_BSDFDATA_ANISOTROPY (1367)
+#define DEBUGVIEW_FABRIC_BSDFDATA_GEOM_NORMAL_WS (1368)
 
 // Generated from UnityEngine.Experimental.Rendering.HDPipeline.Fabric+SurfaceData
 // PackingRules = Exact
@@ -63,7 +60,6 @@ struct SurfaceData
     float3 baseColor;
     float specularOcclusion;
     float3 normalWS;
-    float3 geomNormalWS;
     float perceptualSmoothness;
     float ambientOcclusion;
     float3 specularColor;
@@ -72,6 +68,7 @@ struct SurfaceData
     float thickness;
     float3 tangentWS;
     float anisotropy;
+    float3 geomNormalWS;
 };
 
 // Generated from UnityEngine.Experimental.Rendering.HDPipeline.Fabric+BSDFData
@@ -85,7 +82,6 @@ struct BSDFData
     float specularOcclusion;
     float3 specularColor;
     float3 normalWS;
-    float3 geomNormalWS;
     float perceptualRoughness;
     uint diffusionProfile;
     float subsurfaceMask;
@@ -97,6 +93,7 @@ struct BSDFData
     float roughnessT;
     float roughnessB;
     float anisotropy;
+    float3 geomNormalWS;
 };
 
 //
@@ -122,12 +119,6 @@ void GetGeneratedSurfaceDataDebug(uint paramId, SurfaceData surfacedata, inout f
         case DEBUGVIEW_FABRIC_SURFACEDATA_NORMAL_VIEW_SPACE:
             result = surfacedata.normalWS * 0.5 + 0.5;
             break;
-        case DEBUGVIEW_FABRIC_SURFACEDATA_GEOMETRIC_NORMAL:
-            result = surfacedata.geomNormalWS * 0.5 + 0.5;
-            break;
-        case DEBUGVIEW_FABRIC_SURFACEDATA_GEOMETRIC_NORMAL_VIEW_SPACE:
-            result = surfacedata.geomNormalWS * 0.5 + 0.5;
-            break;
         case DEBUGVIEW_FABRIC_SURFACEDATA_SMOOTHNESS:
             result = surfacedata.perceptualSmoothness.xxx;
             break;
@@ -152,6 +143,9 @@ void GetGeneratedSurfaceDataDebug(uint paramId, SurfaceData surfacedata, inout f
             break;
         case DEBUGVIEW_FABRIC_SURFACEDATA_ANISOTROPY:
             result = surfacedata.anisotropy.xxx;
+            break;
+        case DEBUGVIEW_FABRIC_SURFACEDATA_GEOMETRIC_NORMAL:
+            result = surfacedata.geomNormalWS * 0.5 + 0.5;
             break;
     }
 }
@@ -183,16 +177,7 @@ void GetGeneratedBSDFDataDebug(uint paramId, BSDFData bsdfdata, inout float3 res
             result = bsdfdata.specularColor;
             break;
         case DEBUGVIEW_FABRIC_BSDFDATA_NORMAL_WS:
-            result = bsdfdata.normalWS * 0.5 + 0.5;
-            break;
-        case DEBUGVIEW_FABRIC_BSDFDATA_NORMAL_VIEW_SPACE:
-            result = bsdfdata.normalWS * 0.5 + 0.5;
-            break;
-        case DEBUGVIEW_FABRIC_BSDFDATA_GEOMETRIC_NORMAL:
-            result = bsdfdata.geomNormalWS * 0.5 + 0.5;
-            break;
-        case DEBUGVIEW_FABRIC_BSDFDATA_GEOMETRIC_NORMAL_VIEW_SPACE:
-            result = bsdfdata.geomNormalWS * 0.5 + 0.5;
+            result = bsdfdata.normalWS;
             break;
         case DEBUGVIEW_FABRIC_BSDFDATA_PERCEPTUAL_ROUGHNESS:
             result = bsdfdata.perceptualRoughness.xxx;
@@ -226,6 +211,9 @@ void GetGeneratedBSDFDataDebug(uint paramId, BSDFData bsdfdata, inout float3 res
             break;
         case DEBUGVIEW_FABRIC_BSDFDATA_ANISOTROPY:
             result = bsdfdata.anisotropy.xxx;
+            break;
+        case DEBUGVIEW_FABRIC_BSDFDATA_GEOM_NORMAL_WS:
+            result = bsdfdata.geomNormalWS;
             break;
     }
 }

@@ -211,6 +211,11 @@ uint TileVariantToFeatureFlags(uint variant, uint tileIndex)
     #endif
 #endif
 
+float3 GetShadowNormalBias(BSDFData bsdfData)
+{
+    return bsdfData.geomNormalWS;
+}
+
 // Assume bsdfData.normalWS is init
 void FillMaterialAnisotropy(float anisotropy, float3 tangentWS, float3 bitangentWS, inout BSDFData bsdfData)
 {
@@ -331,11 +336,6 @@ void UpdateSurfaceDataFromNormalData(uint2 positionSS, inout BSDFData bsdfData)
     bsdfData.perceptualRoughness = normalData.perceptualRoughness;
 }
 
-float3 GetShadowNormalBias(BSDFData bsdfData)
-{
-    return bsdfData.normalWS;
-}
-
 //-----------------------------------------------------------------------------
 // conversion function for forward
 //-----------------------------------------------------------------------------
@@ -412,6 +412,9 @@ BSDFData ConvertSurfaceDataToBSDFData(uint2 positionSS, SurfaceData surfaceData)
     FillMaterialTransparencyData( surfaceData.baseColor, surfaceData.metallic, surfaceData.ior, surfaceData.transmittanceColor, surfaceData.atDistance,
                                     surfaceData.thickness, surfaceData.transmittanceMask, bsdfData);
 #endif
+
+    // Save vertex normal for shadow bias
+    bsdfData.geomNormalWS = surfaceData.geomNormalWS;
 
     ApplyDebugToBSDFData(bsdfData);
 
@@ -804,6 +807,9 @@ uint DecodeFromGBuffer(uint2 positionSS, uint tileFeatureFlags, out BSDFData bsd
     // perceptualRoughness can be modify by FillMaterialClearCoatData, so ConvertAnisotropyToClampRoughness must be call after
     ConvertAnisotropyToClampRoughness(bsdfData.perceptualRoughness, bsdfData.anisotropy, bsdfData.roughnessT, bsdfData.roughnessB);
 
+    // Save vertex normal for shadow bias - We use normal from normal map as we don't have vertex normal in deferred
+    bsdfData.geomNormalWS = bsdfData.normalWS;
+
     ApplyDebugToBSDFData(bsdfData);
 
     return pixelFeatureFlags;
@@ -850,10 +856,6 @@ void GetBSDFDataDebug(uint paramId, BSDFData bsdfData, inout float3 result, inou
     // Overide debug value output to be more readable
     switch (paramId)
     {
-    case DEBUGVIEW_LIT_BSDFDATA_NORMAL_VIEW_SPACE:
-        // Convert to view space
-        result = TransformWorldToViewDir(bsdfData.normalWS) * 0.5 + 0.5;
-        break;
     case DEBUGVIEW_LIT_BSDFDATA_MATERIAL_FEATURES:
         result = (bsdfData.materialFeatures.xxx) / 255.0; // Aloow to read with color picker debug mode
         break;

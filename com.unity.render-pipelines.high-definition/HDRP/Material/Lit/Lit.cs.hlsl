@@ -39,6 +39,7 @@
 #define DEBUGVIEW_LIT_SURFACEDATA_TRANSMITTANCE_COLOR (1018)
 #define DEBUGVIEW_LIT_SURFACEDATA_TRANSMITTANCE_ABSORPTION_DISTANCE (1019)
 #define DEBUGVIEW_LIT_SURFACEDATA_TRANSMITTANCE_MASK (1020)
+#define DEBUGVIEW_LIT_SURFACEDATA_GEOMETRIC_NORMAL (1021)
 
 //
 // UnityEngine.Experimental.Rendering.HDPipeline.Lit+BSDFData:  static fields
@@ -68,6 +69,7 @@
 #define DEBUGVIEW_LIT_BSDFDATA_IOR (1072)
 #define DEBUGVIEW_LIT_BSDFDATA_ABSORPTION_COEFFICIENT (1073)
 #define DEBUGVIEW_LIT_BSDFDATA_TRANSMITTANCE_MASK (1074)
+#define DEBUGVIEW_LIT_BSDFDATA_GEOM_NORMAL_WS (1075)
 
 // Generated from UnityEngine.Experimental.Rendering.HDPipeline.Lit+SurfaceData
 // PackingRules = Exact
@@ -93,6 +95,7 @@ struct SurfaceData
     float3 transmittanceColor;
     float atDistance;
     float transmittanceMask;
+    float3 geomNormalWS;
 };
 
 // Generated from UnityEngine.Experimental.Rendering.HDPipeline.Lit+BSDFData
@@ -123,6 +126,7 @@ struct BSDFData
     float ior;
     float3 absorptionCoefficient;
     float transmittanceMask;
+    float3 geomNormalWS;
 };
 
 //
@@ -196,6 +200,9 @@ void GetGeneratedSurfaceDataDebug(uint paramId, SurfaceData surfacedata, inout f
             break;
         case DEBUGVIEW_LIT_SURFACEDATA_TRANSMITTANCE_MASK:
             result = surfacedata.transmittanceMask.xxx;
+            break;
+        case DEBUGVIEW_LIT_SURFACEDATA_GEOMETRIC_NORMAL:
+            result = surfacedata.geomNormalWS * 0.5 + 0.5;
             break;
     }
 }
@@ -282,6 +289,9 @@ void GetGeneratedBSDFDataDebug(uint paramId, BSDFData bsdfdata, inout float3 res
             break;
         case DEBUGVIEW_LIT_BSDFDATA_TRANSMITTANCE_MASK:
             result = bsdfdata.transmittanceMask.xxx;
+            break;
+        case DEBUGVIEW_LIT_BSDFDATA_GEOM_NORMAL_WS:
+            result = bsdfdata.geomNormalWS;
             break;
     }
 }
