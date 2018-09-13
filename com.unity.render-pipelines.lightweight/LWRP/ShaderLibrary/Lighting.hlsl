@@ -58,21 +58,6 @@ struct Light
 ///////////////////////////////////////////////////////////////////////////////
 //                        Attenuation Functions                               /
 ///////////////////////////////////////////////////////////////////////////////
-half CookieAttenuation(float3 worldPos)
-{
-#ifdef _MAIN_LIGHT_COOKIE
-#ifdef _MAIN_LIGHT_DIRECTIONAL
-    float2 cookieUV = mul(_WorldToLight, float4(worldPos, 1.0)).xy;
-    return SAMPLE_TEXTURE2D(_MainLightCookie, sampler_MainLightCookie, cookieUV).a;
-#elif defined(_MAIN_LIGHT_SPOT)
-    float4 projPos = mul(_WorldToLight, float4(worldPos, 1.0));
-    float2 cookieUV = projPos.xy / projPos.w + 0.5;
-    return SAMPLE_TEXTURE2D(_MainLightCookie, sampler_MainLightCookie, cookieUV).a;
-#endif // POINT LIGHT cookie not supported
-#endif
-
-    return 1;
-}
 
 // Matches Unity Vanila attenuation
 // Attenuation smoothly decreases to light range.
@@ -373,17 +358,19 @@ half3 SampleLightmap(float2 lightmapUV, half3 normalWS)
     bool encodedLightmap = true;
 #endif
 
+    half4 decodeInstructions = half4(LIGHTMAP_HDR_MULTIPLIER, LIGHTMAP_HDR_EXPONENT, 0.0h, 0.0h);
+
     // The shader library sample lightmap functions transform the lightmap uv coords to apply bias and scale.
     // However, lightweight pipeline already transformed those coords in vertex. We pass half4(1, 1, 0, 0) and
     // the compiler will optimize the transform away.
     half4 transformCoords = half4(1, 1, 0, 0);
-
+        
 #ifdef DIRLIGHTMAP_COMBINED
     return SampleDirectionalLightmap(TEXTURE2D_PARAM(unity_Lightmap, samplerunity_Lightmap),
         TEXTURE2D_PARAM(unity_LightmapInd, samplerunity_Lightmap),
-        lightmapUV, transformCoords, normalWS, encodedLightmap, unity_Lightmap_HDR);
+        lightmapUV, transformCoords, normalWS, encodedLightmap, decodeInstructions);
 #else
-    return SampleSingleLightmap(TEXTURE2D_PARAM(unity_Lightmap, samplerunity_Lightmap), lightmapUV, transformCoords, encodedLightmap, unity_Lightmap_HDR);
+    return SampleSingleLightmap(TEXTURE2D_PARAM(unity_Lightmap, samplerunity_Lightmap), lightmapUV, transformCoords, encodedLightmap, decodeInstructions);
 #endif
 }
 

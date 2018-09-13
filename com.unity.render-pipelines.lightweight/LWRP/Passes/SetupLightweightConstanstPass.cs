@@ -4,14 +4,19 @@ using UnityEngine.Rendering;
 
 namespace UnityEngine.Experimental.Rendering.LightweightPipeline
 {
+    /// <summary>
+    /// Configure the shader constants needed by the render pipeline
+    ///
+    /// This pass configures constants that LWRP uses when rendering.
+    /// For example, you can execute this pass before you render opaque
+    /// objects, to make sure that lights are configured correctly.
+    /// </summary>
     public class SetupLightweightConstanstPass : ScriptableRenderPass
     {
         public static class LightConstantBuffer
         {
             public static int _MainLightPosition;
             public static int _MainLightColor;
-            public static int _MainLightCookie;
-            public static int _WorldToLight;
 
             public static int _AdditionalLightCount;
             public static int _AdditionalLightPosition;
@@ -38,12 +43,13 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
         private int maxVisibleLocalLights { get; set; }
         private ComputeBuffer perObjectLightIndices { get; set; }
 
+        /// <summary>
+        /// Create the pass
+        /// </summary>
         public SetupLightweightConstanstPass()
         {
             LightConstantBuffer._MainLightPosition = Shader.PropertyToID("_MainLightPosition");
             LightConstantBuffer._MainLightColor = Shader.PropertyToID("_MainLightColor");
-            LightConstantBuffer._MainLightCookie = Shader.PropertyToID("_MainLightCookie");
-            LightConstantBuffer._WorldToLight = Shader.PropertyToID("_WorldToLight");
             LightConstantBuffer._AdditionalLightCount = Shader.PropertyToID("_AdditionalLightCount");
             LightConstantBuffer._AdditionalLightPosition = Shader.PropertyToID("_AdditionalLightPosition");
             LightConstantBuffer._AdditionalLightColor = Shader.PropertyToID("_AdditionalLightColor");
@@ -57,6 +63,11 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
             m_LightSpotDirections = new Vector4[0];
         }
 
+        /// <summary>
+        /// Configure the pass
+        /// </summary>
+        /// <param name="maxVisibleLocalLights">Maximum number of allowed visible local lights</param>
+        /// <param name="perObjectLightIndices">Buffer holding per object light indicies</param>
         public void Setup(int maxVisibleLocalLights, ComputeBuffer perObjectLightIndices)
         {
             this.maxVisibleLocalLights = maxVisibleLocalLights;
@@ -195,22 +206,7 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
         void SetupMainLightConstants(CommandBuffer cmd, ref LightData lightData)
         {
             Vector4 lightPos, lightColor, lightAttenuation, lightSpotDir;
-            List<VisibleLight> lights = lightData.visibleLights;
             InitializeLightConstants(lightData.visibleLights, lightData.mainLightIndex, out lightPos, out lightColor, out lightAttenuation, out lightSpotDir);
-
-            if (lightData.mainLightIndex >= 0)
-            {
-                VisibleLight mainLight = lights[lightData.mainLightIndex];
-                Light mainLightRef = mainLight.light;
-
-                if (LightweightPipeline.IsSupportedCookieType(mainLight.lightType) && mainLightRef.cookie != null)
-                {
-                    Matrix4x4 lightCookieMatrix;
-                    LightweightPipeline.GetLightCookieMatrix(mainLight, out lightCookieMatrix);
-                    cmd.SetGlobalTexture(LightConstantBuffer._MainLightCookie, mainLightRef.cookie);
-                    cmd.SetGlobalMatrix(LightConstantBuffer._WorldToLight, lightCookieMatrix);
-                }
-            }
 
             cmd.SetGlobalVector(LightConstantBuffer._MainLightPosition, lightPos);
             cmd.SetGlobalVector(LightConstantBuffer._MainLightColor, lightColor);
@@ -262,9 +258,6 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
             CoreUtils.SetKeyword(cmd, LightweightKeywordStrings.MixedLightingSubtractive, m_MixedLightingSetup == MixedLightingSetup.Subtractive);
             CoreUtils.SetKeyword(cmd, LightweightKeywordStrings.VertexLights, vertexLightsCount > 0);
 
-            // TODO: We have to discuss cookie approach on LWRP.
-            // CoreUtils.SetKeyword(cmd, LightweightKeywordStrings.MainLightCookieText, mainLightIndex != -1 && LightweightUtils.IsSupportedCookieType(visibleLights[mainLightIndex].lightType) && visibleLights[mainLightIndex].light.cookie != null);
-
             List<VisibleLight> visibleLights = lightData.visibleLights;
 
             // If shadows were resolved in screen space we don't sample shadowmap in lit shader. In that case we just set softDirectionalShadows to false.
@@ -297,7 +290,8 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
             // TODO: Remove this. legacy particles support will be removed from Unity in 2018.3. This should be a shader_feature instead with prop exposed in the Standard particles shader.
             CoreUtils.SetKeyword(cmd, LightweightKeywordStrings.SoftParticles, cameraData.requiresSoftParticles);
         }
-
+        
+        /// <inheritdoc/>
         public override void Execute(ScriptableRenderer renderer, ScriptableRenderContext context, ref RenderingData renderingData)
         {
             CommandBuffer cmd = CommandBufferPool.Get(k_SetupLightConstants);
