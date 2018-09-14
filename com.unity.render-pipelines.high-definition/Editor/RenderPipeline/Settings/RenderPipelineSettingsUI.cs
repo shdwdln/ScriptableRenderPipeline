@@ -1,3 +1,5 @@
+// #define REALTIME_RAYTRACING_SUPPORT
+
 using UnityEngine.Events;
 
 namespace UnityEditor.Experimental.Rendering.HDPipeline
@@ -100,6 +102,19 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
             EditorGUILayout.PropertyField(d.supportMotionVectors, _.GetContent("Support Motion Vectors|Motion vector are use for Motion Blur, TAA, temporal re-projection of various effect like SSR."));
             EditorGUILayout.PropertyField(d.supportRuntimeDebugDisplay, _.GetContent("Support runtime debug display|Remove all debug display shader variant only in the player. Allow faster build."));
             EditorGUILayout.PropertyField(d.supportDitheringCrossFade, _.GetContent("Support dithering cross fade|Remove all dithering cross fade shader variant only in the player. Allow faster build."));
+
+
+            // Only display the support ray tracing feature if the platform supports it
+            #if REALTIME_RAYTRACING_SUPPORT
+            if(UnityEngine.SystemInfo.supportsRayTracing)
+            {
+                EditorGUILayout.PropertyField(d.supportRayTracing, _.GetContent("Support Realtime Raytracing."));
+            }
+            else
+            #endif
+            {
+                d.supportRayTracing.boolValue = false;
+            }
 
             --EditorGUI.indentLevel;
         }
