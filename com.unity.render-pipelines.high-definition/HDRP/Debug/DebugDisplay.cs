@@ -111,6 +111,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
         public ColorPickerDebugSettings colorPickerDebugSettings = new ColorPickerDebugSettings();
         public FalseColorDebugSettings falseColorDebugSettings = new FalseColorDebugSettings();
         public DecalsDebugSettings decalsDebugSettings = new DecalsDebugSettings();
+        public MSAASamples msaaSamples = MSAASamples.None;
 
         public static GUIContent[] lightingFullScreenDebugStrings = null;
         public static int[] lightingFullScreenDebugValues = null;
@@ -124,6 +125,10 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
         public static int[] debugScreenSpaceTracingLinearValues = null;
         public static GUIContent[] debuggedAlgorithmStrings = null;
         public static int[] debuggedAlgorithmValues = null;
+        public static GUIContent[] debugMSAASamplesStrings = null;
+        public static int[] debugMSAASamplesValues = null;
+        public static GUIContent[] msaaSamplesDebugStrings = null;
+        public static int[] msaaSamplesDebugValues = null;
 
         ScreenSpaceLighting.ProjectionModel m_LastProjectionModel = ScreenSpaceLighting.ProjectionModel.None;
         ScreenSpaceTracingDebug m_ScreenSpaceTracingDebugData;
@@ -194,6 +199,11 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                 .Select(t => new GUIContent(t))
                 .ToArray();
             debuggedAlgorithmValues = (int[])Enum.GetValues(typeof(ScreenSpaceLighting.ProjectionModel));
+
+            msaaSamplesDebugStrings = Enum.GetNames(typeof(MSAASamples))
+                .Select(t => new GUIContent(t))
+                .ToArray();
+            msaaSamplesDebugValues = (int[])Enum.GetValues(typeof(MSAASamples));
         }
 
         public int GetDebugMaterialIndex()
@@ -221,6 +231,11 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
         public DebugMipMapMode GetDebugMipMapMode()
         {
             return mipMapDebugSettings.debugMipMapMode;
+        }
+
+        public DebugMipMapModeTerrainTexture GetDebugMipMapModeTerrainTexture()
+        {
+            return mipMapDebugSettings.terrainTexture;
         }
 
         public ColorPickerDebugMode GetDebugColorPickerMode()
@@ -812,8 +827,22 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             widgetList.AddRange(new DebugUI.Widget[]
             {
                 new DebugUI.EnumField { displayName = "Fullscreen Debug Mode", getter = () => (int)fullScreenDebugMode, setter = value => fullScreenDebugMode = (FullScreenDebugMode)value, enumNames = renderingFullScreenDebugStrings, enumValues = renderingFullScreenDebugValues },
-                new DebugUI.EnumField { displayName = "MipMaps", getter = () => (int)mipMapDebugSettings.debugMipMapMode, setter = value => SetMipMapMode((DebugMipMapMode)value), autoEnum = typeof(DebugMipMapMode) },
+                new DebugUI.EnumField { displayName = "MipMaps", getter = () => (int)mipMapDebugSettings.debugMipMapMode, setter = value => SetMipMapMode((DebugMipMapMode)value), autoEnum = typeof(DebugMipMapMode), onValueChanged = RefreshRenderingDebug },
+            });
 
+            if (mipMapDebugSettings.debugMipMapMode != DebugMipMapMode.None)
+            {
+                widgetList.Add(new DebugUI.Container
+                {
+                    children =
+                    {
+                        new DebugUI.EnumField { displayName = "Terrain Texture", getter = ()=>(int)mipMapDebugSettings.terrainTexture, setter = value => mipMapDebugSettings.terrainTexture = (DebugMipMapModeTerrainTexture)value, autoEnum = typeof(DebugMipMapModeTerrainTexture) }
+                    }
+                });
+            }
+
+            widgetList.AddRange(new []
+            {
                 new DebugUI.Container
                 {
                     displayName = "Color Picker",
@@ -840,6 +869,12 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                     }
                 });
             }
+
+            widgetList.AddRange(new DebugUI.Widget[]
+            {
+                new DebugUI.EnumField { displayName = "MSAA Samples", getter = () => (int)msaaSamples, setter = value => msaaSamples = (MSAASamples)value, enumNames = msaaSamplesDebugStrings, enumValues = msaaSamplesDebugValues },
+            });
+
 
             m_DebugRenderingItems = widgetList.ToArray();
             var panel = DebugManager.instance.GetPanel(k_PanelRendering, true);

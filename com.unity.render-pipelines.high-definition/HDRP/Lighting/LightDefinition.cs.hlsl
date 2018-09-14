@@ -94,12 +94,14 @@ struct LightData
     float specularScale;
     float2 size;
     float volumetricDimmer;
+    float range;
 };
 
 // Generated from UnityEngine.Experimental.Rendering.HDPipeline.EnvLightData
 // PackingRules = Exact
 struct EnvLightData
 {
+    uint lightLayers;
     float3 capturePositionRWS;
     int influenceShapeType;
     float3 proxyExtents;

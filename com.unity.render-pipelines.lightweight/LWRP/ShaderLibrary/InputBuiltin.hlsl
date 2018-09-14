@@ -96,8 +96,9 @@ CBUFFER_START(UnityPerDraw)
 // Space block Feature
 float4x4 unity_ObjectToWorld;
 float4x4 unity_WorldToObject;
-real4 unity_LODFade; // x is the fade value ranging within [0,1]. y is x quantized into 16 levels
+float4 unity_LODFade; // x is the fade value ranging within [0,1]. y is x quantized into 16 levels
 float4 unity_WorldTransformParams; // w is usually 1.0, or -1.0 for odd-negative scale transforms
+float4 unity_RenderingLayer;
 
 // Light Indices block feature
 // These are set internally by the engine upon request by RendererConfiguration.
@@ -114,10 +115,6 @@ real4 unity_SpecCube0_HDR;
 float4 unity_LightmapST;
 float4 unity_DynamicLightmapST;
 
-// No feature block yet!
-// HDR lightmap decode instructions
-real4 unity_Lightmap_HDR;
-
 // SH block feature
 real4 unity_SHAr;
 real4 unity_SHAg;
@@ -126,10 +123,6 @@ real4 unity_SHBr;
 real4 unity_SHBg;
 real4 unity_SHBb;
 real4 unity_SHC;
-
-// Probe Occlusion block feature
-// This contain occlusion factor from 0 to 1 for dynamic objects (no SH here)
-real4 unity_ProbesOcclusion;
 CBUFFER_END
 
 #if defined(UNITY_STEREO_MULTIVIEW_ENABLED) || ((defined(UNITY_SINGLE_PASS_STEREO) || defined(UNITY_STEREO_INSTANCING_ENABLED)) && (defined(SHADER_API_GLCORE) || defined(SHADER_API_GLES3) || defined(SHADER_API_METAL)))
@@ -224,11 +217,6 @@ TEXTURE2D(unity_LightmapInd);
 
 // We can have shadowMask only if we have lightmap, so no sampler
 TEXTURE2D(unity_ShadowMask);
-
-// Lightweight Pipeline Specific
-TEXTURE2D(_MainLightCookie);
-SAMPLER(sampler_MainLightCookie);
-
 
 // ----------------------------------------------------------------------------
 

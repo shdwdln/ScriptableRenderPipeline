@@ -38,6 +38,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
                 FoldoutOption.Indent,
                 CED.LabelWidth(300,
                     CED.Action(Drawer_FieldForwardRenderingOnly),
+                    CED.Action(Drawer_FieldEnableMSAA),
                     CED.FadeGroup(
                         (s, d, o, i) => s.isSectionExpandedUseForwardOnly,
                         FadeOption.None,
@@ -54,7 +55,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
                     "XR Settings",
                     (s, p, o) => s.isSectionExpandedXRSettings,
                     FoldoutOption.Indent,
-                    CED.LabelWidth(200, CED.Action(Drawer_FieldStereoEnabled))));
+                    CED.LabelWidth(200, CED.Action(Drawer_XR))));
 
         public static CED.IDrawer SectionLightingSettings = CED.FoldoutGroup(
                 "Lighting Settings",
@@ -95,7 +96,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
             EditorGUILayout.PropertyField(p.enableTransparentPostpass, _.GetContent("Enable Transparent Postpass"));
             EditorGUILayout.PropertyField(p.enableMotionVectors, _.GetContent("Enable Motion Vectors"));
             EditorGUILayout.PropertyField(p.enableObjectMotionVectors, _.GetContent("Enable Object Motion Vectors"));
-            EditorGUILayout.PropertyField(p.enableDecals, _.GetContent("Enable DBuffer"));
+            EditorGUILayout.PropertyField(p.enableDecals, _.GetContent("Enable Decals"));
             EditorGUILayout.PropertyField(p.enableRoughRefraction, _.GetContent("Enable Rough Refraction"));
             EditorGUILayout.PropertyField(p.enableDistortion, _.GetContent("Enable Distortion"));
             EditorGUILayout.PropertyField(p.enablePostprocess, _.GetContent("Enable Postprocess"));
@@ -104,6 +105,11 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
         static void Drawer_FieldForwardRenderingOnly(FrameSettingsUI s, SerializedFrameSettings p, Editor owner)
         {
             EditorGUILayout.PropertyField(p.enableForwardRenderingOnly, _.GetContent("Enable Forward Rendering Only"));
+        }
+
+        static void Drawer_FieldEnableMSAA(FrameSettingsUI s, SerializedFrameSettings p, Editor owner)
+        {
+            EditorGUILayout.PropertyField(p.enableMSAA, _.GetContent("Enable MSAA"));
         }
 
         static void Drawer_FieldUseDepthPrepassWithDefferedRendering(FrameSettingsUI s, SerializedFrameSettings p, Editor owner)
@@ -118,13 +124,13 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
             EditorGUILayout.PropertyField(p.enableOpaqueObjects, _.GetContent("Enable Opaque Objects"));
             EditorGUILayout.PropertyField(p.enableTransparentObjects, _.GetContent("Enable Transparent Objects"));
 
-            // Hide for now as not supported
-            //EditorGUILayout.PropertyField(p.enableMSAA, _.GetContent("Enable MSAA"));
+            EditorGUILayout.PropertyField(p.enableMSAA, _.GetContent("Enable MSAA"));
         }
 
-        static void Drawer_FieldStereoEnabled(FrameSettingsUI s, SerializedFrameSettings p, Editor owner)
+        static void Drawer_XR(FrameSettingsUI s, SerializedFrameSettings p, Editor owner)
         {
             EditorGUILayout.PropertyField(p.enableStereo, _.GetContent("Enable Stereo"));
+            EditorGUILayout.PropertyField(p.xrGraphicsConfig, _.GetContent("XR Graphics Config"));
         }
 
         static void Drawer_SectionLightingSettings(FrameSettingsUI s, SerializedFrameSettings p, Editor owner)
