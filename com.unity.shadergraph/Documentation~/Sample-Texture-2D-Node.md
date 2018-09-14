@@ -4,6 +4,8 @@ Samples a **Texture 2D** and returns a **Vector 4** color value for use in the s
 
 To use the **Sample Texture 2D Node** to sample a normal map, set the **Type** dropdown parameter to **Normal**.
 
+NOTE: This [Node](Node.md) can only be used in the **Fragment** shader stage.
+
 ## Ports
 
 | Name        | Direction           | Type  | Binding | Description |

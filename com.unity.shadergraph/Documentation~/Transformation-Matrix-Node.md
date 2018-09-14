@@ -12,13 +12,18 @@ Defines a constant **Matrix 4x4** value for a common **Transformation Matrix** i
 
 | Name        | Type           | Options  | Description |
 |:------------ |:-------------|:-----|:---|
-|  | Dropdown | ModelView, View, Projection, ViewProjection, TransposeModelView, InverseTransposeModelView, ObjectToWorld, WorldToObject | Sets output value |
+|  | Dropdown | Model, InverseModel, View, InverseView, Projection, InverseProjection, ViewProjection, InverseViewProjection | Sets output value |
 
 ## Shader Code
 
-**ModelView**
+**Model**
 ```
-float4x4 Out = UNITY_MATRIX_MV;
+float4x4 Out = UNITY_MATRIX_M;
+```
+
+**InverseModel**
+```
+float4x4 Out = UNITY_MATRIX_I_M;
 ```
 
 **View**
@@ -26,9 +31,19 @@ float4x4 Out = UNITY_MATRIX_MV;
 float4x4 Out = UNITY_MATRIX_V;
 ```
 
+**InverseView**
+```
+float4x4 Out = UNITY_MATRIX_I_V;
+```
+
 **Projection**
 ```
 float4x4 Out = UNITY_MATRIX_P;
+```
+
+**InverseProjection**
+```
+float4x4 Out = UNITY_MATRIX_I_P;
 ```
 
 **ViewProjection**
@@ -36,22 +51,7 @@ float4x4 Out = UNITY_MATRIX_P;
 float4x4 Out = UNITY_MATRIX_VP;
 ```
 
-**TransposeModelView**
+**InverseViewProjection**
 ```
-float4x4 Out = UNITY_MATRIX_T_MV;
-```
-
-**InverseTransposeModelView**
-```
-float4x4 Out = UNITY_MATRIX_IT_MV;
-```
-
-**ObjectToWorld**
-```
-float4x4 Out = UNITY_MATRIX_M;
-```
-
-**WorldToObject**
-```
-float4x4 Out = UNITY_MATRIX_I_M;
+float4x4 Out = UNITY_MATRIX_I_VP;
 ```

@@ -13,5 +13,5 @@ Adjusts the strength of the normal map defined by input **In** by the amount of 
 ## Shader Function
 
 ```
-Out = {precision}3(In.rg * Strength, In.b);
+Out = {precision}3(In.rg * Strength, lerp(1, In.b, saturate(Strength)));
 ```

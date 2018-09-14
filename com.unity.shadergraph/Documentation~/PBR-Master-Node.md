@@ -18,7 +18,9 @@ Values supplied to the input **Normal** are expected to be in tangent space. Use
 | Alpha      | Input | Vector 1 | None | Defines material's alpha value. Used for transparency and/or alpha clip. Expected range 0 - 1.  |
 | Alpha Clip Threshold      | Input | Vector 1 | None | Fragments with an alpha below this value will be discarded. Requires a node connection. Expected range 0 - 1. |
 
-## Parameters
+## Material Options
+
+**PBR Master Node** material options can be accessed by clicking the cog icon in the top right corner of the **PBR Master Node**. 
 
 | Name        | Type           | Options  | Description |
 |:------------ |:-------------|:-----|:---|

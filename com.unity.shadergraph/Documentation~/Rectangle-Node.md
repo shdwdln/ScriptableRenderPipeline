@@ -2,6 +2,8 @@
 
 Generates a rectangle shape based on input **UV** at the size specified by inputs **Width** and **Height**. The generated shape can be offset or tiled by connecting a [Tiling And Offset Node](Tiling-And-Offset-Node.md). Note that in order to preserve the ability to offset the shape within the UV space the shape will not automatically repeat if tiled. To achieve a repeating rectangle effect first connect your input through a [Fraction Node](Fraction-Node.md).
 
+NOTE: This [Node](Node.md) can only be used in the **Fragment** shader stage.
+
 ## Ports
 
 | Name        | Direction           | Type  | Binding | Description |

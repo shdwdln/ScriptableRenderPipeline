@@ -2,6 +2,8 @@
 
 Samples a **Texture 3D** and returns a **Vector 4** color value for use in the shader. You can override the **UV** coordinates using the **UV** input and define a custom **Sampler State** using the **Sampler** input.
 
+NOTE: This [Node](Node.md) can only be used in the **Fragment** shader stage.
+
 ## Ports
 
 | Name        | Direction           | Type  | Binding | Description |

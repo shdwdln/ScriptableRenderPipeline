@@ -15,7 +15,7 @@ Blends the value of input **Blend** onto input **Base** using the blending mode 
 
 | Name        | Type           | Options  | Description |
 |:------------ |:-------------|:-----|:---|
-| Mode      | Dropdown | Burn, Darken, Difference, Dodge, Divide, Exclusion, HardLight, HardMix, Lighten, LinearBurn, LinearDodge, LinearLight, LinearLightAddSub, Multiply, Negation, Overlay, PinLight, Screen, SoftLight, Subtract, VividLight | Blend mode to apply |
+| Mode      | Dropdown | Burn, Darken, Difference, Dodge, Divide, Exclusion, HardLight, HardMix, Lighten, LinearBurn, LinearDodge, LinearLight, LinearLightAddSub, Multiply, Negation, Overlay, PinLight, Screen, SoftLight, Subtract, VividLight, Overwrite | Blend mode to apply |
 
 ## Shader Function
 
@@ -178,4 +178,10 @@ Out = lerp(Base, Out, Opacity);
 ```
 Out = Base - Blend;
 Out = lerp(Base, Out, Opacity);
+```
+
+**Overwrite**
+
+```
+Out = lerp(Base, Blend, Opacity);
 ```

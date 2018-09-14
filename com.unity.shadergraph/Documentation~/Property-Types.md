@@ -4,6 +4,21 @@
 
 Each property has an associated **Data Type**. See [Data Types](Data-Types.md) for more information.
 
+## Common Parameters
+
+In addition to values specific to their [Data Types](Data-Types.md), all properties have the follow parameters.
+
+| Name        | Type  | Description |
+|:------------ |:---|:---|
+| Display Name | String | The display name of the property |
+| Exposed | Boolean | If true this property will be exposed on the material inspector |
+| Reference Name | String | The internal name used for the property inside the shader |
+
+NOTE: If you overwrite the **Reference Name** parameter be aware of the following conditions:
+- If your **Reference Name** does not begin with an underscore, one will be automatically appended.
+- If your **Reference Name** contains any characters which are unsupported in HLSL they will be removed.
+- You can revert to the default **Reference Name** by right clicking on it and selecting **Reset Reference**.
+
 ## Vector 1
 
 Defines a **Vector 1** value.
@@ -98,9 +113,33 @@ Displays an HDR color field in the material inspector.
 |:-------------|:------|:------------|
 | Default | Vector 4 | The default value of the [Property](https://docs.unity3d.com/Manual/SL-Properties.html). |
 
-## Texture
+## Texture 2D
 
-Defines a [Texture](https://docs.unity3d.com/Manual/class-TextureImporter.html) value. Displays an object field of type [Texture](https://docs.unity3d.com/Manual/class-TextureImporter.html) in the material inspector.
+Defines a [Texture 2D](https://docs.unity3d.com/Manual/class-TextureImporter.html) value. Displays an object field of type [Texture](https://docs.unity3d.com/Manual/class-TextureImporter.html) in the material inspector.
+
+| Data Type    | Modes |
+|:-------------|:------|
+| Texture | White, Black, Grey, Bump |
+
+| Field        | Type  | Description |
+|:-------------|:------|:------------|
+| Default | Texture | The default value of the [Property](https://docs.unity3d.com/Manual/SL-Properties.html). |
+
+## Texture 3D
+
+Defines a [Texture 3D](https://docs.unity3d.com/Manual/class-TextureImporter.html) value. Displays an object field of type [Texture 3D](https://docs.unity3d.com/Manual/class-TextureImporter.html) in the material inspector.
+
+| Data Type    | Modes |
+|:-------------|:------|
+| Texture |  |
+
+| Field        | Type  | Description |
+|:-------------|:------|:------------|
+| Default | Texture | The default value of the [Property](https://docs.unity3d.com/Manual/SL-Properties.html). |
+
+## Texture 2D Array
+
+Defines a [Texture 2D Array](https://docs.unity3d.com/Manual/class-TextureImporter.html) value. Displays an object field of type [Texture 2D Array](https://docs.unity3d.com/Manual/class-TextureImporter.html) in the material inspector.
 
 | Data Type    | Modes |
 |:-------------|:------|
