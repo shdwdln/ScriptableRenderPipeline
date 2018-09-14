@@ -13,7 +13,6 @@ In practice this means that if no [Edge](Edge.md) is connected to the [Port](Por
 | ColorRGB | Vector 3 |  | RGB Color picker |
 | Normal | Vector 3 |  | Vertex or fragment normal vector, label describes expected transform space |
 | Position | Vector 3 |  | Vertex or fragment position, label describes expected transform space |
-| Normal | Vector 3 |  | Vertex or fragment normal vector, label describes expected transform space |
 | Screen Position | Vector 4 |  | Default, Raw, Center, Tiled | Vertex or fragment position in screen space. Dropdown selects mode. See [Screen Position Node](Screen-Position-Node.md) for details |
 | Tangent | Vector 3 |  | Vertex or fragment tangent vector, label describes expected transform space |
 | UV | Vector 2 |  | UV0, UV1, UV2, UV3 | Mesh UV coordinates. Dropdown selects UV channel. |

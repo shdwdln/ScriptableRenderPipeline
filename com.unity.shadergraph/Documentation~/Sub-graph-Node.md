@@ -7,9 +7,3 @@ Provides a reference to a [Sub-graph Asset](Sub-graph-Asset.md). All ports on th
 If a [Node](node.md) within a [Sub-graph](Sub-graph.md) specifies a shader stage, such as how [Sample Texture 2D Node](Same-Texture-2D-Node.md) specifies the **fragment** shader stage, then that entire [Sub-graph](Sub-graph.md) is now locked to that stage. As such a [Sub-graph Node](Sub-graph-Node.md) that references the graph will also be locked to that shader stage.
 
 Furthermore, when an [Edge](Edge.md) connected to an output [Port](Port.md) on a **Sub-graph Node** flows into a [Port](Port.md) on a [Master Node](Master-Node.md) that **Sub-graph Node** is now locked to the shader stage of that [Master Node](Master-Node.md) [Port](Port.md). 
-
-## Parameters
-
-| Name        | Type           | Options  | Description |
-|:------------ |:-------------|:-----|:---|
-|      | Object Field (Sub-graph) |  | Reference sub-graph asset |
