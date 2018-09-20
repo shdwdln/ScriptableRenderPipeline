@@ -19,7 +19,7 @@
     Texture2D<float4> _CameraDepthValues;
 #endif
 
-RWTexture2D<float4> _DeferredShadowTextureUAV;
+RWTexture2D<float> _DeferredShadowTextureUAV;
 
 CBUFFER_START(DeferredShadowParameters)
 float4  _DirectionalLightDirection;
@@ -156,5 +156,5 @@ void DEFERRED_CONTACT_SHADOW_GENERIC(uint2 groupThreadId : SV_GroupThreadID, uin
 
     float contactShadow = ComputeContactShadow(posInput, direction);
 
-    _DeferredShadowTextureUAV[pixelCoord] = float4(1.0, contactShadow, 1.0, 1.0); // Note: RT is RG16 format
+    _DeferredShadowTextureUAV[pixelCoord] = contactShadow;
 }
