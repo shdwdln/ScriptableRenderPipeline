@@ -2481,8 +2481,9 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
 
         public void RenderScreenSpaceShadows(HDCamera hdCamera, RTHandleSystem.RTHandle deferredShadowRT, RenderTargetIdentifier depthTexture, CommandBuffer cmd)
         {
-            bool sunLightShadow = m_CurrentSunLight != null && m_CurrentSunLight.GetComponent<AdditionalShadowData>() != null && m_CurrentShadowSortedSunLightIndex >= 0;
-            if(sunLightShadow)
+            AdditionalShadowData sunShadowData = m_CurrentSunLight.GetComponent<AdditionalShadowData>();
+            bool sunLightShadow = m_CurrentSunLight != null && sunShadowData != null && m_CurrentShadowSortedSunLightIndex >= 0;
+            if (sunLightShadow)
             {
                 cmd.SetGlobalInt(HDShaderIDs._DirectionalShadowIndex, m_CurrentShadowSortedSunLightIndex);
             }
@@ -2492,7 +2493,8 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             }
 
             // if there is no need to compute contact shadows, we just quit
-            if (!m_EnableContactShadow)
+            bool needsContactShadows = (m_CurrentSunLight != null && sunShadowData != null && sunShadowData.contactShadows) || m_DominantLightIndex != -1;
+            if (!m_EnableContactShadow || !needsContactShadows)
             {
                 cmd.SetGlobalTexture(HDShaderIDs._DeferredShadowTexture, RuntimeUtilities.whiteTexture);
                 return;
