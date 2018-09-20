@@ -266,8 +266,8 @@ EnvLightData FetchEnvLight(uint start, uint i)
 float InitContactShadow(PositionInputs posInput)
 {
     // For now we only support one contact shadow
-    // Contactshadow is store in Green Channel of _DeferredShadowTexture
-    return LOAD_TEXTURE2D(_DeferredShadowTexture, posInput.positionSS).x;
+    // Contactshadow is store in Red Channel of _DeferredShadowTexture
+    return 1.0f - LOAD_TEXTURE2D(_DeferredShadowTexture, posInput.positionSS).x;
 }
 
 float GetContactShadow(LightLoopContext lightLoopContext, int contactShadowIndex)
