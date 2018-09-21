@@ -2481,8 +2481,8 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
 
         public void RenderScreenSpaceShadows(HDCamera hdCamera, RTHandleSystem.RTHandle deferredShadowRT, RenderTargetIdentifier depthTexture, CommandBuffer cmd)
         {
-            AdditionalShadowData sunShadowData = m_CurrentSunLight.GetComponent<AdditionalShadowData>();
-            bool sunLightShadow = m_CurrentSunLight != null && sunShadowData != null && m_CurrentShadowSortedSunLightIndex >= 0;
+            AdditionalShadowData sunShadowData = m_CurrentSunLight != null ? m_CurrentSunLight.GetComponent<AdditionalShadowData>() : null;
+            bool sunLightShadow =  sunShadowData != null && m_CurrentShadowSortedSunLightIndex >= 0;
             if (sunLightShadow)
             {
                 cmd.SetGlobalInt(HDShaderIDs._DirectionalShadowIndex, m_CurrentShadowSortedSunLightIndex);
