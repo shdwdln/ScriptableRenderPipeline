@@ -70,7 +70,7 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
             public float cascade2Split { get; private set; }
             public Vector3 cascade4Split { get; private set; }
             public bool supportsSoftShadows { get; private set; }
-            public XRGraphicsConfig savedXRGraphicsConfig { get; private set; }
+            public VRGraphicsConfig savedVRGraphicsConfig { get; private set; }
             public bool supportsDynamicBatching { get; private set; }
             public bool mixedLightingSupported { get; private set; }
 
@@ -109,11 +109,11 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
                 cache.supportsDynamicBatching = asset.supportsDynamicBatching;
                 cache.mixedLightingSupported = asset.supportsMixedLighting;
 
-                cache.savedXRGraphicsConfig = asset.savedXRGraphicsConfig;
-                cache.savedXRGraphicsConfig.renderScale = cache.renderScale;
-                cache.savedXRGraphicsConfig.viewportScale = 1.0f; // Placeholder until viewportScale is all hooked up
-                // Apply any changes to XRGConfig prior to this point
-                cache.savedXRGraphicsConfig.SetConfig();
+                cache.savedVRGraphicsConfig = asset.savedVRGraphicsConfig;
+                cache.savedVRGraphicsConfig.renderScale = cache.renderScale;
+                cache.savedVRGraphicsConfig.viewportScale = 1.0f; // Placeholder until viewportScale is all hooked up
+                // Apply any changes to VRGConfig prior to this point
+                cache.savedVRGraphicsConfig.SetConfig();
 
                 return cache;
             }
@@ -284,10 +284,10 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
             cameraData.isDefaultViewport = (!(Math.Abs(cameraRect.x) > 0.0f || Math.Abs(cameraRect.y) > 0.0f ||
                 Math.Abs(cameraRect.width) < 1.0f || Math.Abs(cameraRect.height) < 1.0f));
 
-            // If XR is enabled, use XR renderScale.
+            // If VR is enabled, use VR renderScale.
             // Discard variations lesser than kRenderScaleThreshold.
             // Scale is only enabled for gameview.
-            float usedRenderScale = XRGraphicsConfig.enabled ? settings.savedXRGraphicsConfig.renderScale : settings.renderScale;
+            float usedRenderScale = VRGraphicsConfig.enabled ? settings.savedVRGraphicsConfig.renderScale : settings.renderScale;
             cameraData.renderScale = (Mathf.Abs(1.0f - usedRenderScale) < kRenderScaleThreshold) ? 1.0f : usedRenderScale;
             cameraData.renderScale = (camera.cameraType == CameraType.Game) ? cameraData.renderScale : 1.0f;
 

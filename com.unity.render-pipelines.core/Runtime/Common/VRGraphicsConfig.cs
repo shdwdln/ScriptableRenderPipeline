@@ -11,7 +11,7 @@ using XRSettings = UnityEngine.VR.VRSettings;
 namespace UnityEngine.Experimental.Rendering
 {
     [Serializable]
-    public class XRGraphicsConfig
+    public class VRGraphicsConfig
     { // XRGConfig stores the desired XR settings for a given SRP asset.
 
         public float renderScale;
@@ -37,7 +37,7 @@ namespace UnityEngine.Experimental.Rendering
             XRSettings.renderViewportScale = viewportScale;
         }
 
-        public static readonly XRGraphicsConfig s_DefaultXRConfig = new XRGraphicsConfig
+        public static readonly VRGraphicsConfig s_DefaultVRConfig = new VRGraphicsConfig
         {
             renderScale = 1.0f,
             viewportScale = 1.0f,
@@ -45,9 +45,9 @@ namespace UnityEngine.Experimental.Rendering
             occlusionMaskScale = 1.0f,
         };
 
-        public static XRGraphicsConfig GetActualXRSettings()
+        public static VRGraphicsConfig GetActualXRSettings()
         {
-            XRGraphicsConfig getXRSettings = new XRGraphicsConfig();
+            VRGraphicsConfig getXRSettings = new VRGraphicsConfig();
 
             if (!enabled)
             {

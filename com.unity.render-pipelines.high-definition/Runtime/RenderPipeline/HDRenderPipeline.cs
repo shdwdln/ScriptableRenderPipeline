@@ -734,7 +734,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             if (!m_ValidAPI)
                 return;
 
-            if (XRGraphicsConfig.enabled)
+            if (VRGraphicsConfig.enabled)
             {
                 // FIXME add support for renderscale, viewportscale, etc.
                 renderPipelineSettings.xrConfig.SetConfig();
@@ -1211,7 +1211,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                             using (new ProfilingSample(cmd, "Blit to final RT", CustomSamplerId.BlitToFinalRT.GetSampler()))
                             {
                                 // This Blit will flip the screen on anything other than openGL
-                                if (srcFrameSettings.enableStereo && (XRGraphicsConfig.eyeTextureDesc.vrUsage == VRTextureUsage.TwoEyes))
+                                if (srcFrameSettings.enableStereo && (VRGraphicsConfig.eyeTextureDesc.vrUsage == VRTextureUsage.TwoEyes))
                                 {
                                     cmd.BlitFullscreenTriangle(m_CameraColorBuffer, BuiltinRenderTextureType.CameraTarget); // If double-wide, only blit once (not once per-eye)
                                 }

@@ -104,7 +104,7 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
         [SerializeField] bool m_MixedLightingSupported = true;
         // TODO: Render Pipeline Batcher
         
-        [SerializeField] XRGraphicsConfig m_SavedXRConfig = XRGraphicsConfig.s_DefaultXRConfig;
+        [SerializeField] VRGraphicsConfig m_SavedVRConfig = VRGraphicsConfig.s_DefaultVRConfig;
 
         // Deprecated settings
         [SerializeField] ShadowQuality m_ShadowType = ShadowQuality.HardShadows;
@@ -423,10 +423,10 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
             get { return resources != null ? resources.samplingShader : null; }
         }
 
-        public XRGraphicsConfig savedXRGraphicsConfig
+        public VRGraphicsConfig savedVRGraphicsConfig
         {
-            get { return m_SavedXRConfig; }
-            set { m_SavedXRConfig = value;  }
+            get { return m_SavedVRConfig; }
+            set { m_SavedVRConfig = value;  }
         }
 
         public void OnBeforeSerialize()

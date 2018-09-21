@@ -42,7 +42,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
         public bool enablePostprocess = true;
 
         public bool enableStereo = false;
-        public XRGraphicsConfig xrGraphicsConfig;
+        public VRGraphicsConfig xrGraphicsConfig;
 
         public bool enableAsyncCompute = true;
 
@@ -151,7 +151,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             // Planar and real time cubemap doesn't need post process and render in FP16
             aggregate.enablePostprocess = camera.cameraType != CameraType.Reflection && srcFrameSettings.enablePostprocess;
 
-            aggregate.enableStereo = ((camera.cameraType == CameraType.Game) || (camera.cameraType == CameraType.VR)) && srcFrameSettings.enableStereo && XRGraphicsConfig.enabled && (camera.stereoTargetEye == StereoTargetEyeMask.Both);
+            aggregate.enableStereo = ((camera.cameraType == CameraType.Game) || (camera.cameraType == CameraType.VR)) && srcFrameSettings.enableStereo && VRGraphicsConfig.enabled && (camera.stereoTargetEye == StereoTargetEyeMask.Both);
 
             aggregate.xrGraphicsConfig = renderPipelineSettings.xrConfig;
 

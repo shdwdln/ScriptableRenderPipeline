@@ -251,10 +251,10 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                 }
                 isFirstFrame = true; // So that mono vars can still update when stereo active
 
-                screenWidth = XRGraphicsConfig.eyeTextureWidth;
-                screenHeight = XRGraphicsConfig.eyeTextureHeight;
+                screenWidth = VRGraphicsConfig.eyeTextureWidth;
+                screenHeight = VRGraphicsConfig.eyeTextureHeight;
 
-                var xrDesc = XRGraphicsConfig.eyeTextureDesc;
+                var xrDesc = VRGraphicsConfig.eyeTextureDesc;
                 m_ActualWidth = xrDesc.width;
                 m_ActualHeight = xrDesc.height;
 
