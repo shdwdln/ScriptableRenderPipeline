@@ -148,7 +148,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                     {
                         captureSettings.overrides |= CaptureSettingsOverrides.FieldOfview;
                     }
-                    captureSettings.fieldOfview = m_FieldOfViewOverride;
+                    captureSettings.fieldOfView = m_FieldOfViewOverride;
                     captureSettings.nearClipPlane = m_CaptureNearPlane;
                     captureSettings.farClipPlane = m_CaptureFarPlane;
 #pragma warning restore CS0618 // Type or member is obsolete

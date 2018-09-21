@@ -412,19 +412,25 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline.Internal
 
         static void SetupCameraForRender(Camera camera, HDAdditionalCameraData additionalData, HDAdditionalReflectionData additional, Camera viewerCamera = null)
         {
-            float nearClipPlane, farClipPlane, aspect, fov;
-            Color backgroundColor;
-            CameraClearFlags clearFlags;
-            Vector3 capturePosition;
-            Quaternion captureRotation;
-            Matrix4x4 worldToCamera, projection;
+            Vector3 capturePosition = additional.capturePosition;
+            Quaternion captureRotation = Quaternion.identity;
+            float nearClipPlane = additional.captureSettings.nearClipPlane;
+            float farClipPlane = additional.captureSettings.farClipPlane;
+            float aspect = 1f;
+            float fov = additional.captureSettings.fieldOfView;
 
-            CalculateCaptureCameraProperties(additional,
-                out nearClipPlane, out farClipPlane,
-                out aspect, out fov, out clearFlags, out backgroundColor,
-                out worldToCamera, out projection,
-                out capturePosition, out captureRotation, viewerCamera);
+            camera.clearFlags = CameraClearFlags.Nothing;
+            camera.backgroundColor = Color.white;
+            camera.aspect = 1f;
 
+            additionalData.backgroundColorHDR = additional.captureSettings.backgroundColorHDR;
+            additionalData.clearColorMode = additional.captureSettings.clearColorMode;
+            additionalData.clearDepth = additional.captureSettings.clearDepth;
+            camera.cullingMask = additional.captureSettings.cullingMask;
+            additionalData.volumeLayerMask = additional.captureSettings.volumeLayerMask;
+            additionalData.volumeAnchorOverride = additional.captureSettings.volumeAnchorOverride;
+            camera.useOcclusionCulling = additional.captureSettings.useOcclusionCulling;
+            camera.orthographic = additional.captureSettings.projection == CameraProjection.Orthographic;
             camera.farClipPlane = farClipPlane;
             camera.nearClipPlane = nearClipPlane;
             camera.fieldOfView = fov;
@@ -495,11 +501,10 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline.Internal
             nearClipPlane = probe.captureNearPlane;
             farClipPlane = probe.captureFarPlane;
             aspect = 1f;
-            fov = probe.overrideFieldOfView
-                ? probe.fieldOfViewOverride
-                : 90f;
-            clearFlags = CameraClearFlags.Nothing;
-            backgroundColor = Color.white;
+            fov = probe.captureSettings.fieldOfView; 
+            clearFlags = probe.captureSettings.clearColorMode;
+            clearDepth = probe.captureSettings.clearDepth;
+            backgroundColor = probe.captureSettings.backgroundColorHDR;
 
             capturePosition = probe.capturePosition;
             captureRotation = Quaternion.LookRotation((Vector3)probe.influenceToWorld.GetColumn(3) - capturePosition, probe.transform.up);
