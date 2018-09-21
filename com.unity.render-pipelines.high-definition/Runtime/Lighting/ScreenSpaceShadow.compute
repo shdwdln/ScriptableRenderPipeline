@@ -107,6 +107,12 @@ float ScreenSpaceShadowRayCast(float3 positionWS, float3 rayDirWS, float rayLeng
     {
         float3 sampleAlongRay = rayStart + t * rayDir;
 
+
+        if (any(sampleAlongRay.xy < 0) || any(sampleAlongRay.xy > 1))
+        {
+            break;
+        }
+
 #ifdef ENABLE_MSAA
         // Depth buffer depth for this sample
         float sampleDepth = SAMPLE_TEXTURE2D_LOD(_CameraDepthValues, s_point_clamp_sampler, sampleAlongRay.xy, 0.0f).y;
