@@ -1,3 +1,5 @@
+# Texel Size Node
+
 ## Description
 
 Returns the **Width** and **Height** of the texel size of **Texture 2D** input. Uses the built in variable `{texturename}_TexelSize` to access special properties of a **Texture 2D**.
@@ -12,3 +14,11 @@ Returns the **Width** and **Height** of the texel size of **Texture 2D** input. 
 | Width      | Output | Vector 1 | None | Texel width |
 | Height | Output      |    Vector 1 | None | Texel height |
 
+## Generated Code Example
+
+The following example code represents one possible outcome of this node.
+
+```
+float2 _TexelSize_Width = Texture_TexelSize.z; 
+float2 _TexelSize_Height = Texture_TexelSize.w; 
+```

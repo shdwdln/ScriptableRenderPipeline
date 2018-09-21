@@ -1,3 +1,5 @@
+# Sub-graph
+
 ## Description
 
 A **Sub-graph** is a special type of [Shader Graph](Shader-Graph.md). It is used to create graphs that can be referenced inside other graphs. This is useful when you wish to perform the same operations multiple times in one graph or across multiple graphs. A **Sub-graph** differs from a [Shader Graph](Shader-Graph.md) in 3 main ways:

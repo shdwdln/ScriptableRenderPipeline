@@ -1,3 +1,5 @@
+# Dielectric Specular Node
+
 ## Description
 
 Returns a **Dielectric Specular** F0 value for a physically based material. The material to use can be selected with the **Material** dropdown parameter on the [Node](Node.md).
@@ -12,7 +14,7 @@ You can use **Custom** material type to define your own physically based materia
 |:------------ |:-------------|:-----|:---|:---|
 | Out | Output      |    Vector 3 | None | Output value |
 
-## Parameters
+## Controls
 
 | Name        | Type           | Options  | Description |
 |:------------ |:-------------|:-----|:---|
@@ -20,34 +22,38 @@ You can use **Custom** material type to define your own physically based materia
 | Range    | Slider |  | Controls output value for **Common** material type. |
 | IOR      | Slider |  | Controls index of refraction for **Custom** material type. |
 
-## Shader Function
+## Generated Code Example
+
+The following example code represents one possible outcome of this node per **Material** mode.
 
 **Common**
 ```
-float3 Out = lerp(0.034, 0.048, _Node_Range);
+float _DielectricSpecular_Range = 0.5;
+float3 _DielectricSpecular_Out = lerp(0.034, 0.048, _DielectricSpecular_Range);
 ```
 
 **RustedMetal**
 ```
-float3 Out = float3(0.030, 0.030, 0.030);
+float3 _DielectricSpecular_Out = float3(0.030, 0.030, 0.030);
 ```
 
 **Water**
 ```
-float3 Out = float3(0.020, 0.020, 0.020);
+float3 _DielectricSpecular_Out = float3(0.020, 0.020, 0.020);
 ```
 
 **Ice**
 ```
-float3 Out = float3(0.018, 0.018, 0.018);
+float3 _DielectricSpecular_Out = float3(0.018, 0.018, 0.018);
 ```
 
 **Glass**
 ```
-float3 Out = float3(0.040, 0.040, 0.040);
+float3 _DielectricSpecular_Out = float3(0.040, 0.040, 0.040);
 ```
 
 **Custom**
 ```
-float3 Out = pow(_Node_IOR - 1, 2) / pow(_Node_IOR + 1, 2);
+float3 _DielectricSpecular_IOR = 1;
+float3 _DielectricSpecular_Out = pow(_Node_IOR - 1, 2) / pow(_DielectricSpecular_IOR + 1, 2);
 ```

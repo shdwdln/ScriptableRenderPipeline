@@ -1,3 +1,5 @@
+# Time Node
+
 ## Description
 
 Provides access to various **Time** parameters in the shader.
@@ -12,12 +14,14 @@ Provides access to various **Time** parameters in the shader.
 | Delta Time | Output      |    Vector 1 | None | Current frame time |
 | Smooth Delta | Output      |    Vector 1 | None | Current frame time smoothed |
 
-## Shader Code
+## Generated Code Example
+
+The following example code represents one possible outcome of this node.
 
 ```
-float Time = _Time.y;
-float SineTime = _SinTime.w;
-float CosineTime = _CosTime.w;
-float DeltaTime = unity_DeltaTime.x;
-float SmoothDelta = unity_DeltaTime.z;
+float Time_Time = _Time.y;
+float Time_SineTime = _SinTime.w;
+float Time_CosineTime = _CosTime.w;
+float Time_DeltaTime = unity_DeltaTime.x;
+float Time_SmoothDelta = unity_DeltaTime.z;
 ```

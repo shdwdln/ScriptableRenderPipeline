@@ -1,3 +1,5 @@
+# Screen Node
+
 ## Description
 
 Provides access to parameters of the screen.
@@ -9,9 +11,11 @@ Provides access to parameters of the screen.
 | Width | Output      |    Vector 1 | None | Screen's width in pixels |
 | Height | Output      |    Vector 1 | None | Screen's height in pixels |
 
-## Shader Function
+## Generated Code Example
+
+The following example code represents one possible outcome of this node.
 
 ```
-float Width = _ScreenParams.x;
-float Height = _ScreenParams.y;
+float _Screen_Width = _ScreenParams.x;
+float _Screen_Height = _ScreenParams.y;
 ```

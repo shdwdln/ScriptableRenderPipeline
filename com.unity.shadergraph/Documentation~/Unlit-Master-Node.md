@@ -1,3 +1,5 @@
+# Unlit Master Node
+
 ## Description
 
 A [Master Node](Master-Node.md) for unlit materials.

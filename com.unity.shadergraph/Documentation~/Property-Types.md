@@ -1,3 +1,5 @@
+# Property Types
+
 ## Description
 
 **Property Types** are the types of [Property](https://docs.unity3d.com/Manual/SL-Properties.html) than can be defined on the [Blackboard](Blackboard.md) for use in the **Graph**. These [Properties](https://docs.unity3d.com/Manual/SL-Properties.html) will be exposed to the [Inspector](https://docs.unity3d.com/Manual/UsingTheInspector.html) for [Materials](https://docs.unity3d.com/Manual/class-Material.html) that use the shader.
@@ -6,7 +8,7 @@ Each property has an associated **Data Type**. See [Data Types](Data-Types.md) f
 
 ## Common Parameters
 
-In addition to values specific to their [Data Types](Data-Types.md), all properties have the follow parameters.
+In addition to values specific to their [Data Types](Data-Types.md), all properties have the following parameters.
 
 | Name        | Type  | Description |
 |:------------ |:---|:---|

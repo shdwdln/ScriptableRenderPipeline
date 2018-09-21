@@ -1,6 +1,8 @@
+# Reflection Probe Node
+
 ## Description
 
-Provides access to the nearest **Reflection Probe** to the object. Requires **Normal** and **View Direction** to sample the probe. You can supply a blurring effect by sampling at a different Level of Detail using the **LOD** input.
+Provides access to the nearest **Reflection Probe** to the object. Requires **Normal** and **View Direction** to sample the probe. You can achieve a blurring effect by sampling at a different Level of Detail using the **LOD** input.
 
 ## Ports
 
@@ -11,9 +13,14 @@ Provides access to the nearest **Reflection Probe** to the object. Requires **No
 | LOD | Input      |    Vector 1 | None | Level of detail for sampling |
 | Out | Output      |    Vector 3 | None | Output color value |
 
-## Shader Function
+## Generated Code Example
+
+The following example code represents one possible outcome of this node.
 
 ```
-float3 reflectVec = reflect(-ViewDir, Normal);
-Out = DecodeHDREnvironment(SAMPLE_TEXTURECUBE_LOD(unity_SpecCube0, samplerunity_SpecCube0, reflectVec, LOD), unity_SpecCube0_HDR);
+void Unity_ReflectionProbe_float(float3 ViewDir, float3 Normal, float LOD, out float3 Out)
+{
+    float3 reflectVec = reflect(-ViewDir, Normal);
+    Out = DecodeHDREnvironment(SAMPLE_TEXTURECUBE_LOD(unity_SpecCube0, samplerunity_SpecCube0, reflectVec, LOD), unity_SpecCube0_HDR);
+}
 ```

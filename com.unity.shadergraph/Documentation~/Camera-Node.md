@@ -1,12 +1,14 @@
+# Camera Node
+
 ## Description
 
-Provides access to various parameters of the current **Camera**. This is comprised of parameters of the **Camera** GameObject, such as Position and Direction, as well as various projection parameters.
+Provides access to various parameters of the **Camera** currently being used for rendering. This is comprised of values the **Camera**'s GameObject, such as Position and Direction, as well as various projection parameters.
 
 ## Ports
 
 | Name        | Direction           | Type  | Binding | Description |
 |:------------ |:-------------|:-----|:---|:---|
-| Position      | Output | Vector 3 | None | Position of the Camera's GameObject to world space |
+| Position      | Output | Vector 3 | None | Position of the Camera's GameObject in world space |
 | Direction       | Output | Vector 3 | None | The Camera's forward vector direction |
 | Orthographic    | Output | Vector 1 | None | Returns 1 if the Camera is orthographic, otherwise 0 |
 | Near Plane       | Output | Vector 1 | None | The Camera's near plane distance |
@@ -15,15 +17,17 @@ Provides access to various parameters of the current **Camera**. This is compris
 | Width       | Output | Vector 1 | None | The Camera's width if orthographic |
 | Height       | Output | Vector 1 | None | The Camera's height if orthographic |
 
-## Shader Code
+## Generated Code Example
+
+The following example code represents one possible outcome of this node.
 
 ```
-float3 Position = _WorldSpaceCameraPos;
-float3 Direction = -1 * mul(unity_ObjectToWorld, UNITY_MATRIX_IT_MV [2].xyz);
-float Orthographic = unity_OrthoParams.w;
-float NearPlane = _ProjectionParams.y;
-float FarPlane = _ProjectionParams.z;
-float ZBufferSign = _ProjectionParams.x;
-float Width = unity_OrthoParams.x;
-float Height = unity_OrthoParams.y;
+float3 _Camera_Position = _WorldSpaceCameraPos;
+float3 _Camera_Direction = -1 * mul(unity_ObjectToWorld, transpose(mul(UNITY_MATRIX_I_M, UNITY_MATRIX_I_V)) [2].xyz);
+float _Camera_Orthographic = unity_OrthoParams.w;
+float _Camera_NearPlane = _ProjectionParams.y;
+float _Camera_FarPlane = _ProjectionParams.z;
+float _Camera_ZBufferSign = _ProjectionParams.x;
+float _Camera_Width = unity_OrthoParams.x;
+float _Camera_Height = unity_OrthoParams.y;
 ```

@@ -1,3 +1,5 @@
+# Triplanar Node
+
 ## Description
 
 Triplanar is a method of generating UVs and sampling a texture by projecting in world space. The input **Texture** is sampled 3 times, once in each of the world x, y and z axises, and the resulting information is planar projected onto the model, blended by the normal, or surface angle. The generated UVs can be scaled with the input **Tile** and the final blending strength can be controlled with the input **Blend**. The projection can be modified by overriding the inputs **Position** and **Normal**. This is commonly used to texture large models such as terrain, where hand authoring UV coordinates would be problematic or not performant.
@@ -12,19 +14,21 @@ NOTE: This [Node](Node.md) can only be used in the **Fragment** shader stage.
 |:------------ |:-------------|:-----|:---|:---|
 | Texture      | Input | Texture | None | Input texture value |
 | Sampler      | Input | Sampler State | None | Sampler for input **Texture** |
-| Position      | Input | Vector 3 | World Space Position | Vertex/fragment position |
-| Normal      | Input | Vector 3 | World Space Normal | Vertex/fragment normal |
+| Position      | Input | Vector 3 | World Space Position | Fragment position |
+| Normal      | Input | Vector 3 | World Space Normal | Fragment normal |
 | Tile      | Input | Vector 1 | None | Tiling amount for generated UVs |
 | Blend      | Input | Vector 1 | None | Blend factor between different samples |
 | Out | Output      |    Vector 4 | None | Output value |
 
-## Parameters
+## Controls
 
 | Name        | Type           | Options  | Description |
 |:------------ |:-------------|:-----|:---|
 | Type      | Dropdown | Default, Normal | Type of input **Texture** |
 
-## Shader Function
+## Generated Code Example
+
+The following example code represents one possible outcome of this node.
 
 **Default**
 

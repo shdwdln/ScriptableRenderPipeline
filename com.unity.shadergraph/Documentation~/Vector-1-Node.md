@@ -1,3 +1,5 @@
+# Vector 1 Node
+
 ## Description
 
 Defines a **Vector 1** value in the shader. If [Port](Port.md) **X** is not connected with an [Edge](Edge.md) this [Node](Node.md) defines a constant **Vector 1**.
@@ -9,8 +11,10 @@ Defines a **Vector 1** value in the shader. If [Port](Port.md) **X** is not conn
 | X      | Input | Vector 1 | None | Input x component value |
 | Out | Output      |    Vector 1 | None | Output value |
 
-## Shader Code
+## Generated Code Example
+
+The following example code represents one possible outcome of this node.
 
 ```
-float Out = X;
+float _Vector1_Out = X;
 ```

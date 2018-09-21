@@ -1,3 +1,5 @@
+# Screen Position Node
+
 ## Description
 
 Provides access to the mesh vertex or fragment's **Screen Position**. The mode of output value can be selected with the **Mode** dropdown parameter.
@@ -24,7 +26,7 @@ Returns **Screen Position** offset so position `float2(0,0)` is at the center of
 |:------------ |:-------------|:-----|:---|:---|
 | Out | Output      |    Vector 4 | None | Mesh's **Screen Position**. |
 
-## Parameters
+## Controls
 
 | Name        | Type           | Options  | Description |
 |:------------ |:-------------|:-----|:---|
