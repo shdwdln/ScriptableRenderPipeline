@@ -51,6 +51,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Updated decal gizmo
 - Optimization: The objects that are rendered in the Motion Vector Pass are not rendered in the prepass anymore
 - Removed setting shader inclue path via old API, use package shader include paths
+- Improved performance and quality of Screen Space Shadows
 
 ## [3.3.0-preview]
 
