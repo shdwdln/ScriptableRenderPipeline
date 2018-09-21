@@ -89,7 +89,6 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
         // Shadow
         public Shader shadowClearShader;
         public ComputeShader shadowBlurMoments;
-        public Shader debugShadowMapShader;
         public Shader debugHDShadowMapShader;
 
         // Decal
@@ -195,7 +194,6 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             // Shadow
             shadowClearShader = Load<Shader>(CorePath + "Shadow/ShadowClear.shader");
             shadowBlurMoments = Load<ComputeShader>(CorePath + "Shadow/ShadowBlurMoments.compute");
-            debugShadowMapShader = Load<Shader>(CorePath + "Shadow/DebugDisplayShadowMap.shader");
             debugHDShadowMapShader = Load<Shader>(HDRenderPipelinePath + "Shadows/DebugDisplayHDShadowMap.shader");
 
             // decal
