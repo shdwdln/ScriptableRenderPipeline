@@ -25,6 +25,12 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
                         ),
                     CED.space,
                     CED.Select(
+                        (s, d, o) => s.hdShadowInitParams,
+                        (s, d, o) => d.hdShadowInitParams,
+                        HDShadowInitParametersUI.SectionAtlas
+                    ),
+                    CED.space,
+                    CED.Select(
                         (s, d, o) => s.decalSettings,
                         (s, d, o) => d.decalSettings,
                         GlobalDecalSettingsUI.Inspector
@@ -42,6 +48,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
         GlobalLightLoopSettingsUI lightLoopSettings = new GlobalLightLoopSettingsUI();
         GlobalDecalSettingsUI decalSettings = new GlobalDecalSettingsUI();
         ShadowInitParametersUI shadowInitParams = new ShadowInitParametersUI();
+        HDShadowInitParametersUI hdShadowInitParams = new HDShadowInitParametersUI();
 
         public RenderPipelineSettingsUI()
             : base(0)
@@ -79,7 +86,6 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
             EditorGUILayout.PropertyField(d.increaseResolutionOfVolumetrics, _.GetContent("Increase resolution of volumetrics|Increase the resolution of volumetric lighting buffers. Warning: high performance cost, do not enable on consoles."));
             EditorGUILayout.PropertyField(d.supportLightLayers, _.GetContent("Support LightLayers|Enable light layers. In deferred this imply an extra render target in memory and extra cost."));
             EditorGUILayout.PropertyField(d.supportOnlyForward, _.GetContent("Support Only Forward|Remove all the memory and shader variant of GBuffer. The renderer can be switch to deferred anymore."));
-
             // Engine
             EditorGUILayout.PropertyField(d.supportDecals, _.GetContent("Support Decals|Enable memory and variant for decals buffer and cluster decals"));
 
