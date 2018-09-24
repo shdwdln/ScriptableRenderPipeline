@@ -39,7 +39,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
         [ColorUsage(true, true)]
         public Color backgroundColorHDR = new Color32(6, 18, 48, 0);
         public bool clearDepth = true;
-        
+
         public LayerMask cullingMask = -1; //= 0xFFFFFFFF which is c++ default
         public bool useOcclusionCulling = true;
 
