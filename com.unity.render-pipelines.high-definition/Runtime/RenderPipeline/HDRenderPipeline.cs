@@ -597,6 +597,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             HDCamera.ClearAll();
 
             DestroyRenderTextures();
+            CullingGroupManager.instance.Cleanup();
 
 #if UNITY_EDITOR
             SceneViewDrawMode.ResetDrawMode();
