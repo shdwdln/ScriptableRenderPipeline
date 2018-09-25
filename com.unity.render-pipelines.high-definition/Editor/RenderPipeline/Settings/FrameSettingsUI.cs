@@ -128,7 +128,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
         static void Drawer_XR(FrameSettingsUI s, SerializedFrameSettings p, Editor owner)
         {
             EditorGUILayout.PropertyField(p.enableStereo, _.GetContent("Enable Stereo"));
-            EditorGUILayout.PropertyField(p.xrGraphicsConfig, _.GetContent("XR Graphics Config"));
+            EditorGUILayout.PropertyField(p.vrGraphicsConfig, _.GetContent("XR Graphics Config"));
         }
 
         static void Drawer_SectionLightingSettings(FrameSettingsUI s, SerializedFrameSettings p, Editor owner)

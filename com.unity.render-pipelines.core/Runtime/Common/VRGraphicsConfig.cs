@@ -12,14 +12,14 @@ namespace UnityEngine.Experimental.Rendering
 {
     [Serializable]
     public class VRGraphicsConfig
-    { // XRGConfig stores the desired XR settings for a given SRP asset.
+    { // VRGConfig stores the desired VR settings for a given SRP asset.
 
         public float renderScale = 1.0f;
         public float viewportScale = 1.0f;
         public bool useOcclusionMesh = true;
         public float occlusionMeshScale = 1.0f;
 
-        public void CopyTo(XRGraphicsConfig targetConfig)
+        public void CopyTo(VRGraphicsConfig targetConfig)
         {
             targetConfig.renderScale = this.renderScale;
             targetConfig.viewportScale = this.viewportScale;
@@ -28,7 +28,7 @@ namespace UnityEngine.Experimental.Rendering
         }
 
         public void SetConfig()
-        { // If XR is enabled, sets XRSettings from our saved config
+        { // If VR is enabled, sets XRSettings from our saved config
             if (!enabled)
                 return;
 

@@ -33,7 +33,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
         public SerializedProperty enablePostprocess;
 
         public SerializedProperty enableStereo;
-        public SerializedProperty xrGraphicsConfig;
+        public SerializedProperty vrGraphicsConfig;
         public SerializedProperty enableAsyncCompute;
 
         public SerializedProperty enableOpaqueObjects;
@@ -73,7 +73,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
             enableDistortion = root.Find((FrameSettings d) => d.enableDistortion);
             enablePostprocess = root.Find((FrameSettings d) => d.enablePostprocess);
             enableStereo = root.Find((FrameSettings d) => d.enableStereo);
-            xrGraphicsConfig = root.Find((FrameSettings d) => d.xrGraphicsConfig);
+            vrGraphicsConfig = root.Find((FrameSettings d) => d.vrGraphicsConfig);
             enableAsyncCompute = root.Find((FrameSettings d) => d.enableAsyncCompute);
             enableOpaqueObjects = root.Find((FrameSettings d) => d.enableOpaqueObjects);
             enableTransparentObjects = root.Find((FrameSettings d) => d.enableTransparentObjects);
