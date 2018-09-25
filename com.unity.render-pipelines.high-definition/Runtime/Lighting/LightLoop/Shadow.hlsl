@@ -9,7 +9,7 @@
 #define SHADOW_USE_SAMPLE_BIASING               0   // Enable per sample biasing for wide multi-tap PCF filters. Incompatible with SHADOW_USE_ONLY_VIEW_BASED_BIASING.
 #define SHADOW_USE_DEPTH_BIAS                   0   // Enable clip space z biasing
 
-#include "ShadowContext.hlsl"
+#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Lighting/Shadow/ShadowContext.hlsl"
 
 // This is an example of how to override the default dynamic resource dispatcher
 // by hardcoding the resources used and calling the shadow sampling routines that take an explicit texture and sampler.
@@ -72,7 +72,6 @@ float3 GetDirectionalShadowClosestSample( ShadowContext shadowContext, real3 pos
 
 #endif
 
-
 // example of overriding punctual lights
 #ifdef  SHADOW_DISPATCH_USE_CUSTOM_PUNCTUAL
 float GetPunctualShadowAttenuation( ShadowContext shadowContext, float3 positionWS, float3 normalWS, int shadowDataIndex, float3 L, float L_dist )
@@ -122,6 +121,7 @@ float GetPunctualShadowClosestDistance( ShadowContext shadowContext, SamplerStat
 }
 
 #endif
+
 
 // cleanup the defines
 #undef SHADOW_DISPATCH_DIR_TEX

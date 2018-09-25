@@ -40,9 +40,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
         public bool supportMotionVectors = true;
         public bool supportRuntimeDebugDisplay = true;
         public bool supportDitheringCrossFade = true;
-
-        public VRGraphicsConfig xrConfig = VRGraphicsConfig.s_DefaultVRConfig;
-
+        
         public GlobalLightLoopSettings  lightLoopSettings = new GlobalLightLoopSettings();
         public ShadowInitParameters     shadowInitParams = new ShadowInitParameters();
         public HDShadowInitParameters   hdShadowInitParams = new HDShadowInitParameters();

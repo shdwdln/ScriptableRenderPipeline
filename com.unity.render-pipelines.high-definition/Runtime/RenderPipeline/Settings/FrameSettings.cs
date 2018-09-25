@@ -42,7 +42,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
         public bool enablePostprocess = true;
 
         public bool enableStereo = false;
-        public VRGraphicsConfig xrGraphicsConfig;
+        public VRGraphicsConfig vrGraphicsConfig = new VRGraphicsConfig();
 
         public bool enableAsyncCompute = true;
 
@@ -51,6 +51,8 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
 
         public bool enableMSAA = false;
 
+        // GC.Alloc
+        // FrameSettings..ctor() 
         public LightLoopSettings lightLoopSettings = new LightLoopSettings();
 
         public void CopyTo(FrameSettings frameSettings)
@@ -83,7 +85,8 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             frameSettings.enablePostprocess = this.enablePostprocess;
 
             frameSettings.enableStereo = this.enableStereo;
-            frameSettings.xrGraphicsConfig = this.xrGraphicsConfig;
+
+            this.vrGraphicsConfig.CopyTo(frameSettings.vrGraphicsConfig);
 
             frameSettings.enableOpaqueObjects = this.enableOpaqueObjects;
             frameSettings.enableTransparentObjects = this.enableTransparentObjects;
@@ -153,7 +156,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
 
             aggregate.enableStereo = ((camera.cameraType == CameraType.Game) || (camera.cameraType == CameraType.VR)) && srcFrameSettings.enableStereo && VRGraphicsConfig.enabled && (camera.stereoTargetEye == StereoTargetEyeMask.Both);
 
-            aggregate.xrGraphicsConfig = renderPipelineSettings.xrConfig;
+            srcFrameSettings.vrGraphicsConfig.CopyTo(aggregate.vrGraphicsConfig);
 
             aggregate.enableAsyncCompute = srcFrameSettings.enableAsyncCompute && SystemInfo.supportsAsyncCompute;
 
@@ -223,6 +226,8 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                 enableSSR = false;
                 enableSubsurfaceScattering = false;
                 enableTransparentObjects = false;
+
+                vrGraphicsConfig.SetConfig();
             }
         }
 
