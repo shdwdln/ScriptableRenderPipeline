@@ -186,10 +186,11 @@ void DEFERRED_CONTACT_SHADOW_GENERIC(uint2 groupThreadId : SV_GroupThreadID, uin
         return;
 
     PositionInputs posInput = GetPositionInput_Stereo(pixelCoord.xy, _ScreenSize.zw, depth, UNITY_MATRIX_I_VP, UNITY_MATRIX_V, tileCoord, unity_StereoEyeIndex);
-    
+
     //Direction got from either the directional light direction or the difference of punctual light position and the pixel position
     float3 direction = normalize(_DirectionalLightDirection.xyz * _DirectionalLightDirection.w + (_PunctualLightPosition.xyz - posInput.positionWS) * _PunctualLightPosition.w);
 
     float contactShadow = ComputeContactShadow(posInput, direction);
 
     _DeferredShadowTextureUAV[pixelCoord] = 1.0f - contactShadow;
+}
