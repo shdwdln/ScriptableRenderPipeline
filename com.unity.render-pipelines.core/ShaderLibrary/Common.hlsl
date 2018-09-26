@@ -666,6 +666,7 @@ float DecodeLogarithmicDepthGeneralized(float d, float4 decodingParams)
 float EncodeLogarithmicDepth(float z, float4 encodingParams)
 {
     // Use max() to avoid NaNs.
+    // TODO: optimize to (log2(z) - log2(n)) / (log2(f) - log2(n)).
     return log2(max(0, z * encodingParams.z)) * encodingParams.w;
 }
 
@@ -676,6 +677,7 @@ float EncodeLogarithmicDepth(float z, float4 encodingParams)
 // Graph: https://www.desmos.com/calculator/qrtatrlrba
 float DecodeLogarithmicDepth(float d, float4 encodingParams)
 {
+    // TODO: optimize to exp2(d * y + log2(x)).
     return encodingParams.x * exp2(d * encodingParams.y);
 }
 
@@ -794,7 +796,7 @@ PositionInputs GetPositionInput_Stereo(float2 positionSS, float2 invScreenSize, 
 #endif
     posInput.positionNDC *= invScreenSize;
 
-#if UNITY_SINGLE_PASS_STEREO
+#if defined(UNITY_SINGLE_PASS_STEREO)
     posInput.positionNDC.x = posInput.positionNDC.x - eye;
 #endif
 
