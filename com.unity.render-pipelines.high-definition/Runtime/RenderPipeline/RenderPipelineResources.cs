@@ -11,8 +11,13 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
     {
         const int currentVersion = 4;
         [SerializeField]
+        // Silent the warning
+        // "The private field `UnityEngine.Experimental.Rendering.HDPipeline.RenderPipelineResources.m_Version' is assigned but its value is never used"
+        // As it is used only in editor currently and when building a player we get this warning.
+#pragma warning disable 414
         [FormerlySerializedAs("version")]
         int m_Version = 1;
+#pragma warning restore 414
 
         [Serializable]
         public sealed class ShaderResources
