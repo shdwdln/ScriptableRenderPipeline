@@ -70,15 +70,14 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
 
             float nearClipPlane, farClipPlane, aspect, fov;
             Color backgroundColor;
-            HDAdditionalCameraData.ClearColorMode clearFlags;
-            bool clearDepth;
+            CameraClearFlags clearFlags;
             Vector3 capturePosition;
             Quaternion captureRotation;
             Matrix4x4 worldToCameraRHS, projection;
 
             ReflectionSystem.CalculateCaptureCameraProperties(d,
                 out nearClipPlane, out farClipPlane,
-                out aspect, out fov, out clearFlags, out clearDepth, out backgroundColor,
+                out aspect, out fov, out clearFlags, out backgroundColor,
                 out worldToCameraRHS, out projection,
                 out capturePosition, out captureRotation, viewerCamera);
 

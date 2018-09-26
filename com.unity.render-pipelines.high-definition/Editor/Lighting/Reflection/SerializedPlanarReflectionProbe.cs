@@ -35,5 +35,15 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
 
             influenceVolume.editorSimplifiedModeBlendNormalDistance.floatValue = 0;
         }
+        
+        internal override void Update()
+        {
+            base.Update();
+
+            //temporarily force value until other mode are supported
+            mode.enumValueIndex = (int)ReflectionProbeMode.Realtime;
+            refreshMode.enumValueIndex = (int)ReflectionProbeRefreshMode.EveryFrame;
+            capturePositionMode.enumValueIndex = (int)PlanarReflectionProbe.CapturePositionMode.MirrorCamera;
+        }
     }
 }

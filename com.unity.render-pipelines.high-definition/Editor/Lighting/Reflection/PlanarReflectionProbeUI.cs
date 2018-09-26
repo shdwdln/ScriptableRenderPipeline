@@ -19,6 +19,10 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
                 Inspector[i] = HDProbeUI.Inspector[i];
             }
 
+            //forbid other mode than realtime at the moment
+            Inspector[1] = CED.noop;        //realtime/Custom/bake
+            Inspector[Inspector.Length - 1] = CED.noop; //bake button
+
             //override SectionInfluenceVolume to remove normals settings
             Inspector[3] = CED.Select(
                 (s, d, o) => s.influenceVolume,
