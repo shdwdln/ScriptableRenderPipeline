@@ -92,7 +92,7 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
         SerializedProperty m_SupportsDynamicBatching;
         SerializedProperty m_MixedLightingSupportedProp;
 
-        SerializedProperty m_XRConfig;
+        SerializedProperty m_VRConfig;
 
         public override void OnInspectorGUI()
         {
@@ -103,7 +103,7 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
             DrawLightingSettings();
             DrawShadowSettings();
             DrawAdvancedSettings();
-            EditorGUILayout.PropertyField(m_XRConfig);
+            EditorGUILayout.PropertyField(m_VRConfig);
 
             serializedObject.ApplyModifiedProperties();
         }
@@ -136,7 +136,7 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
             m_SupportsDynamicBatching = serializedObject.FindProperty("m_SupportsDynamicBatching");
             m_MixedLightingSupportedProp = serializedObject.FindProperty("m_MixedLightingSupported");
 
-            m_XRConfig = serializedObject.FindProperty("m_SavedXRConfig");
+            m_VRConfig = serializedObject.FindProperty("m_SavedVRConfig");
         }
 
         void DrawGeneralSettings()

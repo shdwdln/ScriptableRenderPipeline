@@ -11,7 +11,7 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
         private SetupForwardRenderingPass m_SetupForwardRenderingPass;
         private ScreenSpaceShadowResolvePass m_ScreenSpaceShadowResolvePass;
         private CreateLightweightRenderTexturesPass m_CreateLightweightRenderTexturesPass;
-        private BeginXRRenderingPass m_BeginXrRenderingPass;
+        private BeginVRRenderingPass m_BeginVrRenderingPass;
         private SetupLightweightConstanstPass m_SetupLightweightConstants;
         private RenderOpaqueForwardPass m_RenderOpaqueForwardPass;
         private OpaquePostProcessPass m_OpaquePostProcessPass;
@@ -21,7 +21,7 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
         private RenderTransparentForwardPass m_RenderTransparentForwardPass;
         private TransparentPostProcessPass m_TransparentPostProcessPass;
         private FinalBlitPass m_FinalBlitPass;
-        private EndXRRenderingPass m_EndXrRenderingPass;
+        private EndVRRenderingPass m_EndVrRenderingPass;
 
 #if UNITY_EDITOR
         private SceneViewDepthCopyPass m_SceneViewDepthCopyPass;
@@ -50,7 +50,7 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
             m_SetupForwardRenderingPass = new SetupForwardRenderingPass();
             m_ScreenSpaceShadowResolvePass = new ScreenSpaceShadowResolvePass();
             m_CreateLightweightRenderTexturesPass = new CreateLightweightRenderTexturesPass();
-            m_BeginXrRenderingPass = new BeginXRRenderingPass();
+            m_BeginVrRenderingPass = new BeginVRRenderingPass();
             m_SetupLightweightConstants = new SetupLightweightConstanstPass();
             m_RenderOpaqueForwardPass = new RenderOpaqueForwardPass();
             m_OpaquePostProcessPass = new OpaquePostProcessPass();
@@ -60,7 +60,7 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
             m_RenderTransparentForwardPass = new RenderTransparentForwardPass();
             m_TransparentPostProcessPass = new TransparentPostProcessPass();
             m_FinalBlitPass = new FinalBlitPass();
-            m_EndXrRenderingPass = new EndXRRenderingPass();
+            m_EndVrRenderingPass = new EndVRRenderingPass();
 
 #if UNITY_EDITOR
             m_SceneViewDepthCopyPass = new SceneViewDepthCopyPass();
@@ -142,7 +142,7 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
             }
 
             if (renderingData.cameraData.isStereoEnabled)
-                renderer.EnqueuePass(m_BeginXrRenderingPass);
+                renderer.EnqueuePass(m_BeginVrRenderingPass);
 
             RendererConfiguration rendererConfiguration = ScriptableRenderer.GetRendererConfiguration(renderingData.lightData.additionalLightsCount);
 
@@ -207,7 +207,7 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
 
             if (renderingData.cameraData.isStereoEnabled)
             {
-                renderer.EnqueuePass(m_EndXrRenderingPass);
+                renderer.EnqueuePass(m_EndVrRenderingPass);
             }
 
 #if UNITY_EDITOR
