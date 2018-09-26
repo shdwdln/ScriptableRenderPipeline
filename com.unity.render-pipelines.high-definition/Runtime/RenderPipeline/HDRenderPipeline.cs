@@ -1488,7 +1488,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             // TODO: maybe we can use a stencil to tag when Forward unlit touch normal buffer
 
             // In order to avoid rendering objects twice (once in the depth pre-pass and once in the motion vector pass, when the motion vector pass is enabled). We exclude the objects that have motion vectors.
-            bool excludeMotion = hdCamera.frameSettings.enableMotionVectors;
+            bool excludeMotion = hdCamera.frameSettings.enableObjectMotionVectors;
 
             if (hdCamera.frameSettings.enableForwardRenderingOnly)
             {
@@ -1498,7 +1498,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
 
                     // Full forward: Output normal buffer for both forward and forwardOnly
                     // Exclude object that render velocity (if motion vector are enabled)
-                    RenderOpaqueRenderList(cull, hdCamera, renderContext, cmd, m_DepthOnlyAndDepthForwardOnlyPassNames, excludeMotion ? RendererConfiguration.PerObjectMotionVectors : 0, HDRenderQueue.k_RenderQueue_AllOpaque, excludeMotionVector : excludeMotion);
+                    RenderOpaqueRenderList(cull, hdCamera, renderContext, cmd, m_DepthOnlyAndDepthForwardOnlyPassNames, 0, HDRenderQueue.k_RenderQueue_AllOpaque, excludeMotionVector : excludeMotion);
                 }
             }
             // If we enable DBuffer, we need a full depth prepass
@@ -1509,12 +1509,12 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                     HDUtils.SetRenderTarget(cmd, hdCamera, m_SharedRTManager.GetDepthStencilBuffer());
 
                     // First deferred material
-                    RenderOpaqueRenderList(cull, hdCamera, renderContext, cmd, m_DepthOnlyPassNames, excludeMotion ? RendererConfiguration.PerObjectMotionVectors : 0, HDRenderQueue.k_RenderQueue_AllOpaque, excludeMotionVector: excludeMotion);
+                    RenderOpaqueRenderList(cull, hdCamera, renderContext, cmd, m_DepthOnlyPassNames, 0, HDRenderQueue.k_RenderQueue_AllOpaque, excludeMotionVector: excludeMotion);
 
                     HDUtils.SetRenderTarget(cmd, hdCamera, m_SharedRTManager.GetPrepassBuffersRTI(hdCamera.frameSettings), m_SharedRTManager.GetDepthStencilBuffer());
 
                     // Then forward only material that output normal buffer
-                    RenderOpaqueRenderList(cull, hdCamera, renderContext, cmd, m_DepthForwardOnlyPassNames, excludeMotion ? RendererConfiguration.PerObjectMotionVectors : 0, HDRenderQueue.k_RenderQueue_AllOpaque, excludeMotionVector: excludeMotion);
+                    RenderOpaqueRenderList(cull, hdCamera, renderContext, cmd, m_DepthForwardOnlyPassNames, 0, HDRenderQueue.k_RenderQueue_AllOpaque, excludeMotionVector: excludeMotion);
                 }
             }
             else // Deferred with partial depth prepass
@@ -1525,12 +1525,12 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
 
                     // First deferred alpha tested materials. Alpha tested object have always a prepass even if enableDepthPrepassWithDeferredRendering is disabled
                     var renderQueueRange = new RenderQueueRange { min = (int)RenderQueue.AlphaTest, max = (int)RenderQueue.GeometryLast - 1 };
-                    RenderOpaqueRenderList(cull, hdCamera, renderContext, cmd, m_DepthOnlyPassNames, excludeMotion ? RendererConfiguration.PerObjectMotionVectors : 0, renderQueueRange, excludeMotionVector : excludeMotion);
+                    RenderOpaqueRenderList(cull, hdCamera, renderContext, cmd, m_DepthOnlyPassNames, 0, renderQueueRange, excludeMotionVector : excludeMotion);
 
                     HDUtils.SetRenderTarget(cmd, hdCamera, m_SharedRTManager.GetPrepassBuffersRTI(hdCamera.frameSettings), m_SharedRTManager.GetDepthStencilBuffer());
 
                     // Then forward only material that output normal buffer
-                    RenderOpaqueRenderList(cull, hdCamera, renderContext, cmd, m_DepthForwardOnlyPassNames, excludeMotion ? RendererConfiguration.PerObjectMotionVectors : 0, HDRenderQueue.k_RenderQueue_AllOpaque, excludeMotionVector : excludeMotion);
+                    RenderOpaqueRenderList(cull, hdCamera, renderContext, cmd, m_DepthForwardOnlyPassNames, 0, HDRenderQueue.k_RenderQueue_AllOpaque, excludeMotionVector : excludeMotion);
                 }
             }
         }
