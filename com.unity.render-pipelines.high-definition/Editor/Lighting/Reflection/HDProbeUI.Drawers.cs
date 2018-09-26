@@ -126,7 +126,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
                 EditorReflectionSystemGUI.DrawBakeButton((ReflectionProbeMode)d.mode.intValue, d.target as PlanarReflectionProbe);
         }
 
-        static void Drawer_SectionProbeModeRealtimeSettings(HDProbeUI s, SerializedHDProbe d, Editor o)
+        protected static void Drawer_SectionProbeModeRealtimeSettings(HDProbeUI s, SerializedHDProbe d, Editor o)
         {
             GUI.enabled = false;
             EditorGUILayout.PropertyField(d.refreshMode, _.GetContent("Refresh Mode|Only EveryFrame supported at the moment"));
@@ -196,7 +196,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
 
         static readonly GUIContent[] k_ModeContents = { new GUIContent("Baked"), new GUIContent("Custom"), new GUIContent("Realtime") };
         static readonly int[] k_ModeValues = { (int)ReflectionProbeMode.Baked, (int)ReflectionProbeMode.Custom, (int)ReflectionProbeMode.Realtime };
-        static void Drawer_ReflectionProbeMode(HDProbeUI s, SerializedHDProbe p, Editor owner)
+        protected static void Drawer_ReflectionProbeMode(HDProbeUI s, SerializedHDProbe p, Editor owner)
         {
             EditorGUI.BeginChangeCheck();
             EditorGUI.showMixedValue = p.mode.hasMultipleDifferentValues;
@@ -209,7 +209,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
             }
         }
         
-        static void Drawer_ModeSettingsCustom(HDProbeUI s, SerializedHDProbe p, Editor owner)
+        protected static void Drawer_ModeSettingsCustom(HDProbeUI s, SerializedHDProbe p, Editor owner)
         {
             EditorGUILayout.PropertyField(p.renderDynamicObjects, CoreEditorUtils.GetContent("Dynamic Objects|If enabled dynamic objects are also rendered into the cubemap"));
 
