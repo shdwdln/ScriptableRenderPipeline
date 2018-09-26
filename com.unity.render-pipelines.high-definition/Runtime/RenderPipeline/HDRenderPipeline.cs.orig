@@ -1546,9 +1546,21 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                     HDUtils.SetRenderTarget(cmd, hdCamera, m_SharedRTManager.GetPrepassBuffersRTI(hdCamera.frameSettings), m_SharedRTManager.GetDepthStencilBuffer(hdCamera.frameSettings.enableMSAA));
 
                     // Full forward: Output normal buffer for both forward and forwardOnly
+<<<<<<< HEAD
                     // Exclude object that render velocity (if motion vector are enabled)
                     RenderOpaqueRenderList(cull, hdCamera, renderContext, cmd, m_DepthOnlyAndDepthForwardOnlyPassNames, 0, HDRenderQueue.k_RenderQueue_AllOpaque, excludeMotionVector : excludeMotion);
+                }
+=======
+                    if(excludeMotion)
+                    {
+                    RenderOpaqueRenderList(cull, hdCamera, renderContext, cmd, m_DepthOnlyAndDepthForwardOnlyPassNames, RendererConfiguration.PerObjectMotionVectors, HDRenderQueue.k_RenderQueue_AllOpaque, excludeMotionVector : excludeMotion);
+                }
+                    else
+                    {
+                        RenderOpaqueRenderList(cull, hdCamera, renderContext, cmd, m_DepthOnlyAndDepthForwardOnlyPassNames, 0, HDRenderQueue.k_RenderQueue_AllOpaque);
+                    }
             }
+>>>>>>> master
             }
             // If we enable DBuffer, we need a full depth prepass
             else if (hdCamera.frameSettings.enableDepthPrepassWithDeferredRendering || m_DbufferManager.enableDecals)
@@ -1563,8 +1575,19 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                     HDUtils.SetRenderTarget(cmd, hdCamera, m_SharedRTManager.GetPrepassBuffersRTI(hdCamera.frameSettings), m_SharedRTManager.GetDepthStencilBuffer());
 
                     // Then forward only material that output normal buffer
+<<<<<<< HEAD
                     RenderOpaqueRenderList(cull, hdCamera, renderContext, cmd, m_DepthForwardOnlyPassNames, 0, HDRenderQueue.k_RenderQueue_AllOpaque, excludeMotionVector: excludeMotion);
                 }
+=======
+                    if(excludeMotion)
+                    {
+                        RenderOpaqueRenderList(cull, hdCamera, renderContext, cmd, m_DepthOnlyAndDepthForwardOnlyPassNames, RendererConfiguration.PerObjectMotionVectors, HDRenderQueue.k_RenderQueue_AllOpaque, excludeMotionVector : excludeMotion);
+                }
+                    else
+                    {
+                        RenderOpaqueRenderList(cull, hdCamera, renderContext, cmd, m_DepthOnlyAndDepthForwardOnlyPassNames, 0, HDRenderQueue.k_RenderQueue_AllOpaque);
+                    }                }
+>>>>>>> master
             }
             else // Deferred with partial depth prepass
             {
@@ -1579,8 +1602,19 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                     HDUtils.SetRenderTarget(cmd, hdCamera, m_SharedRTManager.GetPrepassBuffersRTI(hdCamera.frameSettings), m_SharedRTManager.GetDepthStencilBuffer());
 
                     // Then forward only material that output normal buffer
+<<<<<<< HEAD
                     RenderOpaqueRenderList(cull, hdCamera, renderContext, cmd, m_DepthForwardOnlyPassNames, 0, HDRenderQueue.k_RenderQueue_AllOpaque, excludeMotionVector : excludeMotion);
                 }
+=======
+                    if(excludeMotion)
+                    {
+                        RenderOpaqueRenderList(cull, hdCamera, renderContext, cmd, m_DepthOnlyAndDepthForwardOnlyPassNames, RendererConfiguration.PerObjectMotionVectors, HDRenderQueue.k_RenderQueue_AllOpaque, excludeMotionVector : excludeMotion);
+                }
+                    else
+                    {
+                        RenderOpaqueRenderList(cull, hdCamera, renderContext, cmd, m_DepthOnlyAndDepthForwardOnlyPassNames, 0, HDRenderQueue.k_RenderQueue_AllOpaque);
+                    }                }
+>>>>>>> master
             }
         }
 
