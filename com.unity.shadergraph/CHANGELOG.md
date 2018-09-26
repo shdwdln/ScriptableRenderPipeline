@@ -75,3 +75,4 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - SpaceMaterialSlot now reads correct slot.
 - Slider node control now functions correctly.
 - Shader Graphs no longer display an error message intended for Sub Graphs when you delete properties.
+- The dynamic value slot type now uses the correct decimal separator during HLSL generation.
