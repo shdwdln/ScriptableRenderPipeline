@@ -19,15 +19,14 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             }
         }
 
-        private List<CullingGroup> m_FreeList = new List<CullingGroup>();
+        private Stack<CullingGroup> m_FreeList = new Stack<CullingGroup>();
 
         public CullingGroup Alloc()
         {
             CullingGroup group;
             if(m_FreeList.Count > 0)
             {
-                group = m_FreeList[0];
-                m_FreeList.Remove(group);
+                group = m_FreeList.Pop();
             }
             else
             {
@@ -38,7 +37,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
 
         public void Free(CullingGroup group)
         {
-            m_FreeList.Add(group);
+            m_FreeList.Push(group);
         }
 
         public void Cleanup()
