@@ -349,19 +349,16 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
 
         // shadow related stuff
         HDShadowManager                     m_ShadowManager;
-        List<int>                           m_ShadowRequests = new List<int>();
-        Dictionary<int, int>                m_ShadowIndices = new Dictionary<int, int>();
+        HDShadowInitParameters              m_ShadowInitParameters;
 
-        /// HD Shadow stuff
-        HDShadowInitParameters              m_HDShadowInitParameters;
         // Used to shadow shadow maps with use selection enabled in the debug menu
         int m_DebugSelectedLightShadowIndex;
         int m_DebugSelectedLightShadowCount;
 
         void InitShadowSystem(HDRenderPipelineAsset hdAsset)
         {
-            m_HDShadowInitParameters = hdAsset.GetRenderPipelineSettings().hdShadowInitParams;
-            m_ShadowManager = new HDShadowManager(m_HDShadowInitParameters.shadowAtlasWidth, m_HDShadowInitParameters.shadowAtlasHeight, m_HDShadowInitParameters.maxShadowRequests, m_HDShadowInitParameters.shadowMapsDepthBits, hdAsset.renderPipelineResources.shaders.shadowClearPS);
+            m_ShadowInitParameters = hdAsset.GetRenderPipelineSettings().hdShadowInitParams;
+            m_ShadowManager = new HDShadowManager(m_ShadowInitParameters.shadowAtlasWidth, m_ShadowInitParameters.shadowAtlasHeight, m_ShadowInitParameters.maxShadowRequests, m_ShadowInitParameters.shadowMapsDepthBits, hdAsset.renderPipelineResources.shaders.shadowClearPS);
         }
 
         void DeinitShadowSystem()
@@ -1698,7 +1695,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                             if (m_FrameSettings.enableShadow && cullResults.GetShadowCasterBounds(lightIndex, out bounds))
                             {
                                 int shadowRequestCount;
-                                shadowIndex = additionalLightData.UpdateShadowRequest(camera, m_HDShadowInitParameters, m_ShadowManager, light, cullResults, lightIndex, out shadowRequestCount);
+                                shadowIndex = additionalLightData.UpdateShadowRequest(camera, m_ShadowInitParameters, m_ShadowManager, light, cullResults, lightIndex, out shadowRequestCount);
 
 #if UNITY_EDITOR
                                 if (debugDisplaySettings.lightingDebugSettings.shadowDebugUseSelection && UnityEditor.Selection.activeGameObject == lightComponent.gameObject)
