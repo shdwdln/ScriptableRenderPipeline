@@ -1536,6 +1536,11 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             // as they will not use the result of lighting anyway. However take care of effect that will try to filter normal buffer.
             // TODO: maybe we can use a stencil to tag when Forward unlit touch normal buffer
 
+            // Additional guidelines when motion vector are enabled
+            // To save drawcall we don't render in prepass the object that have object motion vector. We use the excludeMotion filter option of DrawRenderer to know that (only C++ can know if an object have object motion vector).
+            // Thus during this prepass we will exclude all object that have object motion vector, mean that during the velocity pass they will also output normal buffer (like a regular prepass) if needed.
+            // Combination of both depth prepass + motion vector pass provide the full depth buffer
+
             // In order to avoid rendering objects twice (once in the depth pre-pass and once in the motion vector pass, when the motion vector pass is enabled). We exclude the objects that have motion vectors.
             bool excludeMotion = hdCamera.frameSettings.enableObjectMotionVectors;
 
@@ -1548,7 +1553,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                     // Full forward: Output normal buffer for both forward and forwardOnly
                     // Exclude object that render velocity (if motion vector are enabled)
                     RenderOpaqueRenderList(cull, hdCamera, renderContext, cmd, m_DepthOnlyAndDepthForwardOnlyPassNames, 0, HDRenderQueue.k_RenderQueue_AllOpaque, excludeMotionVector : excludeMotion);
-            }
+                }
             }
             // If we enable DBuffer, we need a full depth prepass
             else if (hdCamera.frameSettings.enableDepthPrepassWithDeferredRendering || m_DbufferManager.enableDecals)
