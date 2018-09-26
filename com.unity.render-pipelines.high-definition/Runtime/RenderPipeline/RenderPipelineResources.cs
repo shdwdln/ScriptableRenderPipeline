@@ -122,9 +122,6 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
         [Serializable]
         public sealed class ShaderGraphResources
         {
-            public Shader autodeskInteractiveSG;
-            public Shader autodeskInteractiveTransparentSG;
-            public Shader autodeskInteractiveMaskedSG;
         }
 
         public ShaderResources shaders;
@@ -261,9 +258,6 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             // ShaderGraphs
             shaderGraphs = new ShaderGraphResources
             {
-                autodeskInteractiveSG = Load<Shader>(HDRenderPipelinePath + "RenderPipelineResources/ShaderGraph/AutodeskInteractive.ShaderGraph"),
-                autodeskInteractiveTransparentSG = Load<Shader>(HDRenderPipelinePath + "RenderPipelineResources/ShaderGraph/AutodeskInteractiveTransparent.ShaderGraph"),
-                autodeskInteractiveMaskedSG = Load<Shader>(HDRenderPipelinePath + "RenderPipelineResources/ShaderGraph/AutodeskInteractiveMasked.ShaderGraph"),
             };
         }
 #endif
