@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Added control for sundisc on directional light (hack)
 - Added a new HD Lit Master node that implements Lit shader support for Shader Graph
 - Added Micro shadowing support (hack)
+- Added an event on HDAdditionalCameraData for custom rendering
 - Added occlusion mesh to depth prepass for VR (VR still disabled for now)
 
 ### Fixed
