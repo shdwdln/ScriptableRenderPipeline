@@ -91,7 +91,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                     r.y = y;
                     y += r.height;
                     currentY = Mathf.Max(currentY, y);
-                    currentMaxXCache = Mathf.Max(currentMaxX, currentMaxX + r.width);
+                    currentMaxXCache = Mathf.Max(currentMaxXCache, currentMaxX + r.width);
                     shadowRequests[index].atlasViewport = r;
                     index++;
                 } while (y < currentMaxY && index < shadowRequests.Count);
@@ -108,7 +108,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                     r.y = currentMaxY;
                     x += r.width;
                     currentX = Mathf.Max(currentX, x);
-                    currentMaxYCache = Mathf.Max(currentMaxY, currentMaxY + r.height);
+                    currentMaxYCache = Mathf.Max(currentMaxYCache, currentMaxY + r.height);
                     shadowRequests[index].atlasViewport = r;
                     index++;
                 } while (x < currentMaxX && index < shadowRequests.Count);
