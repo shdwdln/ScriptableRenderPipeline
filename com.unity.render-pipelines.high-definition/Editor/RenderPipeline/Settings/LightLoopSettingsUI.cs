@@ -1,5 +1,6 @@
 using UnityEditor.AnimatedValues;
 using UnityEngine;
+using UnityEngine.Experimental.Rendering.HDPipeline;
 
 namespace UnityEditor.Experimental.Rendering.HDPipeline
 {
@@ -46,20 +47,21 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
         {
             //RenderPipelineSettings hdrpSettings = (GraphicsSettings.renderPipelineAsset as HDRenderPipelineAsset).renderPipelineSettings;
             OverridableSettingsArea area = new OverridableSettingsArea(6);
+            FrameSettings defaultFrameSettings = FrameSettingsUI.GetDefaultFrameSettingsFor(owner);
 
             // Uncomment if you re-enable LIGHTLOOP_SINGLE_PASS multi_compile in lit*.shader
             //area.Add(p.enableTileAndCluster, tileAndClusterContent, a => p.overridesTileAndCluster = a, () => p.overridesTileAndCluster);
             //and add indent:1 or indent:2 regarding indentation you want
-            
+
             if (s.isSectionExpandedEnableTileAndCluster.target)
             {
-                area.Add(p.enableFptlForForwardOpaque, fptlForForwardOpaqueContent, () => p.overridesFptlForForwardOpaque, a => p.overridesFptlForForwardOpaque = a);
-                area.Add(p.enableBigTilePrepass, bigTilePrepassContent, () => p.overridesBigTilePrepass, a => p.overridesBigTilePrepass = a);
-                area.Add(p.enableComputeLightEvaluation, computeLightEvaluationContent, () => p.overridesComputeLightEvaluation, a => p.overridesComputeLightEvaluation = a);
+                area.Add(p.enableFptlForForwardOpaque, fptlForForwardOpaqueContent, () => p.overridesFptlForForwardOpaque, a => p.overridesFptlForForwardOpaque = a, defaultValue: defaultFrameSettings.lightLoopSettings.enableFptlForForwardOpaque);
+                area.Add(p.enableBigTilePrepass, bigTilePrepassContent, () => p.overridesBigTilePrepass, a => p.overridesBigTilePrepass = a, defaultValue: defaultFrameSettings.lightLoopSettings.enableBigTilePrepass);
+                area.Add(p.enableComputeLightEvaluation, computeLightEvaluationContent, () => p.overridesComputeLightEvaluation, a => p.overridesComputeLightEvaluation = a, defaultValue: defaultFrameSettings.lightLoopSettings.enableComputeLightEvaluation);
                 if (s.isSectionExpandedComputeLightEvaluation.target)
                 {
-                    area.Add(p.enableComputeLightVariants, computeLightVariantsContent, () => p.overridesComputeLightVariants, a => p.overridesComputeLightVariants = a, indent: 1);
-                    area.Add(p.enableComputeMaterialVariants, computeMaterialVariantsContent, () => p.overridesComputeMaterialVariants, a => p.overridesComputeMaterialVariants = a, indent: 1);
+                    area.Add(p.enableComputeLightVariants, computeLightVariantsContent, () => p.overridesComputeLightVariants, a => p.overridesComputeLightVariants = a, defaultValue: defaultFrameSettings.lightLoopSettings.enableComputeLightVariants, indent: 1);
+                    area.Add(p.enableComputeMaterialVariants, computeMaterialVariantsContent, () => p.overridesComputeMaterialVariants, a => p.overridesComputeMaterialVariants = a, defaultValue: defaultFrameSettings.lightLoopSettings.enableComputeMaterialVariants, indent: 1);
                 }
             }
 
