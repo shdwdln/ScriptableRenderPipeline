@@ -34,7 +34,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
         //static readonly GUIContent shutterSpeedContent = CoreEditorUtils.GetContent("Shutter Speed");
         //static readonly GUIContent isoContent = CoreEditorUtils.GetContent("Iso");
 
-        //static readonly GUIContent shadowDistanceContent = CoreEditorUtils.GetContent("Shadow Distance");
+        static readonly GUIContent shadowDistanceContent = CoreEditorUtils.GetContent("Shadow Distance");
 
         public static CED.IDrawer SectionCaptureSettings = CED.FoldoutGroup(
                 captureSettingsHeaderContent,
@@ -78,7 +78,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
             //area.Add(p.aperture, apertureContent, () => p.overridesAperture, a => p.overridesAperture = a);
             //area.Add(p.shutterSpeed, shutterSpeedContent, () => p.overridesShutterSpeed, a => p.overridesShutterSpeed = a);
             //area.Add(p.iso, isoContent, () => p.overridesIso, a => p.overridesIso = a);
-            //area.Add(p.shadowDistance, shadowDistanceContent, () => p.overridesShadowDistance, a => p.overridesShadowDistance = a);
+            area.Add(p.shadowDistance, shadowDistanceContent, () => p.overridesShadowDistance, a => p.overridesShadowDistance = a);
             area.Add(p.renderingPath, renderingPathContent, () => p.overridesRenderingPath, a => p.overridesRenderingPath = a);
             area.Draw(withOverride: false);
         }

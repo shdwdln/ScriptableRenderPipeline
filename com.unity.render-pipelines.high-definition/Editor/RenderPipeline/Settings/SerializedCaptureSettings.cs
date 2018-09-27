@@ -26,7 +26,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
         //public SerializedProperty shutterSpeed;
         //public SerializedProperty iso;
 
-        //public SerializedProperty shadowDistance;
+        public SerializedProperty shadowDistance;
 
         private SerializedProperty overrides;
         //public bool overridesCubeResolution
@@ -227,17 +227,17 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
         //            overrides.intValue &= ~(int)CaptureSettingsOverrides.Iso;
         //    }
         //}
-        //public bool overridesShadowDistance
-        //{
-        //    get { return (overrides.intValue & (int)CaptureSettingsOverrides.ShadowDistance) > 0; }
-        //    set
-        //    {
-        //        if (value)
-        //            overrides.intValue |= (int)CaptureSettingsOverrides.ShadowDistance;
-        //        else
-        //            overrides.intValue &= ~(int)CaptureSettingsOverrides.ShadowDistance;
-        //    }
-        //}
+        public bool overridesShadowDistance
+        {
+            get { return (overrides.intValue & (int)CaptureSettingsOverrides.ShadowDistance) > 0; }
+            set
+            {
+                if (value)
+                    overrides.intValue |= (int)CaptureSettingsOverrides.ShadowDistance;
+                else
+                    overrides.intValue &= ~(int)CaptureSettingsOverrides.ShadowDistance;
+            }
+        }
 
         public SerializedCaptureSettings(SerializedProperty root)
         {
@@ -265,7 +265,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
             //shutterSpeed = root.Find((CaptureSettings d) => d.shutterSpeed);
             //iso = root.Find((CaptureSettings d) => d.iso);
 
-            //shadowDistance = root.Find((CaptureSettings d) => d.shadowDistance);
+            shadowDistance = root.Find((CaptureSettings d) => d.shadowDistance);
         }
     }
 }

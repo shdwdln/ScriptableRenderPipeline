@@ -25,7 +25,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
         //Aperture = 1 << 15,
         //ShutterSpeed = 1 << 16,
         //Iso = 1 << 17,
-        //ShadowDistance = 1 << 18,
+        ShadowDistance = 1 << 18,
     }
 
     [Serializable]
@@ -58,6 +58,6 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
         //public float shutterSpeed = 1f / 200f;
         //public float iso = 400f;
 
-        //public float shadowDistance = 100.0f;
+        public float shadowDistance = 100.0f;
     }
 }
