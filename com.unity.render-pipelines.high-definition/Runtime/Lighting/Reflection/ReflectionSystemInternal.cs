@@ -416,9 +416,9 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline.Internal
             additionalData.renderingPath = probe.captureSettings.renderingPath;
 
             HDRenderPipelineAsset hdrp = GraphicsSettings.renderPipelineAsset as HDRenderPipelineAsset;
-            hdrp.GetFrameSettings().CopyTo(additionalData.GetFrameSettings());
+            hdrp.GetPlanarReflectionFrameSettings().CopyTo(additionalData.GetFrameSettings());
             if (probe.captureSettings.renderingPath == HDAdditionalCameraData.RenderingPath.Custom)
-                probe.frameSettings.CopyTo(additionalData.GetFrameSettings()); //TODO: only override what needed
+                probe.frameSettings.Override(additionalData.GetFrameSettings()).CopyTo(additionalData.GetFrameSettings());
             
             camera.projectionMatrix = projection;
             camera.worldToCameraMatrix = worldToCamera;
@@ -461,9 +461,9 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline.Internal
             additionalData.renderingPath = additional.captureSettings.renderingPath;
 
             HDRenderPipelineAsset hdrp = GraphicsSettings.renderPipelineAsset as HDRenderPipelineAsset;
-            hdrp.GetFrameSettings().CopyTo(additionalData.GetFrameSettings());
+            hdrp.GetCubeReflectionFrameSettings().CopyTo(additionalData.GetFrameSettings());
             if (additional.captureSettings.renderingPath == HDAdditionalCameraData.RenderingPath.Custom)
-                additional.frameSettings.CopyTo(additionalData.GetFrameSettings()); //TODO: only override what needed
+                additional.frameSettings.Override(additionalData.GetFrameSettings()).CopyTo(additionalData.GetFrameSettings());
 
             camera.projectionMatrix = Matrix4x4.Perspective(fov, aspect, nearClipPlane, farClipPlane);
             camera.worldToCameraMatrix = GeometryUtils.CalculateWorldToCameraMatrixRHS(capturePosition, captureRotation);

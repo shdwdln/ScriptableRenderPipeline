@@ -841,7 +841,16 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                 if (additionalCameraData)
                 {
                     additionalCameraData.UpdateDirtyFrameSettings(assetFrameSettingsIsDirty, m_Asset.GetFrameSettings());
-                    srcFrameSettings = additionalCameraData.GetFrameSettings();
+                    if (camera.cameraType != CameraType.Reflection)
+                    {
+                        srcFrameSettings = additionalCameraData.GetFrameSettings().Override(m_Asset.GetFrameSettings());
+                    }
+                    else 
+                    {
+                        //reflection camera use different framesettings as base for their override
+                        //handled in ReflectionSystemInternal
+                        srcFrameSettings = additionalCameraData.GetFrameSettings();
+                    }
                 }
                 else
                 {

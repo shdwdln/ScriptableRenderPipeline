@@ -17,10 +17,9 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
         Transmission = 1 << 6,
         AtmosphericScaterring = 1 << 7,
         Volumetrics = 1 << 8,
-        ProjectionForVolumetrics = 1 << 9,
+        ReprojectionForVolumetrics = 1 << 9,
         LightLayers = 1 << 10,
         MSAA = 1 << 11,
-        MSAASampleCounte = 1 << 12,
 
         //rendering pass
         TransparentPrepass = 1 << 13,
@@ -49,6 +48,37 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
     [Serializable]
     public class FrameSettings
     {
+        static Dictionary<FrameSettingsOverrides, Action<FrameSettings, FrameSettings>> s_Overrides = new Dictionary<FrameSettingsOverrides, Action<FrameSettings, FrameSettings>>
+        {
+            {FrameSettingsOverrides.Shadow, (a, b) => { a.enableShadow = b.enableShadow; } },
+            {FrameSettingsOverrides.ContactShadow, (a, b) => { a.enableContactShadows = b.enableContactShadows; } },
+            {FrameSettingsOverrides.ShadowMask, (a, b) => { a.enableShadowMask = b.enableShadowMask; } },
+            {FrameSettingsOverrides.SSR, (a, b) => { a.enableSSR = b.enableSSR; } },
+            {FrameSettingsOverrides.SSAO, (a, b) => { a.enableSSAO = b.enableSSAO; } },
+            {FrameSettingsOverrides.SubsurfaceScattering, (a, b) => { a.enableSubsurfaceScattering = b.enableSubsurfaceScattering; } },
+            {FrameSettingsOverrides.Transmission, (a, b) => { a.enableTransmission = b.enableTransmission; } },
+            {FrameSettingsOverrides.AtmosphericScaterring, (a, b) => { a.enableAtmosphericScattering = b.enableAtmosphericScattering; } },
+            {FrameSettingsOverrides.Volumetrics, (a, b) => { a.enableVolumetrics = b.enableVolumetrics; } },
+            {FrameSettingsOverrides.ReprojectionForVolumetrics, (a, b) => { a.enableReprojectionForVolumetrics = b.enableReprojectionForVolumetrics; } },
+            {FrameSettingsOverrides.LightLayers, (a, b) => { a.enableLightLayers = b.enableLightLayers; } },
+            {FrameSettingsOverrides.MSAA, (a, b) => { a.enableMSAA = b.enableMSAA; } },
+            {FrameSettingsOverrides.TransparentPrepass, (a, b) => { a.enableTransparentPrepass = b.enableTransparentPrepass; } },
+            {FrameSettingsOverrides.TransparentPostpass, (a, b) => { a.enableTransparentPostpass = b.enableTransparentPostpass; } },
+            {FrameSettingsOverrides.MotionVectors, (a, b) => { a.enableMotionVectors = b.enableMotionVectors; } },
+            {FrameSettingsOverrides.ObjectMotionVectors, (a, b) => { a.enableObjectMotionVectors = b.enableObjectMotionVectors; } },
+            {FrameSettingsOverrides.Decals, (a, b) => { a.enableDecals = b.enableDecals; } },
+            {FrameSettingsOverrides.RoughRefraction, (a, b) => { a.enableRoughRefraction = b.enableRoughRefraction; } },
+            {FrameSettingsOverrides.Distortion, (a, b) => { a.enableDistortion = b.enableDistortion; } },
+            {FrameSettingsOverrides.Postprocess, (a, b) => { a.enablePostprocess = b.enablePostprocess; } },
+            {FrameSettingsOverrides.ForwardRenderingOnly, (a, b) => { a.enableForwardRenderingOnly = b.enableForwardRenderingOnly; } },
+            {FrameSettingsOverrides.DepthPrepassWithDeferredRendering, (a, b) => { a.enableDepthPrepassWithDeferredRendering = b.enableDepthPrepassWithDeferredRendering; } },
+            {FrameSettingsOverrides.AsyncCompute, (a, b) => { a.enableAsyncCompute = b.enableAsyncCompute; } },
+            {FrameSettingsOverrides.OpaqueObjects, (a, b) => { a.enableOpaqueObjects = b.enableOpaqueObjects; } },
+            {FrameSettingsOverrides.TransparentObjects, (a, b) => { a.enableTransparentObjects = b.enableTransparentObjects; } },
+            {FrameSettingsOverrides.Stereo, (a, b) => { a.enableStereo = b.enableStereo; } },
+            {FrameSettingsOverrides.XrGraphicSettings, (a, b) => { a.xrGraphicsConfig = b.xrGraphicsConfig; } },
+        };
+
         public FrameSettingsOverrides overrides;
 
         // Lighting
@@ -97,8 +127,20 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
         // FrameSettings..ctor() 
         public LightLoopSettings lightLoopSettings = new LightLoopSettings();
 
+        public FrameSettings() {
+            debug = (int)overrides;
+        }
+        public FrameSettings(FrameSettings toCopy)
+        {
+            toCopy.CopyTo(this);
+        }
+
+        int debug = 0;
         public void CopyTo(FrameSettings frameSettings)
         {
+            debug = (int)overrides;
+            frameSettings.debug = (int)frameSettings.overrides;
+
             frameSettings.enableShadow = this.enableShadow;
             frameSettings.enableContactShadows = this.enableContactShadows;
             frameSettings.enableShadowMask = this.enableShadowMask;
@@ -136,7 +178,33 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
 
             frameSettings.enableMSAA = this.enableMSAA;
 
+            frameSettings.overrides = this.overrides;
+            frameSettings.debug = (int)frameSettings.overrides;
+
             this.lightLoopSettings.CopyTo(frameSettings.lightLoopSettings);
+        }
+
+        public FrameSettings Override(FrameSettings overridedFrameSettings)
+        {
+            debug = (int)overrides;
+            if(overrides == 0)
+            {
+                //nothing to override
+                return overridedFrameSettings;
+            }
+
+            FrameSettings result = new FrameSettings(overridedFrameSettings);
+            Array values = Enum.GetValues(typeof(FrameSettingsOverrides));
+            foreach(FrameSettingsOverrides val in values)
+            {
+                if((val & overrides) > 0)
+                {
+                    s_Overrides[val](result, this);
+                }
+            }
+
+            result.lightLoopSettings = lightLoopSettings.Override(overridedFrameSettings.lightLoopSettings);
+            return result;
         }
 
         // Init a FrameSettings from renderpipeline settings, frame settings and debug settings (if any)

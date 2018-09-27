@@ -18,6 +18,16 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
     [Serializable]
     public class LightLoopSettings
     {
+        static Dictionary<LightLoopSettingsOverrides, Action<LightLoopSettings, LightLoopSettings>> s_Overrides = new Dictionary<LightLoopSettingsOverrides, Action<LightLoopSettings, LightLoopSettings>>
+        {
+            {LightLoopSettingsOverrides.FptlForForwardOpaque, (a, b) => { a.enableFptlForForwardOpaque = b.enableFptlForForwardOpaque; } },
+            {LightLoopSettingsOverrides.BigTilePrepass, (a, b) => { a.enableBigTilePrepass = b.enableBigTilePrepass; } },
+            {LightLoopSettingsOverrides.ComputeLightEvaluation, (a, b) => { a.enableComputeLightEvaluation = b.enableComputeLightEvaluation; } },
+            {LightLoopSettingsOverrides.ComputeLightVariants, (a, b) => { a.enableComputeLightVariants = b.enableComputeLightVariants; } },
+            {LightLoopSettingsOverrides.ComputeMaterialVariants, (a, b) => { a.enableComputeMaterialVariants = b.enableComputeMaterialVariants; } },
+            {LightLoopSettingsOverrides.TileAndCluster, (a, b) => { a.enableTileAndCluster = b.enableTileAndCluster; } },
+        };
+
         public LightLoopSettingsOverrides overrides;
 
         // Setup by the users
@@ -33,6 +43,12 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
         // Setup by system
         public bool isFptlEnabled = true;
 
+        public LightLoopSettings() { }
+        public LightLoopSettings(LightLoopSettings toCopy)
+        {
+            toCopy.CopyTo(this);
+        }
+
         public void CopyTo(LightLoopSettings lightLoopSettings)
         {
             lightLoopSettings.enableTileAndCluster = this.enableTileAndCluster;
@@ -44,6 +60,28 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             lightLoopSettings.enableBigTilePrepass = this.enableBigTilePrepass;
 
             lightLoopSettings.isFptlEnabled = this.isFptlEnabled;
+
+            lightLoopSettings.overrides = this.overrides;
+        }
+
+        public LightLoopSettings Override(LightLoopSettings overridedFrameSettings)
+        {
+            if (overrides == 0)
+            {
+                //nothing to override
+                return overridedFrameSettings;
+            }
+
+            LightLoopSettings result = new LightLoopSettings(overridedFrameSettings);
+            Array values = Enum.GetValues(typeof(LightLoopSettingsOverrides));
+            foreach (LightLoopSettingsOverrides val in values)
+            {
+                if ((val & overrides) > 0)
+                {
+                    s_Overrides[val](result, this);
+                }
+            }
+            return result;
         }
 
         // aggregateFrameSettings already contain the aggregation of RenderPipelineSettings and FrameSettings (regular and/or debug)

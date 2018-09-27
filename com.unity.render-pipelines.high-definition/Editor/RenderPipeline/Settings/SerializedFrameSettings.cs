@@ -147,13 +147,13 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
         }
         public bool overridesProjectionForVolumetrics
         {
-            get { return (overrides.intValue & (int)FrameSettingsOverrides.ProjectionForVolumetrics) > 0; }
+            get { return (overrides.intValue & (int)FrameSettingsOverrides.ReprojectionForVolumetrics) > 0; }
             set
             {
                 if (value)
-                    overrides.intValue |= (int)FrameSettingsOverrides.ProjectionForVolumetrics;
+                    overrides.intValue |= (int)FrameSettingsOverrides.ReprojectionForVolumetrics;
                 else
-                    overrides.intValue &= ~(int)FrameSettingsOverrides.ProjectionForVolumetrics;
+                    overrides.intValue &= ~(int)FrameSettingsOverrides.ReprojectionForVolumetrics;
             }
         }
         public bool overridesLightLayers
@@ -341,17 +341,6 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
                     overrides.intValue |= (int)FrameSettingsOverrides.MSAA;
                 else
                     overrides.intValue &= ~(int)FrameSettingsOverrides.MSAA;
-            }
-        }
-        public bool overridesMSAASampleCounte
-        {
-            get { return (overrides.intValue & (int)FrameSettingsOverrides.MSAASampleCounte) > 0; }
-            set
-            {
-                if (value)
-                    overrides.intValue |= (int)FrameSettingsOverrides.MSAASampleCounte;
-                else
-                    overrides.intValue &= ~(int)FrameSettingsOverrides.MSAASampleCounte;
             }
         }
 
