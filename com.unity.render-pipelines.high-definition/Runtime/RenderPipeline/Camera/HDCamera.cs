@@ -272,8 +272,8 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                 m_ActualWidth = xrDesc.width;
                 m_ActualHeight = xrDesc.height;
 
-                ConfigureStereoMatrices();
             }
+            ConfigureStereoMatrices();
 
             if (ShaderConfig.s_CameraRelativeRendering != 0)
             {
@@ -487,6 +487,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             for (uint eyeIndex = 0; eyeIndex < 2; eyeIndex++)
             {
                 viewMatrixStereo[eyeIndex] = camera.GetStereoViewMatrix((Camera.StereoscopicEye)eyeIndex);
+                var location = camera.GetStereoViewMatrix((Camera.StereoscopicEye)eyeIndex).GetColumn(3);
 
                 projMatrixStereo[eyeIndex] = camera.GetStereoProjectionMatrix((Camera.StereoscopicEye)eyeIndex);
                 projMatrixStereo[eyeIndex] = GL.GetGPUProjectionMatrix(projMatrixStereo[eyeIndex], true);
@@ -640,6 +641,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
 
         public void SetupGlobalStereoParams(CommandBuffer cmd)
         {
+            Vector4[] worldSpaceCameraPos = new Vector4[2];
             for (uint eyeIndex = 0; eyeIndex < 2; eyeIndex++)
             {
                 var proj = projMatrixStereo[eyeIndex];
@@ -650,16 +652,20 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
 
                 viewProjStereo[eyeIndex] = proj * view;
                 invViewProjStereo[eyeIndex] = viewProjStereo[eyeIndex].inverse;
+
+                worldSpaceCameraPos[eyeIndex] = view.GetColumn(3);
             }
 
             // corresponds to UnityPerPassStereo
             // TODO: Migrate the other stereo matrices to HDRP-managed UnityPerPassStereo?
             cmd.SetGlobalMatrixArray(HDShaderIDs._ViewMatrixStereo, viewMatrixStereo);
+            cmd.SetGlobalMatrixArray(HDShaderIDs._ProjMatrixStereo, projMatrixStereo);
             cmd.SetGlobalMatrixArray(HDShaderIDs._ViewProjMatrixStereo, viewProjStereo);
             cmd.SetGlobalMatrixArray(HDShaderIDs._InvViewMatrixStereo, invViewStereo);
             cmd.SetGlobalMatrixArray(HDShaderIDs._InvProjMatrixStereo, invProjStereo);
             cmd.SetGlobalMatrixArray(HDShaderIDs._InvViewProjMatrixStereo, invViewProjStereo);
             cmd.SetGlobalMatrixArray(HDShaderIDs._PrevViewProjMatrixStereo, prevViewProjMatrixStereo);
+            cmd.SetGlobalVectorArray(HDShaderIDs._WorldSpaceCameraPosStereo, worldSpaceCameraPos);
             cmd.SetGlobalVector(HDShaderIDs._TextureWidthScaling, textureWidthScaling);
         }
 
