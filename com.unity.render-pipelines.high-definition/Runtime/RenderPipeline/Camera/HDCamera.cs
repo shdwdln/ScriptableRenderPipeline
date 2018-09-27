@@ -487,7 +487,6 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             for (uint eyeIndex = 0; eyeIndex < 2; eyeIndex++)
             {
                 viewMatrixStereo[eyeIndex] = camera.GetStereoViewMatrix((Camera.StereoscopicEye)eyeIndex);
-                var location = camera.GetStereoViewMatrix((Camera.StereoscopicEye)eyeIndex).GetColumn(3);
 
                 projMatrixStereo[eyeIndex] = camera.GetStereoProjectionMatrix((Camera.StereoscopicEye)eyeIndex);
                 projMatrixStereo[eyeIndex] = GL.GetGPUProjectionMatrix(projMatrixStereo[eyeIndex], true);
