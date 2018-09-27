@@ -146,7 +146,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
             FrameSettings defaultFrameSettings = GetDefaultFrameSettingsFor(owner);
             area.Add(p.enableStereo, stereoContent, () => p.overridesStereo, a => p.overridesStereo = a, defaultValue: defaultFrameSettings.enableStereo);
             //need to add support for xrGraphicConfig to show it
-            //area.Add(p.xrGraphicsConfig, xrGraphicConfigContent, () => p.overridesXrGraphicSettings, a => p.overridesXrGraphicSettings = a, () => XRGraphicsConfig.enabled , defaultValue: defaultFrameSettings.xrGraphicsConfig);
+            area.Add(p.xrGraphicsConfig, xrGraphicConfigContent, () => p.overridesXrGraphicSettings, a => p.overridesXrGraphicSettings = a, () => XRGraphicsConfig.tryEnable, defaultValue: defaultFrameSettings.xrGraphicsConfig);
             area.Draw(withOverride);
         }
     }

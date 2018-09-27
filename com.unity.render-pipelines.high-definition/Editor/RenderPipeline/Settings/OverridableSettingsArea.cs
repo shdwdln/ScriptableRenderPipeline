@@ -95,14 +95,18 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
                 }
                 using (new EditorGUI.DisabledScope(shouldBeDisabled))
                 {
-                    //the following block will display a default value if provided instead of actual value (case if(true))
-                    if (shouldBeDisabled && field.defaultValue != null)
+                    using (new EditorGUILayout.VerticalScope())
                     {
-                        DrawDefaultValue(field);
-                    }
-                    else
-                    {
-                        EditorGUILayout.PropertyField(field.property, field.content);
+                        //the following block will display a default value if provided instead of actual value (case if(true))
+                        if (shouldBeDisabled && field.defaultValue != null)
+                        {
+                            DrawDefaultValue(field);
+                        }
+                        else
+                        {
+
+                            EditorGUILayout.PropertyField(field.property, field.content);
+                        }
                     }
                 }
             }
@@ -153,6 +157,9 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
                         break;
                     case SerializedPropertyType.ObjectReference:
                         EditorGUILayout.ObjectField(field.content, (UnityEngine.Object)field.defaultValue, field.defaultValue.GetType(), true);
+                        break;
+                    case SerializedPropertyType.Generic:
+                        EditorGUILayout.PropertyField(field.property, includeChildren: true);
                         break;
                     default:
                         EditorGUILayout.LabelField(field.content, new GUIContent("Unsupported type"));
