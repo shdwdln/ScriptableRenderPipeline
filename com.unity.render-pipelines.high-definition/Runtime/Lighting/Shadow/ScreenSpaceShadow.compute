@@ -53,15 +53,15 @@ float InterleavedGradientNoise(float2 uv, uint frameCount)
 
 float SampleDepth(float2 UV, bool HalfRes)
 {
-    UV.y *= (2.0f / 3.0f);
+    float2 pixelCoord = UV.xy * _ScreenSize.xy;
 
     if (HalfRes)
     {
-        UV.x = UV.x * 0.5f;
-        UV.y = UV.y * 0.5f + (2.0f / 3.0f);
+        pixelCoord.x *= 0.5f;
+        pixelCoord.y = pixelCoord.y * 0.5f + _ScreenSize.y;
     }
-
-    return SAMPLE_TEXTURE2D_LOD(_CameraDepthTexture, sampler_CameraDepthTexture, _ScreenToTargetScale.xy * UV, 0).x;
+    
+    return LOAD_TEXTURE2D(_CameraDepthTexture, pixelCoord).x;
 }
 
 
