@@ -128,19 +128,14 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
         public LightLoopSettings lightLoopSettings = new LightLoopSettings();
 
         public FrameSettings() {
-            debug = (int)overrides;
         }
         public FrameSettings(FrameSettings toCopy)
         {
             toCopy.CopyTo(this);
         }
-
-        int debug = 0;
+        
         public void CopyTo(FrameSettings frameSettings)
         {
-            debug = (int)overrides;
-            frameSettings.debug = (int)frameSettings.overrides;
-
             frameSettings.enableShadow = this.enableShadow;
             frameSettings.enableContactShadows = this.enableContactShadows;
             frameSettings.enableShadowMask = this.enableShadowMask;
@@ -179,14 +174,12 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             frameSettings.enableMSAA = this.enableMSAA;
 
             frameSettings.overrides = this.overrides;
-            frameSettings.debug = (int)frameSettings.overrides;
 
             this.lightLoopSettings.CopyTo(frameSettings.lightLoopSettings);
         }
 
         public FrameSettings Override(FrameSettings overridedFrameSettings)
         {
-            debug = (int)overrides;
             if(overrides == 0)
             {
                 //nothing to override

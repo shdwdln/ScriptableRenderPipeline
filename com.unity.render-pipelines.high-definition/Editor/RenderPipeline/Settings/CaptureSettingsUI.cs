@@ -40,7 +40,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
                 captureSettingsHeaderContent,
                 (s, p, o) => s.isSectionExpandedCaptureSettings,
                 FoldoutOption.Indent,
-                CED.LabelWidth(250, CED.Action((s, p, o) => Drawer_SectionCaptureSettings(s, p, o))),
+                CED.LabelWidth(150, CED.Action((s, p, o) => Drawer_SectionCaptureSettings(s, p, o))),
                 CED.space
                 );
 
