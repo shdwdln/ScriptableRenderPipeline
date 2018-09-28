@@ -2,7 +2,7 @@
 
 ## Description
 
-Converts a height map defined by input **Texture** in to a normal map. UV values and sampler state can be defined by inputs **UV** and **Sampler** respectively. If nothing is connected to these ports they will use default values from the inputs. See [Port Bindings](Port-Bindings.md) for more information.
+Converts a height map defined by input **Texture** into a normal map. UV values and sampler state can be defined by inputs **UV** and **Sampler** respectively. If nothing is connected to these ports they will use default values from the inputs. See [Port Bindings](Port-Bindings.md) for more information.
 
 The strength of the created normal map can be defined by inputs **Offset** and **Strength**, where **Offset** defines the maximum distance of a normal detail and **Strength** acts as a multiplier to the result.
 
