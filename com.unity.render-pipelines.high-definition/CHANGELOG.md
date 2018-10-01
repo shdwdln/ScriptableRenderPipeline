@@ -4,7 +4,20 @@ All notable changes to this package will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [4.0.0-preview] - 2019-09-21
+## [4.1.0-preview] - 2018-09-28
+
+### Fixed
+- Fixed a normal bias issue with Stacklit (Was causing light leaking)
+- Fixed camera preview outputing an error when both scene and game view where display and play and exit was call
+- Fixed override debug mode not apply correctly on static GI
+- Fixed issue where XRGraphicsConfig values set in the asset inspector GUI weren't propagating correctly (VR still disabled for now)
+
+### Changed
+- Use samplerunity_ShadowMask instead of samplerunity_samplerLightmap for shadow mask
+- Allow to resize reflection probe gizmo's size
+- Added occlusion mesh to depth prepass for VR (VR still disabled for now)
+
+## [4.0.0-preview] - 2018-09-28
 ### Added
 - Added a new TerrainLit shader that supports rendering of Unity terrains.
 - Added controls for linear fade at the boundary of density volumes
@@ -20,7 +33,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Added a new HD Lit Master node that implements Lit shader support for Shader Graph
 - Added Micro shadowing support (hack)
 - Added an event on HDAdditionalCameraData for custom rendering
-- Added occlusion mesh to depth prepass for VR (VR still disabled for now)
 
 ### Fixed
 - Fixed an issue where sometimes the deferred shadow texture would not be valid, causing wrong rendering.
@@ -45,7 +57,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed GGX that works correctly for the roughness value of 0 (mean specular highlgiht will disappeard for perfect mirror, we rely on maxSmoothness instead to always have a highlight even on mirror surface)
 - Add stereo support to ShaderPassForward.hlsl. Forward rendering now seems passable in limited test scenes with camera-relative rendering disabled.
 - Add stereo support to ProceduralSky.shader and OpaqueAtmosphericScattering.shader.
-- Fixed issue where XRGraphicsConfig values set in the asset inspector GUI weren't propagating correctly (VR still disabled for now)
+- Added CullingGroupManager to fix more GC.Alloc's in HDRP
+- Fixed rendering when multiple cameras render into the same render texture
 
 ### Changed
 - Changed the way depth & color pyramids are built to be faster and better quality, thus improving the look of distortion and refraction.
