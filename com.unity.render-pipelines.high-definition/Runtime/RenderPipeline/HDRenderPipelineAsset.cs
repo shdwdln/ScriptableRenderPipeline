@@ -39,12 +39,12 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
         FrameSettings m_FrameSettingsRuntime = new FrameSettings();
 
         [SerializeField]
-        FrameSettings m_CubeReflectionFrameSettings = new FrameSettings();
+        FrameSettings m_BakedOrCustomReflectionFrameSettings = new FrameSettings();
         //[SerializeField]
         //CaptureSettings m_CubeReflectionCaptureSettings = new CaptureSettings(); // This are the default settings for all the cube probe, public to be visible in the inspector
 
         [SerializeField]
-        FrameSettings m_PlanarReflectionFrameSettings = new FrameSettings();
+        FrameSettings m_RealtimeReflectionFrameSettings = new FrameSettings();
         //[SerializeField]
         //CaptureSettings m_PlanarReflectionCaptureSettings = new CaptureSettings(); // This are the default settings for all the planar probe, public to be visible in the inspector
         
@@ -59,14 +59,14 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             return m_FrameSettingsRuntime;
         }
         
-        public FrameSettings GetCubeReflectionFrameSettings()
+        public FrameSettings GetBakedOrCustomReflectionFrameSettings()
         {
-            return m_CubeReflectionFrameSettings;
+            return m_BakedOrCustomReflectionFrameSettings;
         }
 
-        public FrameSettings GetPlanarReflectionFrameSettings()
+        public FrameSettings GetRealtimeReflectionFrameSettings()
         {
-            return m_PlanarReflectionFrameSettings;
+            return m_RealtimeReflectionFrameSettings;
         }
 
         // See comment in FrameSettings.UpdateDirtyFrameSettings()

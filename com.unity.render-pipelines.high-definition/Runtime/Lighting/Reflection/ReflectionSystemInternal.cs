@@ -412,11 +412,8 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline.Internal
 
             additionalData.renderingPath = probe.captureSettings.renderingPath;
 
-            HDRenderPipelineAsset hdrp = GraphicsSettings.renderPipelineAsset as HDRenderPipelineAsset;
-            hdrp.GetPlanarReflectionFrameSettings().CopyTo(additionalData.GetFrameSettings());
-            if (probe.captureSettings.renderingPath == HDAdditionalCameraData.RenderingPath.Custom)
-                probe.frameSettings.Override(additionalData.GetFrameSettings()).CopyTo(additionalData.GetFrameSettings());
-            
+            SetupFrameSettings(additionalData, probe);
+
             camera.projectionMatrix = projection;
             camera.worldToCameraMatrix = worldToCamera;
 
@@ -456,11 +453,8 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline.Internal
             //additionalData.iso = additional.captureSettings.iso;
 
             additionalData.renderingPath = additional.captureSettings.renderingPath;
-
-            HDRenderPipelineAsset hdrp = GraphicsSettings.renderPipelineAsset as HDRenderPipelineAsset;
-            hdrp.GetCubeReflectionFrameSettings().CopyTo(additionalData.GetFrameSettings());
-            if (additional.captureSettings.renderingPath == HDAdditionalCameraData.RenderingPath.Custom)
-                additional.frameSettings.Override(additionalData.GetFrameSettings()).CopyTo(additionalData.GetFrameSettings());
+            
+            SetupFrameSettings(additionalData, additional);
 
             camera.projectionMatrix = Matrix4x4.Perspective(fov, aspect, nearClipPlane, farClipPlane);
             camera.worldToCameraMatrix = GeometryUtils.CalculateWorldToCameraMatrixRHS(capturePosition, captureRotation);
@@ -468,6 +462,21 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline.Internal
             var ctr = camera.transform;
             ctr.position = capturePosition;
             ctr.rotation = captureRotation;
+        }
+
+        static void SetupFrameSettings(HDAdditionalCameraData additionalData, HDProbe probe)
+        {
+            HDRenderPipelineAsset hdrp = GraphicsSettings.renderPipelineAsset as HDRenderPipelineAsset;
+            if (probe.mode == ReflectionProbeMode.Realtime)
+            {
+                hdrp.GetRealtimeReflectionFrameSettings().CopyTo(additionalData.GetFrameSettings());
+            }
+            else
+            {
+                hdrp.GetBakedOrCustomReflectionFrameSettings().CopyTo(additionalData.GetFrameSettings());
+            }
+            if (probe.captureSettings.renderingPath == HDAdditionalCameraData.RenderingPath.Custom)
+                probe.frameSettings.Override(additionalData.GetFrameSettings()).CopyTo(additionalData.GetFrameSettings());
         }
 
         public static void CalculateCaptureCameraProperties(PlanarReflectionProbe probe, out float nearClipPlane, out float farClipPlane, out float aspect, out float fov, out CameraClearFlags clearFlags, out Color backgroundColor, out Matrix4x4 worldToCamera, out Matrix4x4 projection, out Vector3 capturePosition, out Quaternion captureRotation, Camera viewerCamera = null)

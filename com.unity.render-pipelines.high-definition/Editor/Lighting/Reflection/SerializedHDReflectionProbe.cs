@@ -1,12 +1,12 @@
 using UnityEngine;
 using UnityEngine.Experimental.Rendering.HDPipeline;
+using UnityEngine.Rendering;
 
 namespace UnityEditor.Experimental.Rendering.HDPipeline
 {
     internal class SerializedHDReflectionProbe : SerializedHDProbe
     {
         internal SerializedObject serializedLegacyObject;
-
 
         SerializedProperty legacyBlendDistance;
         SerializedProperty legacySize;
@@ -46,6 +46,12 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
 
             // Set the legacy blend distance to 0 so the legacy culling system use the probe extent
             legacyBlendDistance.floatValue = 0;
+
+            if(mode.enumValueIndex == (int)ReflectionProbeMode.Realtime)
+            {
+                //only supported mode at the moment is everyframe
+                serializedObject.FindProperty("m_RefreshMode").enumValueIndex = (int)ReflectionProbeRefreshMode.EveryFrame;
+            }
         }
 
         internal override void Apply()

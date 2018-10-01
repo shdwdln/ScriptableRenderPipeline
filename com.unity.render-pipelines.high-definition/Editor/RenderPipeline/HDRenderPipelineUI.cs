@@ -14,7 +14,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
         public static readonly GUIContent diffusionProfileSettingsContent = CoreEditorUtils.GetContent("Diffusion Profile Settings");
         public static readonly GUIContent enableShaderVariantStrippingContent = CoreEditorUtils.GetContent("Enable Shader Variant Stripping (experimental)");
 
-        enum SelectedFrameSettings { Camera, CubeReflection, PlanarReflection };
+        enum SelectedFrameSettings { Camera, BakedOrCustomReflection, RealtimeReflection };
         static SelectedFrameSettings selectedFrameSettings = SelectedFrameSettings.Camera;
 
         static HDRenderPipelineUI()
@@ -48,30 +48,20 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
                     )
                 ),
             CED.FadeGroup(
-                (s, d, o, i) => s.isSectionExpandedCubeReflection,
+                (s, d, o, i) => s.isSectionExpandedBakedOrCustomReflection,
                 FadeOption.None,
-                //CED.Select(
-                //    (s, d, o) => s.defaultCubeReflectionCaptureSettings,
-                //    (s, d, o) => d.defaultCubeReflectionCaptureSettings,
-                //    CaptureSettingsUI.SectionCaptureSettings(withOverride: false)
-                //    ),
                 CED.Select(
                     (s, d, o) => s.defaultCubeReflectionFrameSettings,
-                    (s, d, o) => d.defaultCubeReflectionFrameSettings,
+                    (s, d, o) => d.defaultBakedOrCustomReflectionFrameSettings,
                     FrameSettingsUI.Inspector(withOverride: false)
                     )
                 ),
             CED.FadeGroup(
-                (s, d, o, i) => s.isSectionExpandedPlanarReflection,
+                (s, d, o, i) => s.isSectionExpandedRealtimeReflection,
                 FadeOption.None,
-                //CED.Select(
-                //    (s, d, o) => s.defaultPlanarReflectionFrameSettings,
-                //    (s, d, o) => d.defaultPlanarReflectionFrameSettings,
-                //    CaptureSettingsUI.SectionCaptureSettings(withOverride: false)
-                //    ),
                 CED.Select(
                     (s, d, o) => s.defaultPlanarReflectionFrameSettings,
-                    (s, d, o) => d.defaultPlanarReflectionFrameSettings,
+                    (s, d, o) => d.defaultRealtimeReflectionFrameSettings,
                     FrameSettingsUI.Inspector(withOverride: false)
                     )
                 )
@@ -80,13 +70,11 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
         public FrameSettingsUI defaultFrameSettings = new FrameSettingsUI();
         public FrameSettingsUI defaultCubeReflectionFrameSettings = new FrameSettingsUI();
         public FrameSettingsUI defaultPlanarReflectionFrameSettings = new FrameSettingsUI();
-        //public CaptureSettingsUI defaultCubeReflectionCaptureSettings = new CaptureSettingsUI();
-        //public CaptureSettingsUI defaultPlanarReflectionCaptureSettings = new CaptureSettingsUI();
         public RenderPipelineSettingsUI renderPipelineSettings = new RenderPipelineSettingsUI();
         
         public AnimBool isSectionExpandedCamera { get { return m_AnimBools[0]; } }
-        public AnimBool isSectionExpandedCubeReflection { get { return m_AnimBools[1]; } }
-        public AnimBool isSectionExpandedPlanarReflection { get { return m_AnimBools[2]; } }
+        public AnimBool isSectionExpandedBakedOrCustomReflection { get { return m_AnimBools[1]; } }
+        public AnimBool isSectionExpandedRealtimeReflection { get { return m_AnimBools[2]; } }
 
         public HDRenderPipelineUI()
             : base(3)
@@ -98,8 +86,8 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
         {
             renderPipelineSettings.Reset(data.renderPipelineSettings, repaint);
             defaultFrameSettings.Reset(data.defaultFrameSettings, repaint);
-            defaultCubeReflectionFrameSettings.Reset(data.defaultCubeReflectionFrameSettings, repaint);
-            defaultPlanarReflectionFrameSettings.Reset(data.defaultPlanarReflectionFrameSettings, repaint);
+            defaultCubeReflectionFrameSettings.Reset(data.defaultBakedOrCustomReflectionFrameSettings, repaint);
+            defaultPlanarReflectionFrameSettings.Reset(data.defaultRealtimeReflectionFrameSettings, repaint);
             base.Reset(data, repaint);
         }
 
@@ -121,18 +109,18 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
             if(EditorGUI.EndChangeCheck())
             {
                 s.isSectionExpandedCamera.value = false;
-                s.isSectionExpandedCubeReflection.value = false;
-                s.isSectionExpandedPlanarReflection.value = false;
+                s.isSectionExpandedBakedOrCustomReflection.value = false;
+                s.isSectionExpandedRealtimeReflection.value = false;
                 switch(selectedFrameSettings)
                 {
                     case SelectedFrameSettings.Camera:
                         s.isSectionExpandedCamera.value = true;
                         break;
-                    case SelectedFrameSettings.CubeReflection:
-                        s.isSectionExpandedCubeReflection.value = true;
+                    case SelectedFrameSettings.BakedOrCustomReflection:
+                        s.isSectionExpandedBakedOrCustomReflection.value = true;
                         break;
-                    case SelectedFrameSettings.PlanarReflection:
-                        s.isSectionExpandedPlanarReflection.value = true;
+                    case SelectedFrameSettings.RealtimeReflection:
+                        s.isSectionExpandedRealtimeReflection.value = true;
                         break;
                 }
             }

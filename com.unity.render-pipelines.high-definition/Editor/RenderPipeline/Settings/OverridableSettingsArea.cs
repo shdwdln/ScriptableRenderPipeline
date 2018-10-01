@@ -49,7 +49,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
             {
                 return;
             }
-            if (withOverride)
+            if (withOverride & GUI.enabled)
             {
                 OverridesHeaders();
             }
@@ -74,8 +74,8 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
             }
             bool enabled = field.enabled;
             withOverride |= field.forceOverride;
-            withOverride &= enabled;
-            bool shouldBeDisabled = withOverride || !enabled;
+            withOverride &= enabled & GUI.enabled;
+            bool shouldBeDisabled = withOverride || !enabled || !GUI.enabled;
             using (new EditorGUILayout.HorizontalScope())
             {
                 var overrideRect = GUILayoutUtility.GetRect(15f, 17f, GUILayout.ExpandWidth(false)); //15 = kIndentPerLevel
