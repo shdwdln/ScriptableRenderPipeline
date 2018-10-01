@@ -63,6 +63,7 @@ CBUFFER_START(UnityScreenSpaceReflections)
     int   _SsrStencilExclusionValue;
 CBUFFER_END
 
+
 //--------------------------------------------------------------------------------------------------
 // Implementation
 //--------------------------------------------------------------------------------------------------
@@ -79,11 +80,16 @@ void WriteDebugInfo(uint2 positionSS, float4 value)
 [numthreads(8, 8, 1)]
 void ScreenSpaceReflectionsTracing(uint2 positionSS : SV_DispatchThreadID)
 {
+    // If we are in forward only, the exclusion happens at a later stage.
+    // TODO: It would be good to find a way to skip some work here even in forward.
+    bool doesntReceiveSSR = false;
+    UNITY_BRANCH if (_SsrStencilExclusionValue > 0)
+    {
+        uint   stencilVal = UnpackByte(LOAD_TEXTURE2D(_StencilTexture, positionSS).r);
+        doesntReceiveSSR = (stencilVal & _SsrStencilExclusionValue) != 0;
+    }
 
-    uint   stencilVal = UnpackByte(LOAD_TEXTURE2D(_StencilTexture, positionSS).r);
-    bool   skipSSR = (stencilVal & _SsrStencilExclusionValue) != 0;
-
-    if (skipSSR)
+    if (doesntReceiveSSR)
     {
         WriteDebugInfo(positionSS, -1);
         return;

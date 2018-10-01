@@ -1156,9 +1156,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                                 CoreUtils.DrawFullScreen(cmd, m_CopyStencilForNoLighting, null, 3);
                                 cmd.ClearRandomWriteTargets();
                             }
-                        }
 
-                        {
                             using (new ProfilingSample(cmd, "Update stencil copy for SSR Exclusion", CustomSamplerId.UpdateStencilCopyForSSRExclusion.GetSampler()))
                             {
                                 HDUtils.SetRenderTarget(cmd, hdCamera, m_SharedRTManager.GetDepthStencilBuffer()); // No need for color buffer here
@@ -1167,6 +1165,10 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                                 CoreUtils.DrawFullScreen(cmd, m_UpdateStencilForSSRExclusion, null, 4);
                                 cmd.ClearRandomWriteTargets();
                             }
+
+                        }
+
+                        {
 
                         }
 
@@ -2006,7 +2008,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                 cmd.SetComputeFloatParam(cs, HDShaderIDs._SsrRoughnessFadeEndTimesRcpLength, roughnessFadeEndTimesRcpLength);
                 cmd.SetComputeIntParam(  cs, HDShaderIDs._SsrDepthPyramidMaxMip,             info.mipLevelCount);
                 cmd.SetComputeFloatParam(cs, HDShaderIDs._SsrEdgeFadeRcpLength,              edgeFadeRcpLength);
-                cmd.SetComputeIntParam(  cs, HDShaderIDs._SsrStencilExclusionValue,          (int)StencilBitMask.DoesntReceiveSSR);
+                cmd.SetComputeIntParam(  cs, HDShaderIDs._SsrStencilExclusionValue,          hdCamera.frameSettings.enableForwardRenderingOnly ? -1 : (int)StencilBitMask.DoesntReceiveSSR);
 
                 // cmd.SetComputeTextureParam(cs, kernel, "_SsrDebugTexture",    m_SsrDebugTexture);
                 cmd.SetComputeTextureParam(cs, kernel, HDShaderIDs._SsrHitPointTexture, m_SsrHitPointTexture);

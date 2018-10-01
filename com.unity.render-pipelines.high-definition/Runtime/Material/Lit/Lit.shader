@@ -250,6 +250,7 @@ Shader "HDRenderPipeline/Lit"
     #pragma shader_feature _TRANSMITTANCECOLORMAP
 
     #pragma shader_feature _DISABLE_DECALS
+    #pragma shader_feature _DISABLE_SSR
     #pragma shader_feature _ENABLE_GEOMETRIC_SPECULAR_AA
 
     // Keyword for transparent
