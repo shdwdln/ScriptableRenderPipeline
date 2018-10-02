@@ -81,11 +81,10 @@ void ScreenSpaceReflectionsTracing(uint2 positionSS : SV_DispatchThreadID)
 {
     // If we are in forward only, the exclusion happens at a later stage. This is detected with _SsrStencilExclusionValue < 0
     // TODO: It would be good to find a way to skip some work here even in forward.
-    bool doesntReceiveSSR = false;
     UNITY_BRANCH if (_SsrStencilExclusionValue > 0)
     {
-        uint   stencilVal = UnpackByte(LOAD_TEXTURE2D(_StencilTexture, positionSS).r);
-        doesntReceiveSSR = (stencilVal & _SsrStencilExclusionValue) != 0;
+        uint stencilVal = UnpackByte(LOAD_TEXTURE2D(_StencilTexture, positionSS).r);
+        bool doesntReceiveSSR = (stencilVal & _SsrStencilExclusionValue) != 0;
 
         if (doesntReceiveSSR)
         {
