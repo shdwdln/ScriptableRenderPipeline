@@ -19,7 +19,7 @@ namespace UnityEditor.ShaderGraph
 
         public override bool isBatchable
         {
-            get { return false; }
+            get { return true; }
         }
 
         public override string GetPropertyDeclarationString(string delimiter = ";")
