@@ -133,11 +133,8 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline.Internal
         public void PrepareCull(Camera camera, ReflectionProbeCullResults results)
         {
             UpdateAllPlanarReflectionProbeBounds();
-
-            // GC.Alloc
-            // Caution: new CullingGroup generate 32B of garbage at each frame here !
-            // cullingGroup gets .Dispose() called on it later, not clear why this leaks
-            var cullingGroup = new CullingGroup();            
+           
+            var cullingGroup = CullingGroupManager.instance.Alloc();            
             cullingGroup.targetCamera = camera;
             cullingGroup.SetBoundingSpheres(m_PlanarReflectionProbeBoundsArray);
             cullingGroup.SetBoundingSphereCount(Mathf.Min(m_PlanarReflectionProbeBounds.Count, m_PlanarReflectionProbeBoundsArray.Length));
@@ -475,7 +472,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline.Internal
             clearFlags = CameraClearFlags.Nothing;
             backgroundColor = Color.white;
 
-            capturePosition = additional.transform.position; //at the moment capture position is at probe position
+            capturePosition = additional.capturePosition;
             captureRotation = Quaternion.identity;
 
             worldToCamera = GeometryUtils.CalculateWorldToCameraMatrixRHS(capturePosition, captureRotation);
@@ -501,7 +498,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline.Internal
             clearFlags = CameraClearFlags.Nothing;
             backgroundColor = Color.white;
 
-            capturePosition = probe.transform.TransformPoint(probe.captureLocalPosition);
+            capturePosition = probe.capturePosition;
             captureRotation = Quaternion.LookRotation((Vector3)probe.influenceToWorld.GetColumn(3) - capturePosition, probe.transform.up);
 
             worldToCamera = GeometryUtils.CalculateWorldToCameraMatrixRHS(capturePosition, captureRotation);

@@ -61,8 +61,8 @@ Pass
     #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/NormalSurfaceGradient.hlsl"
 
     // define FragInputs structure
-    #include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderPass/FragInputs.hlsl"
-    #include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderPass/ShaderPass.cs.hlsl"
+    #include "Packages/com.unity.render-pipelines.high-definition/Runtime/RenderPipeline/ShaderPass/FragInputs.hlsl"
+    #include "Packages/com.unity.render-pipelines.high-definition/Runtime/RenderPipeline/ShaderPass/ShaderPass.cs.hlsl"
 
     //-------------------------------------------------------------------------------------
     // Defines
@@ -91,8 +91,8 @@ $splice(Defines)
     // End Defines
     //-------------------------------------------------------------------------------------
 
-    #include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderVariables.hlsl"
-    #include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderGraphFunctions.hlsl"
+    #include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderVariables.hlsl"
+    #include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderGraphFunctions.hlsl"
     #ifdef DEBUG_DISPLAY
         #include "Packages/com.unity.render-pipelines.high-definition/Runtime/Debug/DebugDisplay.hlsl"
     #endif
@@ -222,6 +222,18 @@ $include("SharedCode.template.hlsl")
         surfaceData.specularOcclusion = GetSpecularOcclusionFromBentAO(V, bentNormalWS, surfaceData);
 #elif defined(_MASKMAP)
         surfaceData.specularOcclusion = GetSpecularOcclusionFromAmbientOcclusion(NdotV, surfaceData.ambientOcclusion, PerceptualSmoothnessToRoughness(surfaceData.perceptualSmoothness));
+#endif
+
+#ifdef DEBUG_DISPLAY
+        if (_DebugMipMapMode != DEBUGMIPMAPMODE_NONE)
+        {
+            // TODO: need to update mip info
+            surfaceData.metallic = 0;
+        }
+
+        // We need to call ApplyDebugToSurfaceData after filling the surfarcedata and before filling builtinData
+        // as it can modify attribute use for static lighting
+        ApplyDebugToSurfaceData(input.worldToTangent, surfaceData);
 #endif
     }
 
