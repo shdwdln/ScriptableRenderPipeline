@@ -1176,7 +1176,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                                 HDUtils.SetRenderTarget(cmd, hdCamera, m_ScreenSpaceShadowsBuffer, ClearFlag.Color, CoreUtils.clearColorAllBlack);
                             }
 
-                            HDUtils.ChecKRTCreated(m_ScreenSpaceShadowsBuffer);
+                            HDUtils.CheckRTCreated(m_ScreenSpaceShadowsBuffer);
 
                             m_LightLoop.RenderScreenSpaceShadows(hdCamera, m_ScreenSpaceShadowsBuffer, hdCamera.frameSettings.enableMSAA ? m_SharedRTManager.GetDepthValuesTexture() : m_SharedRTManager.GetDepthTexture(), cmd);
 
@@ -1703,7 +1703,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                         var aoTarget = hdCamera.frameSettings.enableMSAA ? m_MultiAmbientOcclusionBuffer : m_AmbientOcclusionBuffer;
                         var depthTexture = hdCamera.frameSettings.enableMSAA ? m_SharedRTManager.GetDepthValuesTexture() : m_SharedRTManager.GetDepthTexture();
 
-                        HDUtils.ChecKRTCreated(aoTarget.rt);
+                        HDUtils.CheckRTCreated(aoTarget.rt);
                         postProcessLayer.BakeMSVOMap(cmd, camera, aoTarget, depthTexture, true, hdCamera.frameSettings.enableMSAA);
                     }
 

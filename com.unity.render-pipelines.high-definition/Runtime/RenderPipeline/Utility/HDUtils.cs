@@ -461,9 +461,8 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                     SystemInfo.graphicsDeviceType == (GraphicsDeviceType)22 /*GraphicsDeviceType.Switch*/);
         }
 
-        public static void ChecKRTCreated(RenderTexture rt)
+        public static void CheckRTCreated(RenderTexture rt)
         {
-
             // In some cases when loading a project for the first time in the editor, the internal resource is destroyed.
             // When used as render target, the C++ code will re-create the resource automatically. Since here it's used directly as an UAV, we need to check manually
             if (!rt.IsCreated())
