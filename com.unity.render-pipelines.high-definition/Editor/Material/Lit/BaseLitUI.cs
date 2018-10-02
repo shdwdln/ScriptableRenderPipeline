@@ -185,7 +185,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
 
         // SSR
         protected MaterialProperty receivesSSR = null;
-        protected const string kReceiveSSR = "_ReceivesSSR";
+        protected const string kReceivesSSR = "_ReceivesSSR";
 
 
         protected override void FindBaseMaterialProperties(MaterialProperty[] props)
@@ -237,7 +237,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
             specularAAThreshold = FindProperty(kSpecularAAThreshold, props, false);
 
             // SSR
-            receivesSSR = FindProperty(kReceiveSSR, props, false);
+            receivesSSR = FindProperty(kReceivesSSR, props, false);
         }
 
         void TessellationModePopup()
@@ -468,7 +468,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
                 stencilRef = (int)StencilLightingUsage.SplitLighting;
             }
 
-            if(material.HasProperty(kReceiveSSR) && material.GetInt(kReceiveSSR) == 0)
+            if(material.HasProperty(kReceivesSSR) && material.GetInt(kReceivesSSR) == 0)
             {
                 stencilWriteMask |= (int)HDRenderPipeline.StencilBitMask.DoesntReceiveSSR;
                 stencilRef |= (int)HDRenderPipeline.StencilBitMask.DoesntReceiveSSR;
@@ -517,7 +517,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
 
             // Use negation so we don't create keyword by default
             CoreUtils.SetKeyword(material, "_DISABLE_DECALS", material.HasProperty(kSupportDecals) && material.GetFloat(kSupportDecals) == 0.0);
-            CoreUtils.SetKeyword(material, "_DISABLE_SSR", material.HasProperty(kReceiveSSR) && material.GetFloat(kReceiveSSR) == 0.0);
+            CoreUtils.SetKeyword(material, "_DISABLE_SSR", material.HasProperty(kReceivesSSR) && material.GetFloat(kReceivesSSR) == 0.0);
             CoreUtils.SetKeyword(material, "_ENABLE_GEOMETRIC_SPECULAR_AA", material.HasProperty(kEnableGeometricSpecularAA) && material.GetFloat(kEnableGeometricSpecularAA) == 1.0);
         }
 
