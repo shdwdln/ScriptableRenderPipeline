@@ -4,6 +4,11 @@ All notable changes to this package will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [unreleased]
+### Fixed
+- Previously when a light was set to mixed mode, dynamic objects would not receive lighting. Now dynamic objects receive lighting when the light mode is set to mixed.
+- Previously MSAA was not working on Desktop platforms, now MSAA is working on Desktop platforms.
+
 ## [4.0.0-preview] - 2019-09-21
 ### Added
 - When you have enabled Gizmos, they now appear correctly in the Game view.
