@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed issue with tangent that was using SurfaceGradient instead of regular normal decoding
 - Fixed wrong error message display when switching to unsupported target like IOS
 - Shadow near plane is no longer limited at 0.1
+- Fixed decal draw order on transparent material
 
 ### Changed
 - Use samplerunity_ShadowMask instead of samplerunity_samplerLightmap for shadow mask
