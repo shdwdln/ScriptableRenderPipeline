@@ -19,6 +19,12 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
                         ),
                     CED.space,
                     CED.Select(
+                        (s, d, o) => s.shadowInitParams,
+                        (s, d, o) => d.shadowInitParams,
+                        ShadowInitParametersUI.SectionAtlas
+                        ),
+                    CED.space,
+                    CED.Select(
                         (s, d, o) => s.hdShadowInitParams,
                         (s, d, o) => d.hdShadowInitParams,
                         HDShadowInitParametersUI.SectionAtlas
@@ -41,6 +47,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
 
         GlobalLightLoopSettingsUI lightLoopSettings = new GlobalLightLoopSettingsUI();
         GlobalDecalSettingsUI decalSettings = new GlobalDecalSettingsUI();
+        ShadowInitParametersUI shadowInitParams = new ShadowInitParametersUI();
         HDShadowInitParametersUI hdShadowInitParams = new HDShadowInitParametersUI();
 
         public RenderPipelineSettingsUI()
@@ -51,7 +58,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
         public override void Reset(SerializedRenderPipelineSettings data, UnityAction repaint)
         {
             lightLoopSettings.Reset(data.lightLoopSettings, repaint);
-            hdShadowInitParams.Reset(data.hdShadowInitParams, repaint);
+            shadowInitParams.Reset(data.shadowInitParams, repaint);
             decalSettings.Reset(data.decalSettings, repaint);
             base.Reset(data, repaint);
         }
@@ -59,7 +66,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
         public override void Update()
         {
             lightLoopSettings.Update();
-            hdShadowInitParams.Update();
+            shadowInitParams.Update();
             decalSettings.Update();
             base.Update();
         }
@@ -100,6 +107,9 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
             EditorGUILayout.PropertyField(d.supportMotionVectors, _.GetContent("Support Motion Vectors|Motion vector are use for Motion Blur, TAA, temporal re-projection of various effect like SSR."));
             EditorGUILayout.PropertyField(d.supportRuntimeDebugDisplay, _.GetContent("Support runtime debug display|Remove all debug display shader variant only in the player. Allow faster build."));
             EditorGUILayout.PropertyField(d.supportDitheringCrossFade, _.GetContent("Support dithering cross fade|Remove all dithering cross fade shader variant only in the player. Allow faster build."));
+
+            // XR 
+            EditorGUILayout.PropertyField(d.xrConfig);
 
             --EditorGUI.indentLevel;
         }

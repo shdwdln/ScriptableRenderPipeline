@@ -14,18 +14,10 @@ namespace UnityEngine.Experimental.Rendering
     public class XRGraphicsConfig
     { // XRGConfig stores the desired XR settings for a given SRP asset.
 
-        public float renderScale = 1.0f;
-        public float viewportScale = 1.0f;
-        public bool useOcclusionMesh = true;
-        public float occlusionMeshScale = 1.0f;
-
-        public void CopyTo(XRGraphicsConfig targetConfig)
-        {
-            targetConfig.renderScale = this.renderScale;
-            targetConfig.viewportScale = this.viewportScale;
-            targetConfig.useOcclusionMesh = this.useOcclusionMesh;
-            targetConfig.occlusionMeshScale = this.occlusionMeshScale;
-        }
+        public float renderScale;
+        public float viewportScale;
+        public bool useOcclusionMesh;
+        public float occlusionMaskScale;
 
         public void SetConfig()
         { // If XR is enabled, sets XRSettings from our saved config
@@ -35,7 +27,7 @@ namespace UnityEngine.Experimental.Rendering
             XRSettings.eyeTextureResolutionScale = renderScale;
             XRSettings.renderViewportScale = viewportScale;
             XRSettings.useOcclusionMesh = useOcclusionMesh;
-            XRSettings.occlusionMaskScale = occlusionMeshScale;
+            XRSettings.occlusionMaskScale = occlusionMaskScale;
         }
         public void SetViewportScale(float viewportScale)
         { // Only sets viewport- since this is probably the only thing getting updated every frame
@@ -50,7 +42,7 @@ namespace UnityEngine.Experimental.Rendering
             renderScale = 1.0f,
             viewportScale = 1.0f,
             useOcclusionMesh = true,
-            occlusionMeshScale = 1.0f,
+            occlusionMaskScale = 1.0f,
         };
 
         public static XRGraphicsConfig GetActualXRSettings()
@@ -65,7 +57,7 @@ namespace UnityEngine.Experimental.Rendering
             getXRSettings.renderScale = XRSettings.eyeTextureResolutionScale;
             getXRSettings.viewportScale = XRSettings.renderViewportScale;
             getXRSettings.useOcclusionMesh = XRSettings.useOcclusionMesh;
-            getXRSettings.occlusionMeshScale = XRSettings.occlusionMaskScale;
+            getXRSettings.occlusionMaskScale = XRSettings.occlusionMaskScale;
             return getXRSettings;
         }
 
@@ -114,7 +106,7 @@ namespace UnityEngine.Experimental.Rendering
 
         public static uint GetPixelOffset(uint eye)
         {
-            if (!enabled || XRSettings.eyeTextureDesc.vrUsage != VRTextureUsage.TwoEyes)
+            if (!enabled || eyeTextureDesc.vrUsage != VRTextureUsage.TwoEyes)
                 return 0;
             return (uint)(Mathf.CeilToInt((eye * XRSettings.eyeTextureWidth) / 2));
         }

@@ -29,9 +29,6 @@ Shader "Hidden/HDRenderPipeline/TerrainLit_Basemap"
         _Color("Color", Color) = (1,1,1,1)
 
         [ToggleUI] _SupportDecals("Support Decals", Float) = 1.0
-
-        // TEMP: See comment later for motion vector pass
-        [HideInInspector] _EnableMotionVectorForVertexAnimation("EnableMotionVectorForVertexAnimation", Float) = 0.0
     }
 
     HLSLINCLUDE
@@ -59,8 +56,8 @@ Shader "Hidden/HDRenderPipeline/TerrainLit_Basemap"
     //-------------------------------------------------------------------------------------
 
     #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
-    #include "Packages/com.unity.render-pipelines.high-definition/Runtime/RenderPipeline/ShaderPass/FragInputs.hlsl"
-    #include "Packages/com.unity.render-pipelines.high-definition/Runtime/RenderPipeline/ShaderPass/ShaderPass.cs.hlsl"
+    #include "../../ShaderPass/FragInputs.hlsl"
+    #include "../../ShaderPass/ShaderPass.cs.hlsl"
 
     //-------------------------------------------------------------------------------------
     // variable declaration
@@ -112,14 +109,14 @@ Shader "Hidden/HDRenderPipeline/TerrainLit_Basemap"
             #pragma multi_compile _ LIGHT_LAYERS
 
             #define SHADERPASS SHADERPASS_GBUFFER
-            #include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderVariables.hlsl"
+            #include "../../ShaderVariables.hlsl"
             #ifdef DEBUG_DISPLAY
-            #include "Packages/com.unity.render-pipelines.high-definition/Runtime/Debug/DebugDisplay.hlsl"
+            #include "../../Debug/DebugDisplay.hlsl"
             #endif
-            #include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Material.hlsl"
+            #include "../../Material/Material.hlsl"
             #include "TerrainLitSharePass.hlsl"
             #include "TerrainLitData_Basemap.hlsl"
-            #include "Packages/com.unity.render-pipelines.high-definition/Runtime/RenderPipeline/ShaderPass/ShaderPassGBuffer.hlsl"
+            #include "../../ShaderPass/ShaderPassGBuffer.hlsl"
 
             ENDHLSL
         }
@@ -140,11 +137,11 @@ Shader "Hidden/HDRenderPipeline/TerrainLit_Basemap"
             // both direct and indirect lighting) will hand up in the "regular" lightmap->LIGHTMAP_ON.
 
             #define SHADERPASS SHADERPASS_LIGHT_TRANSPORT
-            #include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderVariables.hlsl"
-            #include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Material.hlsl"
+            #include "../../ShaderVariables.hlsl"
+            #include "../../Material/Material.hlsl"
             #include "TerrainLitSharePass.hlsl"
             #include "TerrainLitData_Basemap.hlsl"
-            #include "Packages/com.unity.render-pipelines.high-definition/Runtime/RenderPipeline/ShaderPass/ShaderPassLightTransport.hlsl"
+            #include "../../ShaderPass/ShaderPassLightTransport.hlsl"
 
             ENDHLSL
         }
@@ -166,11 +163,11 @@ Shader "Hidden/HDRenderPipeline/TerrainLit_Basemap"
 
             #define SHADERPASS SHADERPASS_SHADOWS
             #define USE_LEGACY_UNITY_MATRIX_VARIABLES
-            #include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderVariables.hlsl"
-            #include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Material.hlsl"
-            #include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Lit/ShaderPass/LitDepthPass.hlsl"
+            #include "../../ShaderVariables.hlsl"
+            #include "../../Material/Material.hlsl"
+            #include "../Lit/ShaderPass/LitDepthPass.hlsl"
             #include "TerrainLitData_Basemap.hlsl"
-            #include "Packages/com.unity.render-pipelines.high-definition/Runtime/RenderPipeline/ShaderPass/ShaderPassDepthOnly.hlsl"
+            #include "../../ShaderPass/ShaderPassDepthOnly.hlsl"
 
             ENDHLSL
         }
@@ -189,55 +186,19 @@ Shader "Hidden/HDRenderPipeline/TerrainLit_Basemap"
             // In deferred, depth only pass don't output anything.
             // In forward it output the normal buffer
             #pragma multi_compile _ WRITE_NORMAL_BUFFER
-            #pragma multi_compile _ WRITE_MSAA_DEPTH
 
             #define SHADERPASS SHADERPASS_DEPTH_ONLY
-            #include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderVariables.hlsl"
-            #include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Material.hlsl"
+            #include "../../ShaderVariables.hlsl"
+            #include "../../Material/Material.hlsl"
 
             #ifdef WRITE_NORMAL_BUFFER // If enabled we need all regular interpolator
-            #include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Lit/ShaderPass/LitSharePass.hlsl"
+            #include "../Lit/ShaderPass/LitSharePass.hlsl"
             #else
-            #include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Lit/ShaderPass/LitDepthPass.hlsl"
+            #include "../Lit/ShaderPass/LitDepthPass.hlsl"
             #endif
 
             #include "TerrainLitData_Basemap.hlsl"
-            #include "Packages/com.unity.render-pipelines.high-definition/Runtime/RenderPipeline/ShaderPass/ShaderPassDepthOnly.hlsl"
-
-            ENDHLSL
-        }
-
-        // TEMP: Until this PR is in trunk: https://ono.unity3d.com/unity/unity/pull-request/74509/_/graphics/fix-motion-vectors-exclusion
-        // We need to add a motion vector pass that is disabled, otherwise the terrain is not send in the prepass
-        // So add a motion vector pass that do nothing. Don't forget to remove _EnableMotionVectorForVertexAnimation property as well in this shader
-        Pass
-        {
-            Name "Motion Vectors"
-            Tags{ "LightMode" = "MotionVectors" } // Caution, this need to be call like this to setup the correct parameters by C++ (legacy Unity)
-
-            HLSLPROGRAM
-
-            struct Attributes
-            {
-                float4 positionCS : POSITION;
-            };
-
-            struct Varyings
-            {
-                float4 positionCS : SV_POSITION;
-            };
-
-            Varyings Vert(Attributes input)
-            {
-                Varyings output;
-                output.positionCS = input.positionCS;
-                return output;
-            }
-
-            float4 Frag(Varyings input) : SV_Target
-            {
-                return float4(0.0, 0.0, 0.0, 0.0);
-            }
+            #include "../../ShaderPass/ShaderPassDepthOnly.hlsl"
 
             ENDHLSL
         }
@@ -269,12 +230,16 @@ Shader "Hidden/HDRenderPipeline/TerrainLit_Basemap"
             #pragma multi_compile _ SHADOWS_SHADOWMASK
             // Setup DECALS_OFF so the shader stripper can remove variants
             #pragma multi_compile DECALS_OFF DECALS_3RT DECALS_4RT
+
+            // TODO: remove this once new shadow system works
+            // Only for dev/test purpose, allow to switch dynamically between HD and Core shadow system
+            // #pragma multi_compile _ USE_CORE_SHADOW_SYSTEM
             
             // Supported shadow modes per light type
             #pragma multi_compile PUNCTUAL_SHADOW_LOW PUNCTUAL_SHADOW_MEDIUM PUNCTUAL_SHADOW_HIGH
             #pragma multi_compile DIRECTIONAL_SHADOW_LOW DIRECTIONAL_SHADOW_MEDIUM DIRECTIONAL_SHADOW_HIGH
 
-            // #include "Packages/com.unity.render-pipelines.high-definition/Runtime/RenderPipeline/Lighting/Forward.hlsl"
+            // #include "../../Lighting/Forward.hlsl"
             //#pragma multi_compile LIGHTLOOP_SINGLE_PASS LIGHTLOOP_TILE_PASS
             #define LIGHTLOOP_TILE_PASS
             #pragma multi_compile USE_FPTL_LIGHTLIST USE_CLUSTERED_LIGHTLIST
@@ -284,14 +249,14 @@ Shader "Hidden/HDRenderPipeline/TerrainLit_Basemap"
             #ifndef _SURFACE_TYPE_TRANSPARENT
                 #define SHADERPASS_FORWARD_BYPASS_ALPHA_TEST
             #endif
-            #include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderVariables.hlsl"
+            #include "../../ShaderVariables.hlsl"
             #ifdef DEBUG_DISPLAY
-            #include "Packages/com.unity.render-pipelines.high-definition/Runtime/Debug/DebugDisplay.hlsl"
+            #include "../../Debug/DebugDisplay.hlsl"
             #endif
-            #include "Packages/com.unity.render-pipelines.high-definition/Runtime/Lighting/Lighting.hlsl"
+            #include "../../Lighting/Lighting.hlsl"
             #include "TerrainLitSharePass.hlsl"
             #include "TerrainLitData_Basemap.hlsl"
-            #include "Packages/com.unity.render-pipelines.high-definition/Runtime/RenderPipeline/ShaderPass/ShaderPassForward.hlsl"
+            #include "../../ShaderPass/ShaderPassForward.hlsl"
 
             ENDHLSL
         }

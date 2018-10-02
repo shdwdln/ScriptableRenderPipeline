@@ -32,4 +32,4 @@
 #endif
 
 // This include will define the various Attributes/Varyings structure
-#include "Packages/com.unity.render-pipelines.high-definition/Runtime/RenderPipeline/ShaderPass/VaryingMesh.hlsl"
+#include "../../ShaderPass/VaryingMesh.hlsl"

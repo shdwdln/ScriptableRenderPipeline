@@ -135,7 +135,7 @@ namespace UnityEditor.Experimental.Rendering.LightweightPipeline
 
         public bool IsPipelineCompatible(RenderPipelineAsset renderPipelineAsset)
         {
-            return renderPipelineAsset is LightweightRenderPipelineAsset;
+            return renderPipelineAsset is LightweightPipelineAsset;
         }
 
         static string GetTemplatePath(string templateName)

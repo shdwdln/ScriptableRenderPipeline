@@ -211,7 +211,7 @@ namespace UnityEditor.ShaderGraph.Drawing
 
         public void ToSubGraph()
         {
-            var path = EditorUtility.SaveFilePanelInProject("Save subgraph", "New SubGraph", ShaderSubGraphImporter.Extension, "");
+            var path = EditorUtility.SaveFilePanelInProject("Save subgraph", "New SubGraph", "ShaderSubGraph", "");
             path = path.Replace(Application.dataPath, "Assets");
             if (path.Length == 0)
                 return;
@@ -482,18 +482,13 @@ namespace UnityEditor.ShaderGraph.Drawing
 
                 var path = AssetDatabase.GetAssetPath(asset);
                 var extension = Path.GetExtension(path);
-                if (extension == null)
-                    return;
-                // Path.GetExtension returns the extension prefixed with ".", so we remove it. We force lower case such that
-                // the comparison will be case-insensitive.
-                extension = extension.Substring(1).ToLowerInvariant();
                 Type graphType;
                 switch (extension)
                 {
-                    case ShaderGraphImporter.Extension:
+                    case ".ShaderGraph":
                         graphType = typeof(MaterialGraph);
                         break;
-                    case ShaderSubGraphImporter.Extension:
+                    case ".ShaderSubGraph":
                         graphType = typeof(SubGraph);
                         break;
                     default:

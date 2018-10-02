@@ -11,7 +11,6 @@ using UnityEditorInternal;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 using System.Reflection;
-using Object = System.Object;
 
 namespace UnityEditor.ShaderGraph
 {
@@ -1435,53 +1434,22 @@ namespace UnityEditor.ShaderGraph
             }
         }
 
-        static ProcessStartInfo CreateProcessStartInfo(string filePath)
-        {
-            string externalScriptEditor = ScriptEditorUtility.GetExternalScriptEditor();
-
-            ProcessStartInfo psi = new ProcessStartInfo();
-            psi.UseShellExecute = false;
-
-
-        #if UNITY_EDITOR_OSX
-            string arg = string.Format("-a \"{0}\" -n --args \"{1}\"", externalScriptEditor, Path.GetFullPath(filePath));
-            psi.FileName = "open";
-            psi.Arguments = arg;
-        #else
-            psi.Arguments = Path.GetFileName(filePath);
-            psi.WorkingDirectory = Path.GetDirectoryName(filePath);
-            psi.FileName = externalScriptEditor;
-        #endif
-            return psi;
-        }
-
         public static void OpenFile(string path)
         {
-            string filePath = Path.GetFullPath(path);
-            if (!File.Exists(filePath))
+            if (!File.Exists(Path.GetFullPath(path)))
             {
                 Debug.LogError(string.Format("Path {0} doesn't exists", path));
                 return;
             }
 
-            string externalScriptEditor = ScriptEditorUtility.GetExternalScriptEditor();
-            if (externalScriptEditor != "internal")
-            {
-                ProcessStartInfo psi = CreateProcessStartInfo(filePath);
-                Process.Start(psi);
-            }
-            else
-            {
-                Process p = new Process();
-                p.StartInfo.FileName = filePath;
-                p.EnableRaisingEvents = true;
-                p.Exited += (Object obj, EventArgs args) =>
-                {
-                    if(p.ExitCode != 0)
-                        Debug.LogWarningFormat("Unable to open {0}: Check external editor in preferences", filePath);
-                };
-                p.Start();
-            }
+            string file = Path.GetFullPath(path);
+            ProcessStartInfo pi = new ProcessStartInfo(file);
+            pi.Arguments = Path.GetFileName(file);
+            pi.UseShellExecute = true;
+            pi.WorkingDirectory = Path.GetDirectoryName(file);
+            pi.FileName = ScriptEditorUtility.GetExternalScriptEditor();
+            pi.Verb = "OPEN";
+            Process.Start(pi);
         }
     }
 }

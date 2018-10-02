@@ -23,6 +23,7 @@ namespace UnityEditor.Experimental.Rendering.LightweightPipeline
         ShaderKeyword m_Lightmap = new ShaderKeyword("LIGHTMAP_ON");
         ShaderKeyword m_DirectionalLightmap = new ShaderKeyword("DIRLIGHTMAP_COMBINED");
 
+        ShaderKeyword m_DeprecatedAdditionalLights = new ShaderKeyword("_ADDITIONAL_LIGHTS");
         ShaderKeyword m_DeprecatedVertexLights = new ShaderKeyword("_VERTEX_LIGHTS");
         ShaderKeyword m_DeprecatedShadowsEnabled = new ShaderKeyword("_SHADOWS_ENABLED");
         ShaderKeyword m_DeprecatedShadowsCascade = new ShaderKeyword("_SHADOWS_CASCADE");
@@ -142,6 +143,9 @@ namespace UnityEditor.Experimental.Rendering.LightweightPipeline
 
         bool StripDeprecated(ShaderCompilerData compilerData)
         {
+            if (compilerData.shaderKeywordSet.IsEnabled(m_DeprecatedAdditionalLights))
+                return true;
+
             if (compilerData.shaderKeywordSet.IsEnabled(m_DeprecatedVertexLights))
                 return true;
 
@@ -184,7 +188,7 @@ namespace UnityEditor.Experimental.Rendering.LightweightPipeline
         void LogVariants(Shader shader, ShaderSnippetData snippetData, int prevVariantsCount, int currVariantsCount)
         {
 #if LOG_ONLY_LWRP_VARIANTS
-            if (shader.name.Contains("LightweightRenderPipeline"))
+            if (shader.name.Contains("LightweightPipeline"))
 #endif
             {
                 float percentageCurrent = (float)currVariantsCount / (float)prevVariantsCount * 100f;

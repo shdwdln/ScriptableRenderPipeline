@@ -48,7 +48,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             for (var i = 0; i < visiblePlanarReflectionProbeCount; ++i)
                 m_VisiblePlanarReflectionProbes[i] = m_Probes[m_PlanarReflectionProbeIndices[i]];
 
-            CullingGroupManager.instance.Free(m_CullingGroup);
+            m_CullingGroup.Dispose();
             m_CullingGroup = null;
             m_Probes = null;
         }

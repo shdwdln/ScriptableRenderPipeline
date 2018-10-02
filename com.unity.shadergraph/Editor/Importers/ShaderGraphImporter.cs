@@ -1,17 +1,20 @@
+using UnityEditor.ShaderGraph;
 using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using UnityEditor;
 using UnityEditor.Experimental.AssetImporters;
+using UnityEditor.ShaderGraph.Drawing;
 
 namespace UnityEditor.ShaderGraph
 {
-    [ScriptedImporter(19, Extension)]
+    [ScriptedImporter(18, ShaderGraphExtension)]
     public class ShaderGraphImporter : ScriptedImporter
     {
-        public const string Extension = "shadergraph";
+        public const string ShaderGraphExtension = "shadergraph";
 
         const string k_ErrorShader = @"
 Shader ""Hidden/GraphErrorShader2""

@@ -67,15 +67,17 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
     [ExecuteInEditMode]
     public class HDAdditionalLightData : MonoBehaviour, ISerializationCallbackReceiver
     {
-        // 3. Added ShadowNearPlane to HDRP additional light data, we don't use Light.shadowNearPlane anymore
-        private const int currentVersion = 3;
+        private const int currentVersion = 2;
 
         [HideInInspector, SerializeField]
         [FormerlySerializedAs("m_Version")]
         [System.Obsolete("version is deprecated, use m_Version instead")]
         private float version = currentVersion;
+// Currently m_Version is not used and produce a warning, remove these pragmas at the next version incrementation
+#pragma warning disable 414
         [SerializeField]
         private int m_Version = currentVersion;
+#pragma warning restore 414
 
         // To be able to have correct default values for our lights and to also control the conversion of intensity from the light editor (so it is compatible with GI)
         // we add intensity (for each type of light we want to manage).
@@ -175,9 +177,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             return value < 0 ? (uint)LightLayerEnum.Everything : (uint)value;
         }
 
-        // Shadow Settings
-        public float    shadowNearPlane = 0.1f;
-
+        // TODO: see where to put these settings
         // PCSS settings
         [Range(0, 1.0f)]
         public float    shadowSoftness = .5f;
@@ -199,17 +199,16 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             }
         }
 
-        int GetShadowRequestCount(HDShadowSettings shadowSettings)
+        int GetShadowRequestCount()
         {
-            return (m_Light.type == LightType.Point) ? 6 : (m_Light.type == LightType.Directional) ? shadowSettings.cascadeShadowSplitCount : 1;
+            return (m_Light.type == LightType.Point) ? 6 : (m_Light.type == LightType.Directional) ? m_ShadowData.cascadeCount : 1;
         }
 
         // Must return the first executed shadow request
         public int UpdateShadowRequest(Camera camera, HDShadowInitParameters initParameters, HDShadowManager manager, VisibleLight visibleLight, CullResults cullResults, int lightIndex, out int shadowRequestCount)
         {
-            int                 firstShadowRequestIndex = -1;
-            Vector3             cameraPos = camera.transform.position;
-            HDShadowSettings    shadowSettings = VolumeManager.instance.stack.GetComponent<HDShadowSettings>();
+            int     firstShadowRequestIndex = -1;
+            Vector3 cameraPos = camera.transform.position;
             shadowRequestCount = 0;
 
             // When creating a new light, at the first frame, there is no AdditionalShadowData so we can't really render shadows
@@ -217,8 +216,8 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                 return -1;
 
             // Create shadow requests array using the light type
-            if (shadowRequests == null || shadowRequests.Length != GetShadowRequestCount(shadowSettings))
-                shadowRequests = Enumerable.Range(0, GetShadowRequestCount(shadowSettings)).Select(i => new HDShadowRequest()).ToArray();
+            if (shadowRequests == null || shadowRequests.Length != GetShadowRequestCount())
+                shadowRequests = Enumerable.Range(0, GetShadowRequestCount()).Select(i => new HDShadowRequest()).ToArray();
 
             // If the shadow is too far away, we don't render it
             if (m_Light.type != LightType.Directional && Vector3.Distance(cameraPos, transform.position) >= m_ShadowData.shadowFadeDistance)
@@ -226,20 +225,17 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
 
             Vector2 viewportSize = new Vector2(m_ShadowData.shadowResolution, m_ShadowData.shadowResolution);
 
-            if (initParameters.useDynamicViewportRescale && m_Light.type != LightType.Directional)
+            if (initParameters.useDynamicViewportRescale)
             {
                 // resize viewport size by the normalized size of the light on screen
-                // When we will have access to the non screen clamped bounding sphere light size, we could use it to scale the shadow map resolution
-                // For the moment, this will be enough
-                viewportSize *= Mathf.Lerp(64f / viewportSize.x, 1f, visibleLight.range / (cameraPos - transform.position).magnitude);
-                viewportSize = Vector2.Max(new Vector2(64f, 64f) / viewportSize, viewportSize);
+                viewportSize *= visibleLight.screenRect.size.magnitude / Mathf.Sqrt(2);
 
                 // Prevent flickering caused by the floating size of the viewport
                 viewportSize.x = Mathf.Round(viewportSize.x);
                 viewportSize.y = Mathf.Round(viewportSize.y);
-            }
 
-            viewportSize = Vector2.Max(viewportSize, new Vector2(16, 16));
+                viewportSize = Vector2.Max(viewportSize, new Vector2(32, 32));
+            }
 
             for (int requestIndex = 0; requestIndex < shadowRequests.Length; requestIndex++)
             {
@@ -250,16 +246,20 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                 switch (m_Light.type)
                 {
                     case LightType.Point:
-                        HDShadowUtils.ExtractPointLightData(m_Light.type, visibleLight, viewportSize, shadowNearPlane, m_ShadowData.normalBiasMax, (uint)requestIndex, out shadowRequest.view, out invViewProjection, out shadowRequest.projection, out shadowRequest.deviceProjection, out shadowRequest.splitData);
+                        HDShadowUtils.ExtractPointLightData(m_Light.type, visibleLight, viewportSize, m_ShadowData.normalBiasMax, (uint)requestIndex, out shadowRequest.view, out invViewProjection, out shadowRequest.projection, out shadowRequest.deviceProjection, out shadowRequest.splitData);
                         break;
                     case LightType.Spot:
-                        HDShadowUtils.ExtractSpotLightData(m_Light.type, spotLightShape, shadowNearPlane, aspectRatio, shapeWidth, shapeHeight, visibleLight, viewportSize, m_ShadowData.normalBiasMax, out shadowRequest.view, out invViewProjection, out shadowRequest.projection, out shadowRequest.deviceProjection, out shadowRequest.splitData);
+                        HDShadowUtils.ExtractSpotLightData(m_Light.type, spotLightShape, aspectRatio, shapeWidth, shapeHeight, visibleLight, viewportSize, m_ShadowData.normalBiasMax, out shadowRequest.view, out invViewProjection, out shadowRequest.projection, out shadowRequest.deviceProjection, out shadowRequest.splitData);
                         break;
                     case LightType.Directional:
+                        float[] cascadeRatios;
+                        float[] cascadeBorders;
+                        int     cascadeCount;
                         Vector4 cullingSphere;
                         float   nearPlaneOffset = QualitySettings.shadowNearPlaneOffset;
                         
-                        HDShadowUtils.ExtractDirectionalLightData(visibleLight, viewportSize, (uint)requestIndex, shadowSettings.cascadeShadowSplitCount, shadowSettings.cascadeShadowSplits, nearPlaneOffset, cullResults, lightIndex, out shadowRequest.view, out invViewProjection, out shadowRequest.projection, out shadowRequest.deviceProjection, out shadowRequest.splitData);
+                        m_ShadowData.GetShadowCascades(out cascadeCount, out cascadeRatios, out cascadeBorders);
+                        HDShadowUtils.ExtractDirectionalLightData(visibleLight, viewportSize, (uint)requestIndex, m_ShadowData.cascadeCount, cascadeRatios, nearPlaneOffset, cullResults, lightIndex, out shadowRequest.view, out invViewProjection, out shadowRequest.projection, out shadowRequest.deviceProjection, out shadowRequest.splitData);
 
                         cullingSphere = shadowRequest.splitData.cullingSphere;
 
@@ -271,7 +271,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                             cullingSphere.z -= cameraPos.z;
                         }
 
-                        manager.UpdateCascade(requestIndex, cullingSphere, shadowSettings.cascadeShadowBorders[requestIndex]);
+                        manager.UpdateCascade(requestIndex, cullingSphere, cascadeBorders[requestIndex]);
                         break;
                     case LightType.Area:
                         HDShadowUtils.ExtractAreaLightData(visibleLight, lightTypeExtent, out shadowRequest.view, out invViewProjection, out shadowRequest.projection, out shadowRequest.deviceProjection, out shadowRequest.splitData);
@@ -299,7 +299,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
 
             // zBuffer param to reconstruct depth position (for transmission)
             float f = m_Light.range;
-            float n = shadowNearPlane;
+            float n = m_Light.shadowNearPlane;
             shadowRequest.zBufferParam = new Vector4((f-n)/n, 1.0f, (f-n)/n*f, 1.0f/f);
             shadowRequest.viewBias = new Vector4(m_ShadowData.viewBiasMin, m_ShadowData.viewBiasMax, m_ShadowData.viewBiasScale, 2.0f / shadowRequest.projection.m00 / viewportSize.x * 1.4142135623730950488016887242097f);
             shadowRequest.normalBias = new Vector3(m_ShadowData.normalBiasMin, m_ShadowData.normalBiasMax, m_ShadowData.normalBiasScale);
@@ -717,11 +717,6 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                         break;
                 }
                 needsIntensityUpdate_1_0 = false;
-            }
-            if (m_Version <= 2)
-            {
-                // ShadowNearPlane have been move to HDRP as default legacy unity clamp it to 0.1 and we need to be able to go below that
-                shadowNearPlane = m_Light.shadowNearPlane;
             }
 
             m_Version = currentVersion;

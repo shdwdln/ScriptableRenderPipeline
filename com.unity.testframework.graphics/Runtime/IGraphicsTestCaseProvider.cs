@@ -15,12 +15,6 @@ namespace UnityEngine.TestTools.Graphics
         /// </summary>
         /// <returns></returns>
         IEnumerable<GraphicsTestCase> GetTestCases();
-
-        /// <summary>
-        /// Retrieve a single test case from scene path.
-        /// </summary>
-        /// <returns></returns>
-        GraphicsTestCase GetTestCaseFromPath(string scenePath);
-
+        
     }
 }

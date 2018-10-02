@@ -35,14 +35,13 @@ namespace UnityEditor.ShaderGraph.IntegrationTests
             {
                 get
                 {
-                    var filePaths = Directory.GetFiles(s_Path, string.Format("*.{0}", ShaderGraphImporter.Extension), SearchOption.AllDirectories).Select(x => new FileInfo(x));
+                    var filePaths = Directory.GetFiles(s_Path, "*.ShaderGraph", SearchOption.AllDirectories).Select(x => new FileInfo(x));
 
                     foreach (var p in filePaths)
                     {
-                        var extension = Path.GetExtension(p.FullName);
                         yield return new TestInfo
                         {
-                            name = p.FullName.Replace(s_Path + Path.DirectorySeparatorChar, "").Replace(Path.DirectorySeparatorChar, '/').Replace(extension, ""),
+                            name = p.FullName.Replace(s_Path + Path.DirectorySeparatorChar, "").Replace(Path.DirectorySeparatorChar, '/').Replace(".ShaderGraph", ""),
                             info = p,
                             threshold = 0.05f
                         };
