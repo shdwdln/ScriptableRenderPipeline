@@ -1136,7 +1136,6 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                         // TODO: Move this code inside LightLoop
                         if (m_LightLoop.GetFeatureVariantsEnabled())
                         {
-
                             // For material classification we use compute shader and so can't read into the stencil, so prepare it.
                             using (new ProfilingSample(cmd, "Clear and copy stencil texture", CustomSamplerId.ClearAndCopyStencilTexture.GetSampler()))
                             {
@@ -1167,7 +1166,6 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                                     cmd.ClearRandomWriteTargets();
                                 }
                             }
-
                         }
 
                         // Needs the depth pyramid and motion vectors, as well as the render of the previous frame.

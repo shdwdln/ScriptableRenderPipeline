@@ -144,7 +144,7 @@ Shader "Hidden/HDRenderPipeline/CopyStencilBuffer"
         Pass
         {
             // Note, when supporting D3D 11.3+, this can be a one off copy pass.
-            // This is essentially the equivalent of Pass 1
+            // This is essentially the equivalent of Pass 1, but writing to a UAV instead.
             Name "Pass 3 - Initialize Stencil UAV copy with 1 if value different from stencilRef to output"  
 
             Stencil
