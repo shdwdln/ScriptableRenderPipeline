@@ -281,7 +281,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             // Only set if it changed
             if(needUpdate)
             {
-                UnityEditor.PlayerSettings.SetScriptingDefineSymbolsForGroup(UnityEditor.BuildTargetGroup.Standalone, string.Join(";", defineArray));
+                UnityEditor.PlayerSettings.SetScriptingDefineSymbolsForGroup(UnityEditor.BuildTargetGroup.Standalone, string.Join(";", defineArray.ToArray()));
             }
         }
     }
