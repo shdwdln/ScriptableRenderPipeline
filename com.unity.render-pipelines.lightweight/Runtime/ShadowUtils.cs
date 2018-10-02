@@ -112,13 +112,6 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
 
             if (visibleLight.lightType == LightType.Directional)
             {
-                // Scale bias by cascade's world space depth range.
-                // Directional shadow lights have orthogonal projection.
-                // proj.m22 = -2 / (far - near) since the projection's depth range is [-1.0, 1.0]
-                // In order to be correct we should multiply bias by 0.5 but this introducing aliasing along cascades more visible.
-                float sign = (SystemInfo.usesReversedZBuffer) ? 1.0f : -1.0f;
-                bias = light.shadowBias * proj.m22 * sign;
-
                 // Currently only square POT cascades resolutions are used.
                 // We scale normalBias
                 double frustumWidth = 2.0 / (double)proj.m00;
@@ -127,9 +120,13 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
                 float texelSizeY = (float)(frustumHeight / (double)cascadeResolution);
                 float texelSize = Mathf.Max(texelSizeX, texelSizeY);
 
+                // Depth Bias - bias shadow is specified in terms of shadowmap pixels.
+                // bias = 1 means the shadowmap is offseted 1 texel world space size in the direciton of the light
+                bias = -light.shadowBias * texelSize;
+
                 // Since we are applying normal bias on caster side we want an inset normal offset
                 // thus we use a negative normal bias.
-                normalBias = -light.shadowNormalBias * texelSize * kernelRadius;
+                normalBias = -light.shadowNormalBias * texelSize;
             }
             else if (visibleLight.lightType == LightType.Spot)
             {
