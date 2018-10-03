@@ -18,13 +18,13 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
 
         static void Drawer_FieldHDShadows(HDShadowInitParametersUI s, SerializedHDShadowInitParameters d, Editor o)
         {
-            EditorGUILayout.LabelField(_.GetContent("HD Shadow"), EditorStyles.boldLabel);
+            EditorGUILayout.LabelField(_.GetContent("Shadows"), EditorStyles.boldLabel);
             
             ++EditorGUI.indentLevel;
-            EditorGUILayout.LabelField(_.GetContent("Shadow Atlas"), EditorStyles.boldLabel);
+            EditorGUILayout.LabelField(_.GetContent("Atlas"), EditorStyles.boldLabel);
             ++EditorGUI.indentLevel;
-            EditorGUILayout.PropertyField(d.shadowAtlasWidth, _.GetContent("Atlas Width"));
-            EditorGUILayout.PropertyField(d.shadowAtlasHeight, _.GetContent("Atlas Height"));
+            EditorGUILayout.PropertyField(d.shadowAtlasWidth, _.GetContent("Width"));
+            EditorGUILayout.PropertyField(d.shadowAtlasHeight, _.GetContent("Height"));
             bool shadowMap16Bits = (DepthBits)d.shadowMapDepthBits.intValue	== DepthBits.Depth16;
             shadowMap16Bits = EditorGUILayout.Toggle(_.GetContent("16-bit Shadow Maps"), shadowMap16Bits);
             d.shadowMapDepthBits.intValue = (shadowMap16Bits) ? (int)DepthBits.Depth16 : (int)DepthBits.Depth32;
@@ -33,14 +33,14 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
 
             EditorGUILayout.Space();
 
-            EditorGUILayout.LabelField(_.GetContent("Shadow Map Budget"), EditorStyles.boldLabel);
+            EditorGUILayout.LabelField(_.GetContent("Budget"), EditorStyles.boldLabel);
             ++EditorGUI.indentLevel;
             EditorGUILayout.PropertyField(d.maxShadowRequests, _.GetContent("Max Shadow Requests|Max shadow requests (SR) per frame, 1 point light = 6 SR, 1 spot light = 1 SR and the directional is 4 SR"));
             --EditorGUI.indentLevel;
             
             EditorGUILayout.Space();
 
-            EditorGUILayout.LabelField(_.GetContent("Shadow Qualities"), EditorStyles.boldLabel);
+            EditorGUILayout.LabelField(_.GetContent("Qualities"), EditorStyles.boldLabel);
             ++EditorGUI.indentLevel;
             EditorGUILayout.PropertyField(d.punctualShadowQuality, _.GetContent("Punctual Shadow Quality"));
             EditorGUILayout.PropertyField(d.directionalShadowQuality, _.GetContent("Directional Shadow Quality"));
