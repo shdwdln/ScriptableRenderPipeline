@@ -1700,7 +1700,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
 
 #if UNITY_EDITOR
                                 if ((debugDisplaySettings.lightingDebugSettings.shadowDebugUseSelection
-                                        || debugDisplaySettings.lightingDebugSettings.debugLightingMode == DebugLightingMode.SingleShadow)
+                                        || debugDisplaySettings.lightingDebugSettings.shadowDebugMode == ShadowMapDebugMode.SingleShadow)
                                     && UnityEditor.Selection.activeGameObject == lightComponent.gameObject)
                                 {
                                     m_DebugSelectedLightShadowIndex = shadowIndex;
@@ -1939,8 +1939,14 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             m_enableBakeShadowMask = m_enableBakeShadowMask && hdCamera.frameSettings.enableShadowMask;
 
             // We push this parameter here because we know that normal/deferred shadows are not yet rendered
-            if (debugDisplaySettings.lightingDebugSettings.debugLightingMode == DebugLightingMode.SingleShadow)
-                cmd.SetGlobalInt(HDShaderIDs._DebugSingleShadowIndex, m_DebugSelectedLightShadowIndex);
+            if (debugDisplaySettings.lightingDebugSettings.shadowDebugMode == ShadowMapDebugMode.SingleShadow)
+            {
+                int shadowIndex = (int)debugDisplaySettings.lightingDebugSettings.shadowMapIndex;
+
+                if (debugDisplaySettings.lightingDebugSettings.shadowDebugUseSelection)
+                    shadowIndex = m_DebugSelectedLightShadowIndex;
+                cmd.SetGlobalInt(HDShaderIDs._DebugSingleShadowIndex, shadowIndex);
+            }
 
             return m_enableBakeShadowMask;
         }

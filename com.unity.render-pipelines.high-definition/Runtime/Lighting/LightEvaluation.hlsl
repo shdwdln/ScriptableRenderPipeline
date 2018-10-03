@@ -85,7 +85,7 @@ void EvaluateLight_Directional(LightLoopContext lightLoopContext, PositionInputs
 #endif
 
 #ifdef DEBUG_DISPLAY
-    if (_DebugLightingMode == DEBUGLIGHTINGMODE_SINGLE_SHADOW && lightData.shadowIndex == _DebugSingleShadowIndex)
+    if (_DebugShadowMapMode == SHADOWMAPDEBUGMODE_SINGLE_SHADOW && lightData.shadowIndex == _DebugSingleShadowIndex)
         debugShadowAttenuation = shadow;
 #endif
 
@@ -219,8 +219,8 @@ void EvaluateLight_Punctual(LightLoopContext lightLoopContext, PositionInputs po
 #endif
 
 #ifdef DEBUG_DISPLAY
-    if (_DebugLightingMode == DEBUGLIGHTINGMODE_SINGLE_SHADOW && lightData.shadowIndex == _DebugSingleShadowIndex)
-        debugShadowAttenuation = step(distances.x, lightData.range) * shadow;
+    if (_DebugShadowMapMode == SHADOWMAPDEBUGMODE_SINGLE_SHADOW && lightData.shadowIndex == _DebugSingleShadowIndex)
+        debugShadowAttenuation = step(FLT_EPS, attenuation) * shadow;
 #endif
 
         // Transparent have no contact shadow information

@@ -16,7 +16,6 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
         IndirectSpecularOcclusion,
         ScreenSpaceTracingRefraction,
         ScreenSpaceTracingReflection,
-        SingleShadow,
     }
 
     [GenerateHLSL]
@@ -43,11 +42,13 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
         LinearSampledColor
     }
 
+    [GenerateHLSL]
     public enum ShadowMapDebugMode
     {
         None,
         VisualizeAtlas,
-        VisualizeShadowMap
+        VisualizeShadowMap,
+        SingleShadow,
     }
 
     [Serializable]
@@ -55,7 +56,12 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
     {
         public bool IsDebugDisplayEnabled()
         {
-            return debugLightingMode != DebugLightingMode.None || overrideSmoothness || overrideAlbedo || overrideNormal || overrideSpecularColor;
+            return debugLightingMode != DebugLightingMode.None
+                || overrideSmoothness
+                || overrideAlbedo
+                || overrideNormal
+                || overrideSpecularColor
+                || shadowDebugMode == ShadowMapDebugMode.SingleShadow;
         }
 
         public bool IsDebugDisplayRemovePostprocess()

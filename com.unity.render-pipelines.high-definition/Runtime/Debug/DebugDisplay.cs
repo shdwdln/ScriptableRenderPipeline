@@ -216,6 +216,11 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             return lightingDebugSettings.debugLightingMode;
         }
 
+        public ShadowMapDebugMode GetDebugShadowMapMode()
+        {
+            return lightingDebugSettings.shadowDebugMode;
+        }
+
         public int GetDebugLightingSubMode()
         {
             switch (lightingDebugSettings.debugLightingMode)
@@ -312,10 +317,18 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
 
         public void SetFullScreenDebugMode(FullScreenDebugMode value)
         {
-            if (lightingDebugSettings.debugLightingMode == DebugLightingMode.SingleShadow)
+            if (lightingDebugSettings.shadowDebugMode == ShadowMapDebugMode.SingleShadow)
                 value = 0;
             
             fullScreenDebugMode = value;
+        }
+
+        public void SetShadowDebugMode(ShadowMapDebugMode value)
+        {
+            // When SingleShadow is enabled, we don't render full screen debug modes
+            if (value == ShadowMapDebugMode.SingleShadow)
+                fullScreenDebugMode = 0;
+            lightingDebugSettings.shadowDebugMode = value;
         }
 
         public void SetDebugLightingMode(DebugLightingMode value)
@@ -324,10 +337,6 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             {
                 materialDebugSettings.DisableMaterialDebug();
                 mipMapDebugSettings.debugMipMapMode = DebugMipMapMode.None;
-
-                // When SingleShadow is enabled, we don't render full screen debug modes
-                if (value == DebugLightingMode.SingleShadow)
-                    fullScreenDebugMode = 0;
             }
             lightingDebugSettings.debugLightingMode = value;
         }
@@ -653,12 +662,12 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             {
                 displayName = "Shadow Debug Mode",
                 getter = () => (int)lightingDebugSettings.shadowDebugMode,
-                setter = value => lightingDebugSettings.shadowDebugMode = (ShadowMapDebugMode)value,
+                setter = value => SetShadowDebugMode((ShadowMapDebugMode)value),
                 autoEnum = typeof(ShadowMapDebugMode),
                 onValueChanged = RefreshLightingDebug
             });
 
-            if (lightingDebugSettings.shadowDebugMode == ShadowMapDebugMode.VisualizeShadowMap)
+            if (lightingDebugSettings.shadowDebugMode == ShadowMapDebugMode.VisualizeShadowMap || lightingDebugSettings.shadowDebugMode == ShadowMapDebugMode.SingleShadow)
             {
                 var container = new DebugUI.Container();
                 container.children.Add(new DebugUI.BoolField { displayName = "Use Selection", getter = () => lightingDebugSettings.shadowDebugUseSelection, setter = value => lightingDebugSettings.shadowDebugUseSelection = value, flags = DebugUI.Flags.EditorOnly, onValueChanged = RefreshLightingDebug });
