@@ -100,9 +100,8 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
             shadowSliceData.shadowTransform = sliceTransform * shadowSliceData.shadowTransform;
         }
 
-        public static void SetupShadowCasterConstants(CommandBuffer cmd, ref VisibleLight visibleLight, Matrix4x4 proj, float cascadeResolution)
+        public static void SetupShadowCasterConstants(CommandBuffer cmd, ref VisibleLight visibleLight, float shadowDepthBias, float shadowNormalBias, Matrix4x4 proj, float cascadeResolution)
         {
-            Light light = visibleLight.light;
             float bias = 0.0f;
             float normalBias = 0.0f;
 
@@ -122,16 +121,16 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
 
                 // Depth Bias - bias shadow is specified in terms of shadowmap pixels.
                 // bias = 1 means the shadowmap is offseted 1 texel world space size in the direciton of the light
-                bias = -light.shadowBias * texelSize;
+                bias = -shadowDepthBias * texelSize;
 
                 // Since we are applying normal bias on caster side we want an inset normal offset
                 // thus we use a negative normal bias.
-                normalBias = -light.shadowNormalBias * texelSize;
+                normalBias = -shadowNormalBias * texelSize;
             }
             else if (visibleLight.lightType == LightType.Spot)
             {
                 float sign = (SystemInfo.usesReversedZBuffer) ? -1.0f : 1.0f;
-                bias = light.shadowBias * sign;
+                bias = shadowDepthBias * sign;
                 normalBias = 0.0f;
             }
             else
