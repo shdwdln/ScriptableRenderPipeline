@@ -13,6 +13,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
         [Flags]
         protected enum LayerExpendable : uint
         {
+            LayeringOptionMain = 1 << 15,
             ShowLayer1 = 1 << 16,
             ShowLayer2 = 1 << 17,
             ShowLayer3 = 1 << 18,
@@ -395,7 +396,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
             }
             else if (!useMainLayerInfluence.hasMixedValue && useMainLayerInfluence.floatValue != 0.0f)
             {
-                using (var header = new HeaderScope(s_Styles.layerLabels[layerIndex].text + " " + styles.layeringOptionText.text, (uint)LayerExpendable.MainInput, this, colorDot: s_Styles.layerColors[layerIndex]))
+                using (var header = new HeaderScope(s_Styles.layerLabels[layerIndex].text + " " + styles.layeringOptionText.text, (uint)LayerExpendable.LayeringOptionMain, this, colorDot: s_Styles.layerColors[layerIndex]))
                 {
                     if (header.expended)
                         m_MaterialEditor.TexturePropertySingleLine(styles.layerInfluenceMapMaskText, layerInfluenceMaskMap);
