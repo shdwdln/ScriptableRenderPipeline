@@ -15,7 +15,8 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
         IndirectDiffuseOcclusion,
         IndirectSpecularOcclusion,
         ScreenSpaceTracingRefraction,
-        ScreenSpaceTracingReflection
+        ScreenSpaceTracingReflection,
+        SingleShadow,
     }
 
     [GenerateHLSL]
