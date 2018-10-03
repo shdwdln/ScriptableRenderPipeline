@@ -1531,6 +1531,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                 m_CurrentShadowSortedSunLightIndex = -1;
                 m_DominantLightIndex = -1;
                 m_DominantLightValue = 0;
+                m_DebugSelectedLightShadowIndex = -1;
 
                 var stereoEnabled = m_FrameSettings.enableStereo;
 
@@ -2655,7 +2656,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                     int shadowRequestCount = 1;
 
 #if UNITY_EDITOR
-                    if (lightingDebug.shadowDebugUseSelection)
+                    if (lightingDebug.shadowDebugUseSelection && m_DebugSelectedLightShadowIndex != -1)
                     {
                         startShadowIndex = m_DebugSelectedLightShadowIndex;
                         shadowRequestCount = m_DebugSelectedLightShadowCount;

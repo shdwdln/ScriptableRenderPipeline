@@ -310,12 +310,24 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             materialDebugSettings.SetDebugViewGBuffer(value);
         }
 
+        public void SetFullScreenDebugMode(FullScreenDebugMode value)
+        {
+            if (lightingDebugSettings.debugLightingMode == DebugLightingMode.SingleShadow)
+                value = 0;
+            
+            fullScreenDebugMode = value;
+        }
+
         public void SetDebugLightingMode(DebugLightingMode value)
         {
             if (value != 0)
             {
                 materialDebugSettings.DisableMaterialDebug();
                 mipMapDebugSettings.debugMipMapMode = DebugMipMapMode.None;
+
+                // When SingleShadow is enabled, we don't render full screen debug modes
+                if (value == DebugLightingMode.SingleShadow)
+                    fullScreenDebugMode = 0;
             }
             lightingDebugSettings.debugLightingMode = value;
         }
@@ -670,7 +682,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             list.Add(new DebugUI.FloatField { displayName = "Shadow Range Max Value", getter = () => lightingDebugSettings.shadowMaxValue, setter = value => lightingDebugSettings.shadowMaxValue = value });
 
             list.Add(new DebugUI.EnumField { displayName = "Lighting Debug Mode", getter = () => (int)lightingDebugSettings.debugLightingMode, setter = value => SetDebugLightingMode((DebugLightingMode)value), autoEnum = typeof(DebugLightingMode), onValueChanged = RefreshLightingDebug });
-            list.Add(new DebugUI.EnumField { displayName = "Fullscreen Debug Mode", getter = () => (int)fullScreenDebugMode, setter = value => fullScreenDebugMode = (FullScreenDebugMode)value, enumNames = lightingFullScreenDebugStrings, enumValues = lightingFullScreenDebugValues, onValueChanged = RefreshLightingDebug });
+            list.Add(new DebugUI.EnumField { displayName = "Fullscreen Debug Mode", getter = () => (int)fullScreenDebugMode, setter = value => SetFullScreenDebugMode((FullScreenDebugMode)value), enumNames = lightingFullScreenDebugStrings, enumValues = lightingFullScreenDebugValues, onValueChanged = RefreshLightingDebug });
             switch (fullScreenDebugMode)
             {
                 case FullScreenDebugMode.PreRefractionColorPyramid:

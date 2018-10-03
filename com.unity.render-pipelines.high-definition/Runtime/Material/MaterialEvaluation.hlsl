@@ -156,6 +156,10 @@ void PostEvaluateBSDFDebugDisplay(  AmbientOcclusionFactor aoFactor, BuiltinData
             specularLighting = float3(0, 0, 0);
             #endif
             break ;
+        case DEBUGLIGHTINGMODE_SINGLE_SHADOW:
+            diffuseLighting = debugShadowAttenuation.xxx;
+            specularLighting = float3(0, 0, 0);
+            break ;
         }
     }
     else if (_DebugMipMapMode != DEBUGMIPMAPMODE_NONE)
