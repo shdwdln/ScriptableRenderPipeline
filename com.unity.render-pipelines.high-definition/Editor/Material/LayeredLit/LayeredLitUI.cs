@@ -97,7 +97,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
 
             public readonly GUIContent perPixelDisplacementLayersWarning = new GUIContent("For pixel displacement to work correctly, all layers with a heightmap must use the same UV mapping");
 
-            public readonly GUIContent materialReferencesText = new GUIContent("Material References");
+            public readonly GUIContent materialReferencesText = new GUIContent("Material To Copy");
 
             public StylesLayer()
             {
