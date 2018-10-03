@@ -16,6 +16,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
         RTHandleSystem.RTHandle         m_Atlas;
         Material                        m_ClearMaterial;
         LightingDebugSettings           m_LightingDebugSettings;
+        float                           m_RcpScaleFactor = 1;
         
         public HDShadowAtlas(int width, int height, Material clearMaterial, FilterMode filterMode = FilterMode.Bilinear, DepthBits depthBufferBits = DepthBits.Depth16, RenderTextureFormat format = RenderTextureFormat.Shadowmap, string name = "")
         {
@@ -44,6 +45,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             var sortedRequests = shadowRequests.OrderBy(s => s.atlasViewport.height).ThenBy(s => s.atlasViewport.width);
             
             float curX = 0, curY = 0, curH = 0, xMax = m_Width, yMax = m_Height;
+            m_RcpScaleFactor = 1;
 
             // Assign to every view shadow viewport request a position in the atlas
             foreach (var shadowRequest in sortedRequests)
@@ -123,6 +125,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             }
 
             Vector4 scale = new Vector4(m_Width / currentMaxX, m_Height / currentMaxY, m_Width / currentMaxX, m_Height / currentMaxY);
+            m_RcpScaleFactor = Mathf.Max(scale.x, scale.y);
 
             // Scale down every shadow rects to fit with the current atlas size
             foreach (var r in shadowRequests)
@@ -175,8 +178,9 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             propertyBlock.SetTexture("_AtlasTexture", m_Atlas.rt);
             propertyBlock.SetVector("_TextureScaleBias", scaleBias);
             propertyBlock.SetVector("_ValidRange", validRange);
+            propertyBlock.SetFloat("_RcpGlobalScaleFactor", m_RcpScaleFactor);
             cmd.SetViewport(new Rect(screenX, screenY, screenSizeX, screenSizeY));
-            cmd.DrawProcedural(Matrix4x4.identity, debugMaterial, debugMaterial.FindPass("VARIANCESHADOW"), MeshTopology.Triangles, 3, 1, propertyBlock);
+            cmd.DrawProcedural(Matrix4x4.identity, debugMaterial, debugMaterial.FindPass("RegularShadow"), MeshTopology.Triangles, 3, 1, propertyBlock);
         }
 
         public void Clear()
