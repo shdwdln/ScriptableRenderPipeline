@@ -234,8 +234,12 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
         {
             int shadowIndex = 0;
 
+            m_Atlas.UpdateDebugSettings(lightingDebugSettings);
+            m_CascadeAtlas.UpdateDebugSettings(lightingDebugSettings);
+
             if (lightingDebugSettings.shadowResolutionScaleFactor != 1.0f)
             {
+                // TODO: this does not works well with the CalcShadowGuardAngle
                 foreach (var shadowRequest in m_ShadowRequests)
                     shadowRequest.viewportSize *= lightingDebugSettings.shadowResolutionScaleFactor;
             }

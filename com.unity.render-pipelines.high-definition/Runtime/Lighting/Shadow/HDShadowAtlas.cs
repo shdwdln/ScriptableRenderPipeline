@@ -15,6 +15,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
 
         RTHandleSystem.RTHandle         m_Atlas;
         Material                        m_ClearMaterial;
+        LightingDebugSettings           m_LightingDebugSettings;
         
         public HDShadowAtlas(int width, int height, Material clearMaterial, FilterMode filterMode = FilterMode.Bilinear, DepthBits depthBufferBits = DepthBits.Depth16, RenderTextureFormat format = RenderTextureFormat.Shadowmap, string name = "")
         {
@@ -28,6 +29,11 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
         public void Reserve(HDShadowRequest shadowRequest)
         {
             shadowRequests.Add(shadowRequest);
+        }
+
+        public void UpdateDebugSettings(LightingDebugSettings lightingDebugSettings)
+        {
+            m_LightingDebugSettings = lightingDebugSettings;
         }
 
         public bool Layout(bool allowResize = true)
@@ -121,7 +127,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             // Scale down every shadow rects to fit with the current atlas size
             foreach (var r in shadowRequests)
             {
-                r.viewBias.w /= Mathf.Max(scale.x, scale.y);
+                r.viewBias.w /= Mathf.Max(scale.x, scale.y); // TODO m_LightingDebugSettings
                 Vector4 s = new Vector4(r.atlasViewport.x, r.atlasViewport.y, r.atlasViewport.width, r.atlasViewport.height);
                 Vector4 reScaled = Vector4.Scale(s, scale);
 
@@ -133,6 +139,9 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
         {
             cmd.SetRenderTarget(identifier);
             cmd.SetGlobalVector(HDShaderIDs._ShadowAtlasSize, new Vector4(m_Width, m_Height, 1.0f / m_Width, 1.0f / m_Height));
+            
+            if (m_LightingDebugSettings.clearShadowAtlas)
+                CoreUtils.DrawFullScreen(cmd, m_ClearMaterial, null, 0);
 
             foreach (var shadowRequest in shadowRequests)
             {
