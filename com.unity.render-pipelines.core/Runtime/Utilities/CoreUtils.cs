@@ -519,7 +519,7 @@ namespace UnityEngine.Experimental.Rendering
                 animateMaterials = false;
 
                 // Determine whether the "Animated Materials" checkbox is checked for the current view.
-                foreach (UnityEditor.MaterialEditor med in Resources.FindObjectsOfTypeAll(typeof(UnityEditor.MaterialEditor)))
+                foreach (UnityEditor.MaterialEditor med in materialEditors)
                 {
                     // Warning: currently, there's no way to determine whether a given camera corresponds to this MaterialEditor.
                     // Therefore, if at least one of the visible MaterialEditors is in Play Mode, all of them will play.
@@ -549,6 +549,15 @@ namespace UnityEngine.Experimental.Rendering
         #endif
 
             return animateMaterials;
+        }
+        
+        static System.Reflection.FieldInfo s_MaterialEditorsField = typeof(UnityEditor.MaterialEditor).GetField("s_MaterialEditors", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+        static List<UnityEditor.MaterialEditor> materialEditors
+        {
+            get
+            {
+                return (List<UnityEditor.MaterialEditor>)s_MaterialEditorsField.GetValue(null);
+            }
         }
 
         public static bool IsSceneViewFogEnabled(Camera camera)
