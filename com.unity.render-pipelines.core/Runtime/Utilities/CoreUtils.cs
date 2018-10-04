@@ -505,7 +505,7 @@ namespace UnityEngine.Experimental.Rendering
                 animateMaterials = false;
 
                 // Determine whether the "Animated Materials" checkbox is checked for the current view.
-                foreach (UnityEditor.SceneView sv in Resources.FindObjectsOfTypeAll(typeof(UnityEditor.SceneView)))
+                foreach (UnityEditor.SceneView sv in UnityEditor.SceneView.sceneViews)
                 {
                     if (sv.camera == camera && sv.sceneViewState.showMaterialUpdate)
                     {
