@@ -33,17 +33,12 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
         public static string k_PanelMaterials = "Material";
         public static string k_PanelLighting = "Lighting";
         public static string k_PanelRendering = "Rendering";
-
-        public static string k_PanelScreenSpaceTracing = "Screen Space Tracing";
         public static string k_PanelDecals = "Decals";
-
-        static readonly string[] k_HiZIntersectionKind = { "None", "Cell", "Depth" };
 
         DebugUI.Widget[] m_DebugDisplayStatsItems;
         DebugUI.Widget[] m_DebugMaterialItems;
         DebugUI.Widget[] m_DebugLightingItems;
         DebugUI.Widget[] m_DebugRenderingItems;
-        DebugUI.Widget[] m_DebugScreenSpaceTracingItems;
         DebugUI.Widget[] m_DebugDecalsItems;
 
 
@@ -568,7 +563,6 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             UnregisterDebugItems(k_PanelMaterials, m_DebugMaterialItems);
             UnregisterDebugItems(k_PanelLighting, m_DebugLightingItems);
             UnregisterDebugItems(k_PanelRendering, m_DebugRenderingItems);
-            UnregisterDebugItems(k_PanelScreenSpaceTracing, m_DebugScreenSpaceTracingItems);
         }
 
         void UnregisterDebugItems(string panelName, DebugUI.Widget[] items)
