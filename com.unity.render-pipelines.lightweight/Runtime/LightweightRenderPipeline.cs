@@ -368,10 +368,14 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
 
             for (int i = 0; i < visibleLights.Count; ++i)
             {
-                // TODO: In LWRP we get the depth and normal bias from an AdditionalLightData component
-                // If the component is attached to light then we get the values from the component, otherwise
-                // we use the default global asset values
-                m_ShadowBiasData.Add(new Vector4(settings.shadowDepthBias, settings.shadowNormalBias, 0.0f, 0.0f));
+                Light light = visibleLights[i].light;
+                LightweightRPLightOverrides lightOverrides =
+                    (light != null) ? light.gameObject.GetComponent<LightweightRPLightOverrides>() : null;
+
+                if (lightOverrides)
+                    m_ShadowBiasData.Add(new Vector4(lightOverrides.depthBias, lightOverrides.normalBias, 0.0f, 0.0f));
+                else
+                    m_ShadowBiasData.Add(new Vector4(settings.shadowDepthBias, settings.shadowNormalBias, 0.0f, 0.0f));
             }
 
             shadowData.bias = m_ShadowBiasData;
