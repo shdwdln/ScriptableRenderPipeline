@@ -519,7 +519,7 @@ namespace UnityEngine.Experimental.Rendering
                 animateMaterials = false;
 
                 // Determine whether the "Animated Materials" checkbox is checked for the current view.
-                foreach (UnityEditor.MaterialEditor med in materialEditors)
+                foreach (UnityEditor.MaterialEditor med in materialEditors())
                 {
                     // Warning: currently, there's no way to determine whether a given camera corresponds to this MaterialEditor.
                     // Therefore, if at least one of the visible MaterialEditors is in Play Mode, all of them will play.
@@ -550,14 +550,16 @@ namespace UnityEngine.Experimental.Rendering
 
             return animateMaterials;
         }
-        
-        static System.Reflection.FieldInfo s_MaterialEditorsField = typeof(UnityEditor.MaterialEditor).GetField("s_MaterialEditors", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
-        static List<UnityEditor.MaterialEditor> materialEditors
+
+        static Func<List<UnityEditor.MaterialEditor>> materialEditors;
+
+        static CoreUtils()
         {
-            get
-            {
-                return (List<UnityEditor.MaterialEditor>)s_MaterialEditorsField.GetValue(null);
-            }
+            //quicker than standard reflection as it is compilated
+            System.Reflection.FieldInfo field = typeof(UnityEditor.MaterialEditor).GetField("s_MaterialEditors", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+            var fieldExpression = System.Linq.Expressions.Expression.Field(null, field);
+            var lambda = System.Linq.Expressions.Expression.Lambda<Func<List<UnityEditor.MaterialEditor>>>(fieldExpression);
+            materialEditors = lambda.Compile();
         }
 
         public static bool IsSceneViewFogEnabled(Camera camera)
