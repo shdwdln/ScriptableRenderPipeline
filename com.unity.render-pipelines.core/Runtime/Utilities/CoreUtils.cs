@@ -468,7 +468,7 @@ namespace UnityEngine.Experimental.Rendering
             Debug.LogError(msg);
 
 #if UNITY_EDITOR
-            foreach (UnityEditor.SceneView sv in Resources.FindObjectsOfTypeAll(typeof(UnityEditor.SceneView)))
+            foreach (UnityEditor.SceneView sv in UnityEditor.SceneView.sceneViews)
                 sv.ShowNotification(new GUIContent(msg));
 #endif
         }
@@ -572,7 +572,7 @@ namespace UnityEngine.Experimental.Rendering
                 fogEnable = false;
 
                 // Determine whether the "Animated Materials" checkbox is checked for the current view.
-                foreach (UnityEditor.SceneView sv in Resources.FindObjectsOfTypeAll(typeof(UnityEditor.SceneView)))
+                foreach (UnityEditor.SceneView sv in UnityEditor.SceneView.sceneViews)
                 {
                     if (sv.camera == camera && sv.sceneViewState.showFog)
                     {
