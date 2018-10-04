@@ -100,14 +100,67 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
             shadowSliceData.shadowTransform = sliceTransform * shadowSliceData.shadowTransform;
         }
 
-        public static void SetupShadowCasterConstants(CommandBuffer cmd, ref VisibleLight visibleLight, float shadowDepthBias, float shadowNormalBias, Matrix4x4 proj, float cascadeResolution)
+        public static Vector4 GetShadowBias(ref VisibleLight shadowLight, int shadowLightIndex, ref ShadowData shadowData, Matrix4x4 lightProjectionMatrix, float shadowResolution)
         {
+            if (shadowLightIndex < 0 || shadowLightIndex >= shadowData.bias.Count)
+            {
+                Debug.LogWarning(string.Format("{0} is not a valid light index.", shadowLightIndex));
+                return Vector4.zero;
+            }
+
+            float frustumSize;
+            if (shadowLight.lightType == LightType.Directional)
+            {
+                // Frustum size is guaranteed to be a cube as we wrap shadow frustum around a sphere
+                frustumSize = 2.0f / lightProjectionMatrix.m00;
+            }
+            else if (shadowLight.lightType == LightType.Spot)
+            {
+                // Spot lights shadow texel size varies with depth (perpective projection)
+                // As an approximation we compute the texel size at far plane. For lights with small ranges
+                // it should be fine. Otherwise bias can be tweaked per-light to find reasonable term between acne
+                // and peter panning.
+                frustumSize = Mathf.Tan(shadowLight.spotAngle * Mathf.Deg2Rad) * shadowLight.range * 2.0f;
+            }
+            else
+            {
+                Debug.LogWarning("Only spot and directional shadow casters are supported in lightweight pipeline");
+                frustumSize = 0.0f;
+            }
+
+            // depth and normal bias scale is in shadowmap texel size in world space
+            float texelSize = frustumSize / shadowResolution;
+            float depthBias = -shadowData.bias[shadowLightIndex].x * texelSize;
+            float normalBias = -shadowData.bias[shadowLightIndex].y * texelSize;
+            
+            if (shadowData.supportsSoftShadows)
+            {
+                // TODO: depth and normal bias assume sample is no more than 1 texel away from shadowmap
+                // This is not true with PCF. Ideally we need to do either
+                // cone base bias (based on distance to center sample)
+                // or receiver plance bias based on derivatives.
+                // For now we scale it by the PCF kernel size (5x5)
+                const float kernelRadius = 2.5f;
+                depthBias *= kernelRadius;
+                normalBias *= kernelRadius;
+            }
+
+            return new Vector4(depthBias, normalBias, 0.0f, 0.0f);
+        }
+
+        public static void SetupShadowCasterConstantBuffer(CommandBuffer cmd, ref VisibleLight shadowLight, Vector4 shadowBias)
+        {
+            Vector3 lightDirection = -shadowLight.localToWorld.GetColumn(2);
+            cmd.SetGlobalVector("_ShadowBias", shadowBias);
+            cmd.SetGlobalVector("_LightDirection", new Vector4(lightDirection.x, lightDirection.y, lightDirection.z, 0.0f));
+        }
+
+        [Obsolete("SetupShadowCasterConstants is deprecated, use SetupShadowCasterConstantBuffer instead")]
+        public static void SetupShadowCasterConstants(CommandBuffer cmd, ref VisibleLight visibleLight, Matrix4x4 proj, float cascadeResolution)
+        {
+            Light light = visibleLight.light;
             float bias = 0.0f;
             float normalBias = 0.0f;
-
-            // Use same kernel radius as built-in pipeline so we can achieve same bias results
-            // with the default light bias parameters.
-            const float kernelRadius = 3.65f;
 
             if (visibleLight.lightType == LightType.Directional)
             {
@@ -121,16 +174,16 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
 
                 // Depth Bias - bias shadow is specified in terms of shadowmap pixels.
                 // bias = 1 means the shadowmap is offseted 1 texel world space size in the direciton of the light
-                bias = -shadowDepthBias * texelSize;
+                bias = -light.shadowBias * texelSize;
 
                 // Since we are applying normal bias on caster side we want an inset normal offset
                 // thus we use a negative normal bias.
-                normalBias = -shadowNormalBias * texelSize;
+                normalBias = -light.shadowNormalBias * texelSize * 3.65f;
             }
             else if (visibleLight.lightType == LightType.Spot)
             {
                 float sign = (SystemInfo.usesReversedZBuffer) ? -1.0f : 1.0f;
-                bias = shadowDepthBias * sign;
+                bias = light.shadowBias * sign;
                 normalBias = 0.0f;
             }
             else

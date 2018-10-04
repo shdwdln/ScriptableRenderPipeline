@@ -143,14 +143,14 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
                     RenderBufferStoreAction.Store, ClearFlag.Depth, Color.black, TextureDimension.Tex2D);
 
                 bool success = false;
-                Vector4 shadowBias = shadowData.bias[shadowLightIndex];
                 for (int cascadeIndex = 0; cascadeIndex < m_ShadowCasterCascadesCount; ++cascadeIndex)
                 {
                     success = ShadowUtils.ExtractDirectionalLightMatrix(ref cullResults, ref shadowData, shadowLightIndex, cascadeIndex, shadowResolution, shadowNearPlane, out m_CascadeSplitDistances[cascadeIndex], out m_CascadeSlices[cascadeIndex], out view, out proj);
                     if (success)
                     {
                         settings.splitData.cullingSphere = m_CascadeSplitDistances[cascadeIndex];
-                        ShadowUtils.SetupShadowCasterConstants(cmd, ref shadowLight, shadowBias.x, shadowBias.y, proj, shadowResolution);
+                        Vector4 shadowBias = ShadowUtils.GetShadowBias(ref shadowLight, shadowLightIndex, ref shadowData, proj, shadowResolution);
+                        ShadowUtils.SetupShadowCasterConstantBuffer(cmd, ref shadowLight, shadowBias);
                         ShadowUtils.RenderShadowSlice(cmd, ref context, ref m_CascadeSlices[cascadeIndex], ref settings, proj, view);
                     }
                 }

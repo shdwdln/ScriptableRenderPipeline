@@ -3,8 +3,7 @@
 
 #include "Packages/com.unity.render-pipelines.lightweight/ShaderLibrary/Core.hlsl"
 
-// x: global clip space bias, y: normal world space bias
-float4 _ShadowBias;
+float4 _ShadowBias; // x: depth bias, y: normal bias
 float3 _LightDirection;
 
 struct Attributes

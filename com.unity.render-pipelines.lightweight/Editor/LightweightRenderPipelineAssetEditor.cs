@@ -39,8 +39,8 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
             // Shadow settings
             public static GUIContent shadowDistanceText = EditorGUIUtility.TrTextContent("Distance", "Maximum shadow rendering distance.");
             public static GUIContent shadowCascadesText = EditorGUIUtility.TrTextContent("Cascades", "Number of cascade splits used in for directional shadows");
-            public static GUIContent shadowDepthBias = EditorGUIUtility.TrTextContent("Depth Bias", "");
-            public static GUIContent shadowNormalBias = EditorGUIUtility.TrTextContent("Normal Bias", "");
+            public static GUIContent shadowDepthBias = EditorGUIUtility.TrTextContent("Depth Bias", "Amount of shadow texels to offset in the direction of light. Use this tweak shadow artifacts. This setting applied to all lights. It can be overriden by adding a LightAdditionalData component to the light.");
+            public static GUIContent shadowNormalBias = EditorGUIUtility.TrTextContent("Normal Bias", "Amount of shadow texels to offset in the direction of the receiver's normal. Use this tweak shadow artifacts. This setting applied to all lights. It can be overriden by adding a LightAdditionalData component to the light.");
             public static GUIContent supportsSoftShadows = EditorGUIUtility.TrTextContent("Soft Shadows", "If enabled pipeline will perform shadow filtering. Otherwise all lights that cast shadows will fallback to perform a single shadow sample.");
 
             // Advanced settings
